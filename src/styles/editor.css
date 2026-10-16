@@ -213,9 +213,13 @@
   outline-offset: -2px;
 }
 
+/* The Preview frame: the learner's page on white, filling the card. */
 .editor-preview {
+  display: block;
   flex: 1;
+  width: 100%;
   min-height: 320px;
+  border: 0;
   background-color: var(--color-bg);
 }
 
