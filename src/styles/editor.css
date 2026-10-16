@@ -36,6 +36,7 @@
 :root {
   --editor-width: 1280px;
   --code-font: 'JetBrains Mono', 'IRANYekanXFaNum', ui-monospace, monospace;
+  --gutter-font: 'JetBrains Mono', ui-monospace, monospace;
   /*
    * Console levels. Not palette tokens: they only color console text. Both
    * pass AA as text on surface (6.1:1 and 5.1:1) and on white.
@@ -200,23 +201,97 @@
   background-color: var(--color-bg);
 }
 
+/*
+ * The CodeMirror host. `contain: size` keeps a long file from growing the
+ * card: the editor scrolls inside whatever height the layout gives it.
+ */
 .editor-code {
+  position: relative;
   flex: 1;
-  width: 100%;
+  min-width: 0;
   height: max(280px, 50dvh);
-  padding: 12px 14px;
-  resize: none;
-  background-color: var(--color-bg);
-  color: var(--color-ink);
-  font-family: var(--code-font);
-  font-size: 14px;
-  line-height: 1.7;
-  tab-size: 2;
+  contain: size;
 }
 
-.editor-code:focus-visible {
+/* The still copy of the outgoing file, fading out over the incoming one on a tab switch. */
+.editor-code .editor-code-outgoing {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/*
+ * CodeMirror's light theme, on palette P. Selectors start with
+ * `.editor-code .cm-editor` to outrank CodeMirror's base theme, which it
+ * injects at runtime.
+ */
+.editor-code .cm-editor {
+  height: 100%;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.editor-code .cm-editor .cm-scroller {
+  font-family: var(--code-font);
+  line-height: 1.7;
+}
+
+.editor-code .cm-editor .cm-gutters {
+  border: none;
+  background-color: var(--color-bg);
+  color: var(--color-muted);
+  /* No IRANYekanXFaNum: it would draw the line numbers in Persian digits. */
+  font-family: var(--gutter-font);
+}
+
+/*
+ * The caret's line reads as surface (#F5F7FA) on white. It is a translucent
+ * tint, not the opaque token, because CodeMirror draws selections beneath
+ * the lines: an opaque line would hide the selection on it.
+ */
+.editor-code .cm-editor .cm-activeLine {
+  background-color: rgb(5 55 130 / 0.04);
+}
+
+.editor-code .cm-editor .cm-activeLineGutter {
+  background-color: var(--color-surface);
+}
+
+.editor-code .cm-editor .cm-selectionBackground,
+.editor-code .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background: var(--color-primary-soft);
+}
+
+.editor-code .cm-editor .cm-cursor {
+  border-left-color: var(--color-ink);
+}
+
+.editor-code .cm-editor.cm-focused {
   outline: 2px solid var(--color-primary);
   outline-offset: -2px;
+}
+
+.editor-code .cm-editor .cm-matchingBracket {
+  background-color: var(--color-primary-soft);
+}
+
+/* Syntax colours (spec: Code Pane). Everything else is ink. */
+.editor-code .code-tag {
+  color: var(--color-primary-text);
+}
+
+.editor-code .code-attribute {
+  color: var(--color-muted);
+}
+
+.editor-code .code-string {
+  color: #1237c8;
+}
+
+.editor-code .code-comment {
+  color: var(--color-muted);
+  font-style: italic;
 }
 
 /* The Preview frame: the learner's page on white, filling the card. */

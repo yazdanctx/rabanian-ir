@@ -92,4 +92,11 @@ describe('landing page (dist/index.html) stays free of the editor', () => {
       expect(readFileSync(join(distDir, path), 'utf8')).not.toMatch(/EditorApp|data-editor/);
     }
   });
+
+  it('loads no CodeMirror', () => {
+    for (const path of pageScripts(home)) {
+      expect(readFileSync(join(distDir, path), 'utf8')).not.toMatch(/\bcm-(editor|content)\b|@codemirror/);
+    }
+    expect(pageCss(home)).not.toMatch(/\.cm-|code-(tag|string|comment)/);
+  });
 });

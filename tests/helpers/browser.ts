@@ -64,7 +64,44 @@ export interface PageOptions {
 export interface BrowserPage {
   /** Evaluates an expression in the page (promises are awaited). */
   evaluate<T>(expression: string): Promise<T>;
+  /** Sends a raw DevTools protocol command to the page. */
+  send(method: string, params?: object): Promise<any>;
+  /** Types text into the focused element as the keyboard would (Farsi included). */
+  type(text: string): Promise<void>;
+  /**
+   * Presses and releases one key, e.g. `'ArrowRight'` or `'z'`, holding
+   * `modifiers` (a bitmask: Alt 1, Ctrl 2, Meta 4, Shift 8).
+   */
+  press(key: string, modifiers?: number): Promise<void>;
   close(): Promise<void>;
+}
+
+/** Key codes for `BrowserPage.press`; letters map to their `Key*` codes. */
+const keyCodes: Record<string, [code: string, keyCode: number]> = {
+  ArrowLeft: ['ArrowLeft', 37],
+  ArrowUp: ['ArrowUp', 38],
+  ArrowRight: ['ArrowRight', 39],
+  ArrowDown: ['ArrowDown', 40],
+  Home: ['Home', 36],
+  End: ['End', 35],
+  Backspace: ['Backspace', 8],
+  Delete: ['Delete', 46],
+  Enter: ['Enter', 13],
+  Tab: ['Tab', 9],
+  Escape: ['Escape', 27],
+};
+
+function keyEvent(key: string, modifiers: number) {
+  const [code, keyCode] = keyCodes[key] ?? [`Key${key.toUpperCase()}`, key.toUpperCase().charCodeAt(0)];
+  const text = key === 'Enter' ? '\r' : key.length === 1 ? key : undefined;
+  return {
+    key,
+    code,
+    windowsVirtualKeyCode: keyCode,
+    nativeVirtualKeyCode: keyCode,
+    modifiers,
+    ...(text && !(modifiers & 7) ? { text, unmodifiedText: text } : {}),
+  };
 }
 
 /** Launches Chrome, opens `url` with the given emulation, resolves on load. */
@@ -87,8 +124,10 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   );
 
   const portFile = join(profile, 'DevToolsActivePort');
-  for (let i = 0; i < 200 && !existsSync(portFile); i++) await sleep(50);
-  const port = readFileSync(portFile, 'utf8').split('\n')[0];
+  // Chrome may create the file before writing the port into it.
+  const readPort = () => (existsSync(portFile) ? readFileSync(portFile, 'utf8').split('\n')[0] : '');
+  for (let i = 0; i < 200 && !/^\d+$/.test(readPort()); i++) await sleep(50);
+  const port = readPort();
   const targets: { type: string; webSocketDebuggerUrl: string }[] = await (
     await fetch(`http://127.0.0.1:${port}/json/list`)
   ).json();
@@ -135,6 +174,15 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   await loaded;
 
   return {
+    send,
+    async type(text: string) {
+      await send('Input.insertText', { text });
+    },
+    async press(key: string, modifiers = 0) {
+      const event = keyEvent(key, modifiers);
+      await send('Input.dispatchKeyEvent', { type: 'text' in event ? 'keyDown' : 'rawKeyDown', ...event });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+    },
     async evaluate<T>(expression: string) {
       const { result, exceptionDetails } = await send('Runtime.evaluate', {
         expression,
