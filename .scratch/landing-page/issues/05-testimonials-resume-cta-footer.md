@@ -1,6 +1,6 @@
 # 05 — Testimonials, Résumé, dark CTA block, Footer
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Sections 7–10)
 Blocked by: 02, 03
 
@@ -16,3 +16,7 @@ Blocked by: 02, 03
 
 - Full page renders end-to-end with all copy; anchors from Hero/TopBar land on the right sections.
 - CTA block is the only dark surface on the page.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (aaf786c).

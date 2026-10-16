@@ -1,6 +1,6 @@
 # 07 — Motion script with vanilla `motion`, reduced-motion safe
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Motion)
 Blocked by: 05
 Decision: ADR-0003 (no React on the landing page — React + motion island measured ~97.5 KB gz vs ~26 KB vanilla)
@@ -18,3 +18,7 @@ Decision: ADR-0003 (no React on the landing page — React + motion island measu
 
 - Landing JS ≤ ~45 KB gzipped total; no React runtime in `dist/` for `index.html`; nothing scroll-linked.
 - With reduced motion enabled (or JS disabled), no element moves and content is visible on load.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (773747b).

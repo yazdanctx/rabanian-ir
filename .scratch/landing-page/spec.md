@@ -1,6 +1,6 @@
 # rabanian.ir — landing page
 
-Status: ready-for-agent
+Status: resolved
 Decided: 2026-10-16 (grilling session, three rounds)
 Design reference: `موبایل-html/Mobile.dc.html` — **content and section order only**; its colors, fonts and ambient animations are not used.
 Vocabulary: `GLOSSARY.md`. Decisions with lock-in: `docs/adr/`.
