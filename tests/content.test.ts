@@ -73,6 +73,39 @@ describe('tools collection', () => {
   });
 });
 
+describe('experiences collection', () => {
+  it('lists the four Experiences newest first, with the design’s month-and-year periods', () => {
+    expect(
+      collection('experiences').map(({ role, employer, period, summary }) => [role, employer, period, summary]),
+    ).toEqual([
+      ['مدیر محصول نرم‌افزاری', 'ویسِند انگلستان', 'جولای 2025 – اکنون', 'هوشمندسازی شبکه‌های اجتماعی با هوش مصنوعی.'],
+      [
+        'مدیر ارشد محصول',
+        'مستربلیط',
+        'آگوست 2024 – جولای 2025',
+        'توسعه و گسترش پلتفرم مستربلیط و رشد تیم محصول در صنعت سفر آنلاین.',
+      ],
+      ['مدیر محصول', 'سی‌آر‌ام دیدار', 'دسامبر 2023 – جولای 2024', 'رهبری تیم محصول.'],
+      [
+        'مدیر عملکرد',
+        'اسنپ',
+        'ژوئن 2023 – دسامبر 2023',
+        'همکاری با تیمی حدود 50 نفره، بهبود فرایندها، تحلیل داده با تیم BI، توسعهٔ پروژه‌های جدید (اسنپ‌لاین و اسنپ‌استور) و ساخت داشبورد داخلی سازمانی.',
+      ],
+    ]);
+  });
+});
+
+describe('education collection', () => {
+  it('lists the three degrees, highest first', () => {
+    expect(collection('education').map(({ degree, school }) => [degree, school])).toEqual([
+      ['کارشناسی ارشد مدیریت', 'دانشگاه تهران'],
+      ['کارشناسی ارشد مهندسی برق', 'دانشگاه صنعتی اصفهان'],
+      ['کارشناسی مهندسی برق', 'دانشگاه صنعتی اصفهان'],
+    ]);
+  });
+});
+
 describe('testimonials collection', () => {
   it('holds the four Masterclass Learner quotes verbatim, emoji included', () => {
     const role = 'دانش‌پذیر مسترکلاس';

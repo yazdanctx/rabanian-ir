@@ -52,8 +52,26 @@ export const testimonial = z.object({
   quote: z.string(),
 });
 
+/** An Experience: one résumé entry. `period` is display text, e.g. «جولای 2025 – اکنون». */
+export const experience = z.object({
+  id: z.string(),
+  role: z.string(),
+  employer: z.string(),
+  period: z.string(),
+  summary: z.string(),
+});
+
+/** An education entry (not an Experience). */
+export const education = z.object({
+  id: z.string(),
+  degree: z.string(),
+  school: z.string(),
+});
+
 export const schemas = {
   courses: course,
   tools: tool,
   testimonials: testimonial,
+  experiences: experience,
+  education,
 };

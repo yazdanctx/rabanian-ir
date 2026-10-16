@@ -14,4 +14,12 @@ export const collections = {
     loader: file('src/content/testimonials.json'),
     schema: schemas.testimonials,
   }),
+  experiences: defineCollection({
+    loader: file('src/content/experiences.json'),
+    schema: schemas.experiences,
+  }),
+  education: defineCollection({
+    loader: file('src/content/education.json'),
+    schema: schemas.education,
+  }),
 };
