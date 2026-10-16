@@ -48,20 +48,26 @@ describe('buildDocument', () => {
     expect(styles[1]).toBe(files.css);
   });
 
-  it("puts the learner's HTML in the body, then the console bridge, then the learner's JS", () => {
-    const body = dom(buildDocument(files)).body;
-    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script', 'script']);
-    expect(body.querySelector('h1')?.textContent).toBe('سلام دنیا');
-    const [bridge, js] = body.querySelectorAll('script');
+  it("runs the console bridge in the head, after the styles, so it hears every script on the visitor's page", () => {
+    const head = dom(buildDocument(files)).head;
+    expect([...head.children].map((el) => el.localName)).toEqual(['meta', 'style', 'style', 'script']);
+    const bridge = head.querySelector('script')!;
     expect(bridge.textContent).toMatch(/parent\.postMessage\(/);
     expect(bridge.textContent).toMatch(/['"]rabanian-editor['"]/);
-    expect(js.textContent).toBe(files.js);
+  });
+
+  it("puts the visitor's HTML in the body, then the visitor's JS", () => {
+    const body = dom(buildDocument(files)).body;
+    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
+    expect(body.querySelector('h1')?.textContent).toBe('سلام دنیا');
+    expect(body.querySelector('script')?.textContent).toBe(files.js);
   });
 
   it('leaves the console bridge out when asked, for the downloaded page', () => {
-    const body = dom(buildDocument(files, { consoleBridge: false })).body;
-    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
-    expect(body.querySelector('script')?.textContent).toBe(files.js);
+    const page = dom(buildDocument(files, { consoleBridge: false }));
+    expect(page.head.querySelector('script')).toBeNull();
+    expect([...page.body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
+    expect(page.body.querySelector('script')?.textContent).toBe(files.js);
     expect(buildDocument(files, { consoleBridge: false })).not.toMatch(/postMessage|rabanian-editor/);
   });
 });

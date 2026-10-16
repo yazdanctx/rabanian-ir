@@ -176,6 +176,20 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     ]);
   });
 
+  it("lists what the HTML tab's own scripts log and throw while the page loads", async () => {
+    const html = `<script>console.log('from html')</script>
+      <h1>سلام</h1>
+      <script>throw new Error('on load')</script>`;
+    const listed = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await setFiles({ html: ${JSON.stringify(html)}, js: "console.log('from js')" });
+      await waitFor(() => entries().includes('log from js'));
+      await sleep(200);
+      return entries();
+    })()`);
+    expect(listed).toEqual(['log from html', 'error Uncaught Error: on load', 'log from js']);
+  });
+
   it('ignores messages from the editor page itself, from other frames, and untagged ones', async () => {
     const listed = await tab.evaluate<string[]>(`(async () => {
       ${lib}
