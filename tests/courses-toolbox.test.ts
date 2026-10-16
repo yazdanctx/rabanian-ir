@@ -45,4 +45,58 @@ describe('courses (#courses)', () => {
       expect(text(card?.querySelector('[data-price]'))).toBe('15 میلیون تومان');
     });
   });
+
+  describe('Course rail', () => {
+    const rail = courses?.querySelector('ul[data-rail]');
+    const cards = [...(rail?.querySelectorAll(':scope > li') ?? [])];
+
+    it('hints at swiping above the Rail on mobile only', () => {
+      const hint = rail?.previousElementSibling;
+      expect(text(hint)).toBe('← برای دیدن بیشتر بکشید');
+      expect(hint?.classList.contains('md:hidden')).toBe(true);
+    });
+
+    it('is a named Rail that becomes a 2-column grid at md', () => {
+      expect(rail?.getAttribute('aria-label')).toBe('دوره‌های من');
+      expect(rail?.classList.contains('md:grid-cols-2')).toBe(true);
+    });
+
+    it('lists the 7 other Courses in order: category, title, description', () => {
+      expect(cards.map((card) => text(card.querySelector('h3')))).toEqual([
+        'مینی‌دوره برنامه‌نویسی با AI',
+        'آموزش فیگما از صفر',
+        'طراحی سایت‌های سه‌بعدی',
+        'تگ منیجر برای مبتدیان',
+        'آموزش پست‌هاگ (PostHog)',
+        'مایکروسافت کلریتی',
+        'آموزش کرسر (Cursor)',
+      ]);
+      expect(text(cards[0]?.querySelector('[data-category]'))).toBe('AI Coding');
+      expect(text(cards[6]?.querySelector('[data-category]'))).toBe('ایجنتیک');
+      expect(text(cards[0]?.querySelector('h3 + p'))).toBe(
+        'آموزش فشرده طراحی سایت با هوش مصنوعی از صفر.',
+      );
+    });
+
+    it('prices each card in «میلیون»', () => {
+      expect(cards.map((card) => text(card.querySelector('[data-price]')))).toEqual([
+        '5 میلیون',
+        '2 میلیون',
+        '4 میلیون',
+        '2 میلیون',
+        '1 میلیون',
+        '1 میلیون',
+        '3 میلیون',
+      ]);
+    });
+
+    it('links every card\'s «جزئیات ←» to Support while no Course has its own url', () => {
+      for (const card of cards) {
+        const details = card.querySelector('a');
+        expect(text(details)).toBe('جزئیات ←');
+        expect(details?.getAttribute('href')).toBe(SUPPORT);
+        expect(details?.classList.contains('text-primary-text')).toBe(true);
+      }
+    });
+  });
 });

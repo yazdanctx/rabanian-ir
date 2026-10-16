@@ -1,14 +1,27 @@
 ---
 import { getOrderedCollection } from '../content/ordered';
 import { COPY } from '../site';
+import CourseCard from './CourseCard.astro';
 import MasterclassCard from './MasterclassCard.astro';
+import Rail from './Rail.astro';
 import Section from './Section.astro';
 
 const courses = (await getOrderedCollection('courses')).map(({ data }) => data);
 const masterclass = courses.find((course) => course.featured);
-const { eyebrow, title } = COPY.courses;
+const others = courses.filter((course) => !course.featured);
+const { eyebrow, title, swipeHint } = COPY.courses;
 ---
 
 <Section id="courses" eyebrow={eyebrow} title={title}>
   {masterclass && <MasterclassCard course={masterclass} />}
+  <p class="mt-6 mb-2.5 text-end text-[13px] text-muted md:hidden">{swipeHint}</p>
+  <Rail label={title} cols={2} itemWidth="260px" class="md:mt-6">
+    {
+      others.map((course) => (
+        <li>
+          <CourseCard course={course} />
+        </li>
+      ))
+    }
+  </Rail>
 </Section>
