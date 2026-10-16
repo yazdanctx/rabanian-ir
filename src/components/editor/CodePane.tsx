@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { EditorState, type Extension } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
-import { defaultKeymap } from '@codemirror/commands';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { syntaxHighlighting } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
@@ -49,7 +49,8 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       lineNumbers(),
       // HTML tags auto-close from html() itself.
       closeBrackets(),
-      keymap.of([...closeBracketsKeymap, ...defaultKeymap]),
+      history(),
+      keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap]),
       LANGUAGE[file](),
       syntaxHighlighting(highlighter),
       EditorView.updateListener.of((update) => {

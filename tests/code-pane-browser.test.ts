@@ -210,4 +210,38 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     await typeKeys(tab, '[{(');
     expect(await paneText(tab)).toBe('[{()}]');
   });
+
+  it('keeps a separate undo history per file', async () => {
+    const mod = await modifier(tab);
+    /** Undoes until nothing changes; returns every text passed through. */
+    const undoAll = async () => {
+      await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
+      const seen = [await paneText(tab)];
+      for (let i = 0; i < 50; i++) {
+        await tab.press('z', mod);
+        const now = await paneText(tab);
+        if (now === seen.at(-1)) break;
+        seen.push(now);
+      }
+      return seen;
+    };
+    await pick(tab, 'CSS');
+    const css = await paneText(tab);
+    await clear(tab);
+    await tab.type('p {}');
+    await pick(tab, 'JS');
+    await clear(tab);
+    await tab.type('x');
+    const js = await undoAll();
+    // JS walks back to its own empty start and never shows CSS text…
+    expect(js.at(-1)).toBe('');
+    expect(js.some((text) => text.includes('p {}'))).toBe(false);
+    // …while CSS keeps its text, and its own history.
+    await pick(tab, 'CSS');
+    expect(await paneText(tab)).toBe('p {}');
+    await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
+    await tab.press('z', mod);
+    // Typing straight after emptying may land in the same undo step.
+    expect(['', css]).toContain(await paneText(tab));
+  });
 });
