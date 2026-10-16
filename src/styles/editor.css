@@ -231,6 +231,24 @@
   font-family: var(--gutter-font);
 }
 
+/* Syntax colours (spec: Code Pane). Everything else is ink. */
+.editor-code .code-tag {
+  color: var(--color-primary-text);
+}
+
+.editor-code .code-attribute {
+  color: var(--color-muted);
+}
+
+.editor-code .code-string {
+  color: #1237c8;
+}
+
+.editor-code .code-comment {
+  color: var(--color-muted);
+  font-style: italic;
+}
+
 .editor-preview {
   flex: 1;
   min-height: 320px;

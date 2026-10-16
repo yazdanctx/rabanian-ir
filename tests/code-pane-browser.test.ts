@@ -63,6 +63,26 @@ async function typeKeys(tab: BrowserPage, text: string) {
   }
 }
 
+/** Each leaf token on screen, as `text: color` (plus ` italic`). */
+const tokens = (tab: BrowserPage) =>
+  tab.evaluate<Record<string, string>>(`(() => {
+    ${lib}
+    const leaves = [...content().querySelectorAll('.cm-line span')].filter((s) => !s.querySelector('span'));
+    return Object.fromEntries(leaves.map((s) => {
+      const style = getComputedStyle(s);
+      return [s.textContent.trim(), style.color + (style.fontStyle === 'italic' ? ' italic' : '')];
+    }));
+  })()`);
+
+/** Palette P's syntax colours (spec: Code Pane). */
+const TAG = 'rgb(13, 91, 224)';
+const ATTRIBUTE = 'rgb(83, 96, 120)';
+const STRING = 'rgb(18, 55, 200)';
+const COMMENT = 'rgb(83, 96, 120) italic';
+
+const pick = (tab: BrowserPage, label: string) =>
+  tab.evaluate(`(async () => { ${lib} await pick(${JSON.stringify(label)}); })()`);
+
 const paneText = (tab: BrowserPage) => tab.evaluate<string>(`(() => { ${lib} return text(); })()`);
 
 let site: Awaited<ReturnType<typeof serveDist>>;
@@ -139,5 +159,36 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       // No IRANYekanXFaNum here: it would draw line numbers in Persian digits.
       gutterFont: 'JetBrains Mono, ui-monospace, monospace',
     });
+  });
+
+  it('highlights HTML: tags, attribute names, values and comments', async () => {
+    await pick(tab, 'HTML');
+    await clear(tab);
+    await tab.type('<!-- c --><h1 class="t">سلام</h1>');
+    expect(await tokens(tab)).toMatchObject({
+      '<!-- c -->': COMMENT,
+      '<': TAG,
+      h1: TAG,
+      '>': TAG,
+      '</': TAG,
+      class: ATTRIBUTE,
+      '"t"': STRING,
+    });
+  });
+
+  it('highlights CSS: selectors, strings and comments', async () => {
+    await pick(tab, 'CSS');
+    await clear(tab);
+    await tab.type('/* c */ body { font-family: "x"; }');
+    expect(await tokens(tab)).toMatchObject({ '/* c */': COMMENT, body: TAG, '"x"': STRING });
+  });
+
+  it('highlights JS: strings and comments', async () => {
+    await pick(tab, 'JS');
+    await clear(tab);
+    await tab.type('// c');
+    await tab.press('Enter');
+    await tab.type("console.log('s');");
+    expect(await tokens(tab)).toMatchObject({ '// c': COMMENT, "'s'": STRING });
   });
 });

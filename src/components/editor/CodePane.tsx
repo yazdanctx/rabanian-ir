@@ -1,6 +1,11 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
-import { EditorState } from '@codemirror/state';
+import { EditorState, type Extension } from '@codemirror/state';
 import { EditorView, lineNumbers } from '@codemirror/view';
+import { syntaxHighlighting } from '@codemirror/language';
+import { html } from '@codemirror/lang-html';
+import { css } from '@codemirror/lang-css';
+import { javascript } from '@codemirror/lang-javascript';
+import { tagHighlighter, tags } from '@lezer/highlight';
 import { COPY } from '../../site';
 import { FILES, type FileId, type Files } from './files';
 
@@ -16,6 +21,20 @@ interface Props {
   onChange: (file: FileId, text: string) => void;
 }
 
+const LANGUAGE: Record<FileId, () => Extension> = { html, css, js: javascript };
+
+/**
+ * Syntax tokens get plain classes, coloured on palette P in editor.css.
+ * Sub-tags follow their parent: `string` covers attribute values and JS
+ * template strings; `comment` covers line and block comments.
+ */
+const highlighter = tagHighlighter([
+  { tag: [tags.tagName, tags.angleBracket], class: 'code-tag' },
+  { tag: tags.attributeName, class: 'code-attribute' },
+  { tag: tags.string, class: 'code-string' },
+  { tag: tags.comment, class: 'code-comment' },
+]);
+
 /** One editor state per file, so each keeps its own text, selection and undo history. */
 function createState(file: FileId, doc: string, onDocChange: (text: string) => void) {
   const label = FILES.find((f) => f.id === file)!.label;
@@ -26,6 +45,8 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       EditorView.editorAttributes.of({ dir: 'ltr' }),
       EditorView.contentAttributes.of({ 'aria-label': `${COPY.editor.code} ${label}` }),
       lineNumbers(),
+      LANGUAGE[file](),
+      syntaxHighlighting(highlighter),
       EditorView.updateListener.of((update) => {
         if (update.docChanged) onDocChange(update.state.doc.toString());
       }),
