@@ -10,4 +10,8 @@ import { schemas } from './content/schemas';
 export const collections = {
   courses: defineCollection({ loader: file('src/content/courses.json'), schema: schemas.courses }),
   tools: defineCollection({ loader: file('src/content/tools.json'), schema: schemas.tools }),
+  testimonials: defineCollection({
+    loader: file('src/content/testimonials.json'),
+    schema: schemas.testimonials,
+  }),
 };

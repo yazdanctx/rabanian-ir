@@ -72,3 +72,30 @@ describe('tools collection', () => {
     expect(new Set(tools.map((t) => t.icon)).size).toBe(8);
   });
 });
+
+describe('testimonials collection', () => {
+  it('holds the four Masterclass Learner quotes verbatim, emoji included', () => {
+    const role = 'دانش‌پذیر مسترکلاس';
+    expect(collection('testimonials').map(({ name, role, quote }) => ({ name, role, quote }))).toEqual([
+      { name: 'زهرا قاضی‌زاهدی', role, quote: 'دوره خیلی خوب بود و راضی بودم.' },
+      {
+        name: 'سارا اسفندیاری',
+        role,
+        quote:
+          'واقعاً استاد خوب توضیح می‌دن که نتیجهٔ تمرین‌هام می‌شه این 😍 برای ثبت‌نام خیلی دودل بودم اما الان خیلی راضی‌ام و می‌دونم قراره کلی کارهای خفن انجام بدم 😍',
+      },
+      {
+        name: 'میثم بدرقه',
+        role,
+        quote:
+          'دارم دوره رو تماشا می‌کنم که برای دخترم هست (سال دوم شبکه و نرم‌افزار) و تمرین‌ها رو بهش می‌دم؛ خیلی ذوق داره 😊 استاد فرمودند دانشجویان مستعد رو در پروژه‌های آینده به کار می‌گیرند. 🚀',
+      },
+      {
+        name: 'فرناز کاشی',
+        role,
+        quote:
+          'خیلی ممنون از آموزش‌های خوبتون و راهنمایی‌هاتون حین دوره. اینجوری کمک می‌کنه پیشرفت بیشتری داشته باشم 😍',
+      },
+    ]);
+  });
+});

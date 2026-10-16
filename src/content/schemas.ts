@@ -44,7 +44,16 @@ export const tool = z.discriminatedUnion('locked', [
   z.object({ ...toolBase, locked: z.literal(true), href: z.undefined().optional() }),
 ]);
 
+/** A Testimonial: a Learner's quote. Emoji are part of the quote. */
+export const testimonial = z.object({
+  id: z.string(),
+  name: z.string(),
+  role: z.string(),
+  quote: z.string(),
+});
+
 export const schemas = {
   courses: course,
   tools: tool,
+  testimonials: testimonial,
 };
