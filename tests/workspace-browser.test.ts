@@ -53,7 +53,8 @@ const lib = `
     document.execCommand('insertText', false, text);
   };
   const frame = () => document.querySelector('iframe[data-preview]');
-  const button = (label) => [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === label);
+  const button = (label) =>
+    [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === label);
   const entries = () =>
     [...document.querySelectorAll('[data-console] li')].map((li) => li.dataset.level + ' ' + li.textContent);
 `;
@@ -79,7 +80,9 @@ async function waitForEditor(tab: BrowserPage) {
  */
 async function inPreview<T>(tab: BrowserPage, expression: string): Promise<T> {
   const { targetInfos } = await tab.send('Target.getTargets');
-  const frame = targetInfos.find((t: { type: string; url: string }) => t.type === 'iframe' && t.url === 'about:srcdoc');
+  const frame = targetInfos.find(
+    (t: { type: string; url: string }) => t.type === 'iframe' && t.url === 'about:srcdoc',
+  );
   if (!frame) throw new Error('no Preview frame');
   const { sessionId } = await tab.send('Target.attachToTarget', { targetId: frame.targetId, flatten: true });
   try {
