@@ -76,7 +76,7 @@ export const CONSOLE_BRIDGE = `(() => {
       }
     }
   };
-  for (const level of ['log', 'info', 'warn', 'error']) {
+  for (const level of ${JSON.stringify(CONSOLE_LEVELS)}) {
     const original = console[level];
     console[level] = (...args) => {
       original.apply(console, args);
