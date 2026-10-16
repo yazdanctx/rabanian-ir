@@ -39,7 +39,6 @@ Browser tests (`tests/*-browser.test.ts`) drive the system Chrome at `/Applicati
 
 ## Waiting on Amin
 
-- Real profile photo → replace `src/assets/images/profile.jpg` (square, ≥ 800px). Updates the Hero and the logo.
 - Masterclass banner → replace `src/assets/images/masterclass-banner.jpg` (16:9, ≥ 1600px).
 - Course `url`s in `src/content/courses.json` — until set, every course link goes to Telegram Support.
 - Confirm the CTA eyebrow «پشتیبانی» (invented; the design had none).
