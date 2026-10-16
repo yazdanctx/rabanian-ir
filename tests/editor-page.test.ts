@@ -97,6 +97,7 @@ describe('landing page (dist/index.html) stays free of the editor', () => {
     for (const path of pageScripts(home)) {
       expect(readFileSync(join(distDir, path), 'utf8')).not.toMatch(/\bcm-(editor|content)\b|@codemirror/);
     }
-    expect(pageCss(home)).not.toMatch(/\.cm-|code-(tag|string|comment)/);
+    // The Code Pane's classes; the palette's `--color-code-string` is on every page.
+    expect(pageCss(home)).not.toMatch(/\.cm-|\.code-(tag|string|comment)/);
   });
 });

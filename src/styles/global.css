@@ -32,6 +32,13 @@
   --color-white: #ffffff;
   /* Spec "on dark block": the eyebrow on the ink CTA. */
   --color-primary-on-ink: #56a6ff;
+  /*
+   * HTML Editor (.scratch/html-editor/spec.md): strings in code, and the
+   * console strip's warnings and errors. All pass AA as text on surface and white.
+   */
+  --color-code-string: #1237c8;
+  --color-warn: #b54708;
+  --color-error: #b42318;
 
   /* The single centered column (`max-w-page`), on every viewport. */
   --container-page: 680px;
