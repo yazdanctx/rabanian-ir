@@ -1,0 +1,14 @@
+---
+import { SITE } from '../site';
+import Icon from './Icon.astro';
+
+/* The logo: star mark in a 30px `primary` tile + rabanian.ir with a muted .ir, linking to the top. */
+const [domainName, tld] = SITE.domain.split(/(?=\.)/);
+---
+
+<a href="#top" dir="ltr" class="inline-flex items-center gap-2.25 text-[15px] font-bold tracking-[-0.01em]">
+  <span class="grid size-7.5 place-items-center rounded-[9px] bg-primary text-white">
+    <Icon name="star" size={16} />
+  </span>
+  <span>{domainName}<span class="font-medium text-muted">{tld}</span></span>
+</a>
