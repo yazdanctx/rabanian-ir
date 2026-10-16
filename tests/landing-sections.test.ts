@@ -121,7 +121,7 @@ describe('brands', () => {
   );
   const rail = brands?.querySelector('ul[data-rail]');
 
-  it('captions a Rail of the five Brands, by name only, in order', () => {
+  it('captions a Rail of the five Brands, each its logo + name, in order', () => {
     expect(brands).toBeDefined();
     const chips = [...(rail?.querySelectorAll(':scope > li') ?? [])];
     expect(chips.map(text)).toEqual([
@@ -131,7 +131,13 @@ describe('brands', () => {
       'سی‌آر‌ام دیدار',
       'ویسِند انگلیس',
     ]);
-    expect(rail?.querySelector('img, svg, picture')).toBeNull();
+    const logos = chips.map((chip) => chip.querySelector('[data-logo] img'));
+    for (const img of logos) {
+      // Decorative: the Brand's name is right below it.
+      expect(img?.getAttribute('alt')).toBe('');
+      expect(img?.getAttribute('loading')).toBe('lazy');
+    }
+    expect(new Set(logos.map((img) => img?.getAttribute('src'))).size).toBe(5);
   });
 
   it('makes the Rail a named, keyboard-scrollable list', () => {
