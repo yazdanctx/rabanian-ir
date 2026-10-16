@@ -122,5 +122,7 @@ export const COPY = {
     name: 'ویرایشگر HTML',
     description:
       'ویرایشگر HTML رایگان آکادمی ربانیان؛ HTML، CSS و جاوااسکریپت بنویس و نتیجه را همان لحظه در پیش‌نمایش ببین.',
+    /** Screen-reader name of the HTML · CSS · JS tab list. */
+    filesLabel: 'فایل‌ها',
   },
 } as const;
