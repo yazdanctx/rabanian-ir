@@ -46,3 +46,43 @@ describe('testimonials', () => {
     ]);
   });
 });
+
+describe('résumé (#resume)', () => {
+  const resume = doc.querySelector('main #resume');
+  const headings = [...(resume?.querySelectorAll('h3') ?? [])];
+  /** The list that directly follows the h3 reading `title`. */
+  const listAfter = (title: string) => headings.find((h) => text(h) === title)?.nextElementSibling;
+  const itemsAfter = (title: string) => [...(listAfter(title)?.querySelectorAll(':scope > li') ?? [])];
+
+  it('has its eyebrow and h2', () => {
+    expect(text(resume?.querySelector('header p'))).toBe('مسیر من');
+    expect(text(resume?.querySelector('h2'))).toBe('خلاصه‌ای از سوابق');
+    expect(headings.map(text)).toEqual(['تجربهٔ حرفه‌ای', 'تحصیلات']);
+  });
+
+  it('lists the four Experiences, newest first: role, employer · period, summary', () => {
+    expect(itemsAfter('تجربهٔ حرفه‌ای').map(text)).toEqual([
+      'مدیر محصول نرم‌افزاری ویسِند انگلستان · جولای 2025 – اکنون هوشمندسازی شبکه‌های اجتماعی با هوش مصنوعی.',
+      'مدیر ارشد محصول مستربلیط · آگوست 2024 – جولای 2025 توسعه و گسترش پلتفرم مستربلیط و رشد تیم محصول در صنعت سفر آنلاین.',
+      'مدیر محصول سی‌آر‌ام دیدار · دسامبر 2023 – جولای 2024 رهبری تیم محصول.',
+      'مدیر عملکرد اسنپ · ژوئن 2023 – دسامبر 2023 همکاری با تیمی حدود 50 نفره، بهبود فرایندها، تحلیل داده با تیم BI، توسعهٔ پروژه‌های جدید (اسنپ‌لاین و اسنپ‌استور) و ساخت داشبورد داخلی سازمانی.',
+    ]);
+  });
+
+  it('draws the Experiences as a timeline: a line with a primary dot per entry', () => {
+    expect(listAfter('تجربهٔ حرفه‌ای')?.hasAttribute('data-timeline')).toBe(true);
+    for (const item of itemsAfter('تجربهٔ حرفه‌ای')) {
+      const dot = item.querySelector('[data-dot]');
+      expect(dot?.getAttribute('aria-hidden')).toBe('true');
+      expect(dot?.classList.contains('bg-primary')).toBe(true);
+    }
+  });
+
+  it('lists the three degrees with their universities', () => {
+    expect(itemsAfter('تحصیلات').map(text)).toEqual([
+      'کارشناسی ارشد مدیریت دانشگاه تهران',
+      'کارشناسی ارشد مهندسی برق دانشگاه صنعتی اصفهان',
+      'کارشناسی مهندسی برق دانشگاه صنعتی اصفهان',
+    ]);
+  });
+});
