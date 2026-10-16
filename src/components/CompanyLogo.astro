@@ -3,10 +3,11 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 /*
- * A company's logo in a rounded tile, for Brands and résumé Experiences.
- * Logos live in src/assets/logos/<id>.<png|jpg|webp|svg> (sources in the README
- * there); `id` is the Brand/Experience id, which the two collections share.
- * Decorative (alt=""): the company's name is always next to it.
+ * A company's or university's logo in a rounded tile, for Brands, résumé
+ * Experiences and education entries. Logos live in
+ * src/assets/logos/<id>.<png|jpg|webp|svg> (sources in the README there); `id`
+ * is the Brand/Experience id, which the two collections share, or an education
+ * entry's `logo`. Decorative (alt=""): the name is always next to it.
  */
 interface Props {
   id: string;

@@ -2,16 +2,19 @@
   {
     "id": "msc-management-tehran",
     "degree": "کارشناسی ارشد مدیریت",
-    "school": "دانشگاه تهران"
+    "school": "دانشگاه تهران",
+    "logo": "university-of-tehran"
   },
   {
     "id": "msc-electrical-iut",
     "degree": "کارشناسی ارشد مهندسی برق",
-    "school": "دانشگاه صنعتی اصفهان"
+    "school": "دانشگاه صنعتی اصفهان",
+    "logo": "iut"
   },
   {
     "id": "bsc-electrical-iut",
     "degree": "کارشناسی مهندسی برق",
-    "school": "دانشگاه صنعتی اصفهان"
+    "school": "دانشگاه صنعتی اصفهان",
+    "logo": "iut"
   }
 ]

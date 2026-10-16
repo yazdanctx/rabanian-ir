@@ -66,6 +66,8 @@ export const education = z.object({
   id: z.string(),
   degree: z.string(),
   school: z.string(),
+  /** The school's logo, `src/assets/logos/<logo>.*`; degrees from one school share it. */
+  logo: z.string(),
 });
 
 /** A Brand, shown by name only (no logo). */

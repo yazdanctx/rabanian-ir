@@ -84,3 +84,25 @@ describe.skipIf(!chromePath)('résumé employer · period separator', () => {
     }
   });
 });
+
+describe.skipIf(!chromePath)('education cards', () => {
+  it('put the university logo on the card’s left, vertically centred on the text', async () => {
+    const tab = await openPage(`${site.origin}/`, { reducedMotion: true });
+    try {
+      const cards = await tab.evaluate<{ logoRight: number; textLeft: number; logoMid: number; textMid: number }[]>(
+        `[...document.querySelectorAll('#resume [data-timeline] ~ ul > li')].map((li) => {
+          const logo = li.querySelector('[data-logo]').getBoundingClientRect();
+          const text = li.firstElementChild.getBoundingClientRect();
+          return { logoRight: logo.right, textLeft: text.left, logoMid: logo.top + logo.height / 2, textMid: text.top + text.height / 2 };
+        })`,
+      );
+      expect(cards).toHaveLength(3);
+      for (const card of cards) {
+        expect(card.logoRight).toBeLessThan(card.textLeft);
+        expect(Math.abs(card.logoMid - card.textMid)).toBeLessThanOrEqual(1);
+      }
+    } finally {
+      await tab.close();
+    }
+  });
+});

@@ -143,6 +143,14 @@ describe('education collection', () => {
       ['کارشناسی مهندسی برق', 'دانشگاه صنعتی اصفهان'],
     ]);
   });
+
+  it('names each school’s logo file, one per university', () => {
+    expect(collection('education').map(({ school, logo }) => [school, logo])).toEqual([
+      ['دانشگاه تهران', 'university-of-tehran'],
+      ['دانشگاه صنعتی اصفهان', 'iut'],
+      ['دانشگاه صنعتی اصفهان', 'iut'],
+    ]);
+  });
 });
 
 describe('testimonials collection', () => {

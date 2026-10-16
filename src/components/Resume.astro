@@ -39,9 +39,15 @@ const subheadingClasses = 'mb-4 text-[17px] font-bold';
   <ul data-stagger class="flex flex-col gap-2.5">
     {
       education.map(({ data }) => (
-        <li data-reveal class="rounded-card border border-line bg-surface px-4 py-3.5">
-          <b class="block text-sm font-semibold">{data.degree}</b>{' '}
-          <span class="mt-0.5 block text-xs text-muted">{data.school}</span>
+        <li
+          data-reveal
+          class="flex items-center justify-between gap-3 rounded-card border border-line bg-surface px-4 py-3.5"
+        >
+          <div>
+            <b class="block text-sm font-semibold">{data.degree}</b>{' '}
+            <span class="mt-0.5 block text-xs text-muted">{data.school}</span>
+          </div>{' '}
+          <CompanyLogo id={data.logo} size={36} />
         </li>
       ))
     }

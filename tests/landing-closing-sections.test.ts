@@ -138,6 +138,25 @@ describe('résumé (#resume)', () => {
       'کارشناسی مهندسی برق دانشگاه صنعتی اصفهان',
     ]);
   });
+
+  it('ends each degree card with its university’s logo (the left side, in RTL)', () => {
+    const items = itemsAfter('تحصیلات');
+    const logos = items.map((item) => item.lastElementChild);
+    for (const logo of logos) {
+      expect(logo?.hasAttribute('data-logo')).toBe(true);
+      const img = logo?.querySelector('img');
+      // Decorative: the university's name is right next to it.
+      expect(img?.getAttribute('alt')).toBe('');
+      expect(img?.getAttribute('width')).toBe('36');
+      expect(img?.getAttribute('height')).toBe('36');
+      expect(img?.getAttribute('loading')).toBe('lazy');
+      expect(img?.getAttribute('src')).toMatch(/^\/_astro\//);
+    }
+    // Tehran, then Isfahan University of Technology for both its degrees.
+    const [tehran, iutMsc, iutBsc] = logos.map((logo) => logo?.querySelector('img')?.getAttribute('src'));
+    expect(iutMsc).toBe(iutBsc);
+    expect(tehran).not.toBe(iutMsc);
+  });
 });
 
 describe('CTA', () => {
