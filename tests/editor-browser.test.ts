@@ -93,5 +93,31 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       })()`);
       expect(seen).toEqual(['CSS:', 'JS:', 'HTML:<h1>سلام دنیا</h1>', 'CSS:h1 { color: red }']);
     });
+
+    it('moves selection and focus with the arrow keys in RTL reading order, wrapping, plus Home/End', async () => {
+      const path = await tab.evaluate<string[]>(`(async () => {
+        ${lib}
+        tabs()[0].click();
+        await waitFor(() => selected() === tabs()[0]);
+        tabs()[0].focus();
+        const press = async (key) => {
+          document.activeElement.dispatchEvent(
+            new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }),
+          );
+          await new Promise((r) => setTimeout(r, 50));
+          const label = selected().textContent.trim();
+          const focused = document.activeElement === selected();
+          const shows = panel().getAttribute('aria-labelledby') === selected().id;
+          return label + (focused ? '' : ' (not focused)') + (shows ? '' : ' (panel not shown)');
+        };
+        const path = [];
+        // The page is RTL: HTML sits rightmost, so ArrowLeft moves forward.
+        for (const key of ['ArrowLeft', 'ArrowLeft', 'ArrowLeft', 'ArrowRight', 'End', 'Home']) {
+          path.push(await press(key));
+        }
+        return path;
+      })()`);
+      expect(path).toEqual(['CSS', 'JS', 'HTML', 'JS', 'JS', 'HTML']);
+    });
   });
 });
