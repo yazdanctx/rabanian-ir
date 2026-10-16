@@ -9,11 +9,11 @@ const { caption } = COPY.brands;
 ---
 
 <Section>
-  <p class="mb-5 text-center text-xs text-muted">{caption}</p>
+  <p data-reveal class="mb-5 text-center text-xs text-muted">{caption}</p>
   <Rail label={caption} cols={3} itemWidth="150px">
     {
       brands.map(({ data }) => (
-        <li class="grid min-h-18 place-items-center rounded-card border border-line bg-surface px-3 text-center text-[13px] font-semibold">
+        <li data-reveal class="grid min-h-18 place-items-center rounded-card border border-line bg-surface px-3 text-center text-[13px] font-semibold">
           {data.name}
         </li>
       ))

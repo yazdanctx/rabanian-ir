@@ -13,12 +13,18 @@ const { eyebrow, title, swipeHint } = COPY.courses;
 ---
 
 <Section id="courses" eyebrow={eyebrow} title={title}>
-  {masterclass && <MasterclassCard course={masterclass} />}
-  <p class="mt-6 mb-2.5 text-end text-[13px] text-muted md:hidden">{swipeHint}</p>
+  {
+    masterclass && (
+      <div data-reveal>
+        <MasterclassCard course={masterclass} />
+      </div>
+    )
+  }
+  <p data-reveal class="mt-6 mb-2.5 text-end text-[13px] text-muted md:hidden">{swipeHint}</p>
   <Rail label={title} cols={2} itemWidth="260px" class="md:mt-6">
     {
       others.map((course) => (
-        <li>
+        <li data-reveal>
           <CourseCard course={course} />
         </li>
       ))

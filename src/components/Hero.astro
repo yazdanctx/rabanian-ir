@@ -10,21 +10,22 @@ const button =
   'flex flex-1 items-center justify-center gap-1.5 rounded-btn px-4 py-3.25 text-sm font-semibold transition-colors';
 ---
 
-<Section id="top" class="pt-7">
+<Section id="top" class="pt-7" stagger="load">
   <div
+    data-reveal
     data-badge
     class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted"
   >
     <span aria-hidden="true" class="pulse-dot size-1.75 rounded-full bg-primary"></span>
     {SITE.badge}
   </div>
-  <h1 class="mt-4 mb-1.5 text-[34px]/[1.15] font-bold tracking-[-0.02em]">{SITE.name}</h1>
-  <p class="mb-2.5 text-[17px] font-semibold text-primary-text">{SITE.tagline}</p>
-  <p class="text-sm/[1.9] text-muted">{SITE.lead}</p>
+  <h1 data-reveal class="mt-4 mb-1.5 text-[34px]/[1.15] font-bold tracking-[-0.02em]">{SITE.name}</h1>
+  <p data-reveal class="mb-2.5 text-[17px] font-semibold text-primary-text">{SITE.tagline}</p>
+  <p data-reveal class="text-sm/[1.9] text-muted">{SITE.lead}</p>
 
-  <ProfilePhoto />
+  <div data-reveal><ProfilePhoto /></div>
 
-  <div class="mb-5.5 flex gap-2.5">
+  <div data-reveal class="mb-5.5 flex gap-2.5">
     <a href="#courses" class:list={[button, 'bg-primary text-white hover:bg-primary-text']}>
       {COPY.hero.coursesButton}<Icon name="chevron" size={16} />
     </a>
@@ -33,7 +34,7 @@ const button =
     </a>
   </div>
 
-  <ul data-stats class="grid grid-cols-3 gap-2.5">
+  <ul data-reveal data-stats class="grid grid-cols-3 gap-2.5">
     {
       stats.map(({ data }) => (
         <li class="rounded-btn border border-line bg-surface px-2.5 py-3 text-center">

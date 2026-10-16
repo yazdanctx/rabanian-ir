@@ -14,6 +14,62 @@ function rules(css: string): { selector: string; body: string }[] {
   }));
 }
 
+/** The `data-reveal` elements whose nearest `data-stagger` group is `group`. */
+const members = (group: Element) =>
+  [...group.querySelectorAll('[data-reveal]')].filter(
+    (el) => el.parentElement?.closest('[data-stagger]') === group,
+  );
+
+describe('reveal markup', () => {
+  it('sequences the Hero on load: badge, h1, tagline, lead, photo, buttons, stats', () => {
+    const hero = doc.querySelector('#top [data-stagger="load"]');
+    expect(hero).not.toBeNull();
+    const items = members(hero!);
+    expect(items).toHaveLength(7);
+    const [badge, h1, tagline, lead, photo, buttons, stats] = items;
+    expect(badge.hasAttribute('data-badge')).toBe(true);
+    expect(h1.tagName).toBe('H1');
+    expect(tagline.textContent).toBe('با من هوش مصنوعی رو اصولی یاد بگیر!');
+    expect(lead.tagName).toBe('P');
+    expect(photo.querySelector('[data-profile-photo]') ?? photo.closest('[data-profile-photo]')).not.toBeNull();
+    expect(buttons.querySelector('a[href="#courses"]')).not.toBeNull();
+    expect(buttons.querySelector('a[href="#tools"]')).not.toBeNull();
+    expect(stats.hasAttribute('data-stats')).toBe(true);
+  });
+
+  it('reveals every section after the Hero, heading and content', () => {
+    const sections = [...doc.querySelectorAll('main > section')].slice(1);
+    expect(sections.length).toBeGreaterThanOrEqual(7);
+    for (const section of sections) {
+      expect(section.querySelector('[data-reveal]')).not.toBeNull();
+      const header = section.querySelector('header');
+      if (header) expect(header.hasAttribute('data-reveal')).toBe(true);
+    }
+  });
+
+  it('staggers every Rail, the Toolbox and the résumé lists item by item', () => {
+    const lists = [
+      ...doc.querySelectorAll('[data-rail]'),
+      doc.querySelector('#tools ul'),
+      doc.querySelector('[data-timeline]'),
+      doc.querySelector('#resume [data-timeline] ~ ul'),
+    ];
+    expect(lists).toHaveLength(6);
+    for (const list of lists) {
+      expect(list?.hasAttribute('data-stagger')).toBe(true);
+      const items = [...list!.children];
+      expect(items.length).toBeGreaterThan(0);
+      for (const item of items) expect(item.hasAttribute('data-reveal')).toBe(true);
+    }
+  });
+
+  it('never nests one reveal inside another', () => {
+    for (const el of doc.querySelectorAll('[data-reveal]')) {
+      expect(el.parentElement?.closest('[data-reveal]')).toBeNull();
+    }
+  });
+});
+
 describe('reveal starting state', () => {
   const hiding = rules(builtCss()).filter(
     (r) => r.selector.includes('[data-reveal]') && /opacity:\s*0\b|transform:/.test(r.body),
