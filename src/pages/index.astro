@@ -11,10 +11,11 @@ import Resume from '../components/Resume.astro';
 import Cta from '../components/Cta.astro';
 import Footer from '../components/Footer.astro';
 import Motion from '../components/Motion.astro';
+import { SITE } from '../site';
 ---
 
 <Base
-  title="امین ربانیان | آموزش هوش مصنوعی"
+  title={`${SITE.name} — ${SITE.tagline}`}
   description="امین ربانیان، متخصص هوش مصنوعی و مدیریت محصول؛ دوره‌های آموزش هوش مصنوعی، برنامه‌نویسی و طراحی سایت."
 >
   <Motion />
