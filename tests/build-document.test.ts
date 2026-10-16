@@ -70,4 +70,24 @@ describe('buildDocument', () => {
     expect(page.body.querySelector('script')?.textContent).toBe(files.js);
     expect(buildDocument(files, { consoleBridge: false })).not.toMatch(/postMessage|rabanian-editor/);
   });
+
+  it.each([
+    { page: 'the Preview', options: {} },
+    { page: 'the download', options: { consoleBridge: false } },
+  ])('keeps «</script>» in the JS and «</style>» in the CSS from ending them early, in $page', ({ options }) => {
+    const tricky = {
+      html: '<p>سلام</p>',
+      css: 'p::after { content: "</style>" } p::before { content: "</STYLE >" }',
+      js: "console.log('</script>'); console.log(`</Script >`);",
+    };
+    const page = dom(buildDocument(tricky, options));
+    const styles = [...page.querySelectorAll('head style')];
+    expect(styles).toHaveLength(2);
+    // `<\/` is still `</` to CSS and in a JS string, but no end tag to HTML.
+    expect(styles[1].textContent).toBe('p::after { content: "<\\/style>" } p::before { content: "<\\/STYLE >" }');
+    expect([...page.body.children].map((el) => el.localName)).toEqual(['p', 'script']);
+    expect(page.body.querySelector('script')?.textContent).toBe(
+      "console.log('<\\/script>'); console.log(`<\\/Script >`);",
+    );
+  });
 });

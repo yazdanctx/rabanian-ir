@@ -190,6 +190,21 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     expect(listed).toEqual(['log from html', 'error Uncaught Error: on load', 'log from js']);
   });
 
+  it('runs JS and CSS holding «</script>» and «</style>» whole', async () => {
+    const listed = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await setFiles({
+        html: '<p>سلام</p>',
+        css: 'body::after { content: "</style>" }',
+        js: "console.log('</script>', getComputedStyle(document.body, '::after').content)",
+      });
+      await waitFor(() => entries().some((entry) => entry.includes('</script>')));
+      await sleep(200);
+      return entries();
+    })()`);
+    expect(listed).toEqual(['log </script> "</style>"']);
+  });
+
   it('ignores messages from the editor page itself, from other frames, and untagged ones', async () => {
     const listed = await tab.evaluate<string[]>(`(async () => {
       ${lib}
