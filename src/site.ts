@@ -119,4 +119,33 @@ export const COPY = {
     creditHeart: '♥',
     creditAfter: 'توسط آکادمی ربانیان',
   },
+  /** The HTML Editor at /editor. Tab labels (HTML, CSS, JS) are language names, not copy. */
+  editor: {
+    name: 'ویرایشگر HTML',
+    description:
+      'ویرایشگر HTML رایگان آکادمی ربانیان؛ HTML، CSS و جاوااسکریپت بنویس و نتیجه را همان لحظه در پیش‌نمایش ببین.',
+    /** Screen-reader name of the HTML · CSS · JS tab list. */
+    filesLabel: 'فایل‌ها',
+    /** Screen-reader name of the Code Pane, before the file's name: «کد HTML». */
+    code: 'کد',
+    /** Screen-reader description of the Code Pane: Tab indents there, so how to leave it. */
+    codeHint: 'در کد، Tab فاصله می‌گذارد؛ برای بیرون رفتن، اول Esc و بعد Tab را بزن.',
+    /** The action bar's three buttons. */
+    run: 'اجرا',
+    reset: 'بازنشانی',
+    /** Asked before «بازنشانی» replaces the visitor's files with the Starter Template. */
+    resetConfirm: 'با بازنشانی، کدی که نوشته‌ای پاک می‌شود و قالب شروع برمی‌گردد. ادامه می‌دهی؟',
+    download: 'دانلود',
+    /** Title of the Preview card. */
+    preview: 'پیش‌نمایش',
+    /** The console strip's toggle. */
+    console: 'کنسول',
+    /**
+     * The toggle's name while the console holds entries; the count shows
+     * beside «کنسول». ASCII digits, drawn Persian by the font (ADR-0002).
+     */
+    consoleLabel: (count: number) => `کنسول، ${count} پیام`,
+    /** Empties the console strip. */
+    clearConsole: 'پاک کردن',
+  },
 } as const;

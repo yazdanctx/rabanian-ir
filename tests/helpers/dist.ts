@@ -18,10 +18,29 @@ export function distFiles(dir = distDir, prefix = ''): string[] {
   });
 }
 
-/** Concatenated contents of every built stylesheet. */
+/** Contents of every inline `<style>` in a built page. */
+function inlineStyles(doc: Document): string[] {
+  return [...doc.querySelectorAll('style')].map((style) => style.textContent ?? '');
+}
+
+/**
+ * Concatenated contents of every built stylesheet, including the small ones
+ * Astro inlines as `<style>` into a page instead of emitting a file.
+ */
 export function builtCss(): string {
-  return distFiles()
-    .filter((f) => f.endsWith('.css'))
-    .map((f) => readFileSync(join(distDir, f), 'utf8'))
-    .join('\n');
+  const files = distFiles();
+  return [
+    ...files.filter((f) => f.endsWith('.css')).map((f) => readFileSync(join(distDir, f), 'utf8')),
+    ...files.filter((f) => f.endsWith('.html')).flatMap((f) => inlineStyles(page(f))),
+  ].join('\n');
+}
+
+/** The CSS one built page loads: its linked stylesheets and inline `<style>`s. */
+export function pageCss(doc: Document): string {
+  return [
+    ...[...doc.querySelectorAll('link[rel="stylesheet"]')].map((link) =>
+      readFileSync(join(distDir, link.getAttribute('href')!), 'utf8'),
+    ),
+    ...inlineStyles(doc),
+  ].join('\n');
 }

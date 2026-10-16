@@ -2,6 +2,15 @@
 @import './fonts.css';
 
 /*
+ * This stylesheet is shared by every page, the landing page included, so the
+ * HTML Editor's files are not scanned for classes: they are styled by
+ * src/styles/editor.css (on /editor only) and use no utilities.
+ */
+@source not '../components/editor';
+@source not '../pages/editor.astro';
+@source not './editor.css';
+
+/*
  * Palette P (spec: .scratch/landing-page/spec.md). `static` keeps every token
  * on :root as a CSS variable even when no utility uses it. `src/palette.ts`
  * mirrors these colors for the OG image; keep the two in step (a test checks).
@@ -23,6 +32,13 @@
   --color-white: #ffffff;
   /* Spec "on dark block": the eyebrow on the ink CTA. */
   --color-primary-on-ink: #56a6ff;
+  /*
+   * HTML Editor (.scratch/html-editor/spec.md): strings in code, and the
+   * console strip's warnings and errors. All pass AA as text on surface and white.
+   */
+  --color-code-string: #1237c8;
+  --color-warn: #b54708;
+  --color-error: #b42318;
 
   /* The single centered column (`max-w-page`), on every viewport. */
   --container-page: 680px;
@@ -41,6 +57,16 @@
 }
 
 @layer base {
+  /*
+   * The focus ring, on every page: 2px of primary, 2px out. Markup takes it
+   * with the `focus-ring` utility; editor.css, which uses no utilities, reads
+   * these two variables.
+   */
+  :root {
+    --focus-ring: 2px solid var(--color-primary);
+    --focus-ring-offset: 2px;
+  }
+
   html {
     font-family: var(--font-sans);
     background-color: var(--color-bg);
@@ -63,6 +89,14 @@
 .motion [data-reveal]:not([data-revealed]) {
   opacity: 0;
   transform: translateY(8px);
+}
+
+/* The focus ring (see :root above), drawn when focus comes from the keyboard. */
+@utility focus-ring {
+  &:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
 }
 
 /*

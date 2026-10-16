@@ -16,4 +16,9 @@ export const PALETTE = {
   white: '#FFFFFF',
   /** Spec "on dark block": the eyebrow on the ink CTA. */
   primaryOnInk: '#56A6FF',
+  /** HTML Editor: strings in the Code Pane. */
+  codeString: '#1237C8',
+  /** HTML Editor: the console strip's warnings and errors. */
+  warn: '#B54708',
+  error: '#B42318',
 } as const;

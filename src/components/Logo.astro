@@ -5,10 +5,17 @@ import { SITE } from '../site';
 // updates both.
 import profile from '../assets/images/profile.jpg';
 
-/* The logo: Amin's photo in a 30px circle + «آکادمی ربانیان», linking to the top. */
+/*
+ * The logo: Amin's photo in a 30px circle + «آکادمی ربانیان». On the home
+ * page it links to the top; on any other page (the HTML Editor) it links home.
+ */
+const href = Astro.url.pathname === '/' ? '#top' : '/';
 ---
 
-<a href="#top" class="inline-flex items-center gap-2.25 text-[15px] font-bold">
+<a
+  href={href}
+  class="inline-flex items-center gap-2.25 rounded-btn text-[15px] font-bold focus-ring"
+>
   <Picture
     src={profile}
     alt=""

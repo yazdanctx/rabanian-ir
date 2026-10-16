@@ -57,6 +57,8 @@ export interface PageOptions {
   reducedMotion?: boolean;
   /** Run the page with JavaScript disabled. */
   noScript?: boolean;
+  /** Emulate a phone: a mobile viewport and touch input (`Input.dispatchTouchEvent`). */
+  mobile?: boolean;
   width?: number;
   height?: number;
 }
@@ -64,12 +66,59 @@ export interface PageOptions {
 export interface BrowserPage {
   /** Evaluates an expression in the page (promises are awaited). */
   evaluate<T>(expression: string): Promise<T>;
+  /**
+   * Sends a raw DevTools protocol command to the page, or to the target
+   * attached as `sessionId` (e.g. an out-of-process frame).
+   */
+  send(method: string, params?: object, sessionId?: string): Promise<any>;
+  /** Types text into the focused element as the keyboard would (Farsi included). */
+  type(text: string): Promise<void>;
+  /**
+   * Presses and releases one key, e.g. `'ArrowRight'` or `'z'`, holding
+   * `modifiers` (a bitmask: Alt 1, Ctrl 2, Meta 4, Shift 8).
+   */
+  press(key: string, modifiers?: number): Promise<void>;
+  /** Reloads the page, resolving on its load event. */
+  reload(): Promise<void>;
+  /**
+   * Answers the page's dialogs (`alert`, `confirm`, `prompt`) from now on:
+   * `accept` gets each one's message and says whether to accept it.
+   */
+  answerDialogs(accept: (message: string) => boolean): void;
   close(): Promise<void>;
+}
+
+/** Key codes for `BrowserPage.press`; letters map to their `Key*` codes. */
+const keyCodes: Record<string, [code: string, keyCode: number]> = {
+  ArrowLeft: ['ArrowLeft', 37],
+  ArrowUp: ['ArrowUp', 38],
+  ArrowRight: ['ArrowRight', 39],
+  ArrowDown: ['ArrowDown', 40],
+  Home: ['Home', 36],
+  End: ['End', 35],
+  Backspace: ['Backspace', 8],
+  Delete: ['Delete', 46],
+  Enter: ['Enter', 13],
+  Tab: ['Tab', 9],
+  Escape: ['Escape', 27],
+};
+
+function keyEvent(key: string, modifiers: number) {
+  const [code, keyCode] = keyCodes[key] ?? [`Key${key.toUpperCase()}`, key.toUpperCase().charCodeAt(0)];
+  const text = key === 'Enter' ? '\r' : key.length === 1 ? key : undefined;
+  return {
+    key,
+    code,
+    windowsVirtualKeyCode: keyCode,
+    nativeVirtualKeyCode: keyCode,
+    modifiers,
+    ...(text && !(modifiers & 7) ? { text, unmodifiedText: text } : {}),
+  };
 }
 
 /** Launches Chrome, opens `url` with the given emulation, resolves on load. */
 export async function openPage(url: string, options: PageOptions = {}): Promise<BrowserPage> {
-  const { reducedMotion = false, noScript = false, width = 390, height = 844 } = options;
+  const { reducedMotion = false, noScript = false, mobile = false, width = 390, height = 844 } = options;
   const profile = mkdtempSync(join(tmpdir(), 'rabanian-chrome-'));
   const chrome: ChildProcess = spawn(
     chromePath!,
@@ -87,8 +136,10 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   );
 
   const portFile = join(profile, 'DevToolsActivePort');
-  for (let i = 0; i < 200 && !existsSync(portFile); i++) await sleep(50);
-  const port = readFileSync(portFile, 'utf8').split('\n')[0];
+  // Chrome may create the file before writing the port into it.
+  const readPort = () => (existsSync(portFile) ? readFileSync(portFile, 'utf8').split('\n')[0] : '');
+  for (let i = 0; i < 200 && !/^\d+$/.test(readPort()); i++) await sleep(50);
+  const port = readPort();
   const targets: { type: string; webSocketDebuggerUrl: string }[] = await (
     await fetch(`http://127.0.0.1:${port}/json/list`)
   ).json();
@@ -100,13 +151,13 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
 
   let nextId = 0;
   const pending = new Map<number, (message: any) => void>();
-  const listeners = new Map<string, () => void>();
+  const listeners = new Map<string, (params: any) => void>();
   socket.onmessage = (event) => {
     const message = JSON.parse(String(event.data));
     if (message.id !== undefined) pending.get(message.id)?.(message);
-    else listeners.get(message.method)?.();
+    else listeners.get(message.method)?.(message.params);
   };
-  const send = (method: string, params: object = {}) =>
+  const send = (method: string, params: object = {}, sessionId?: string) =>
     new Promise<any>((resolve, reject) => {
       const id = ++nextId;
       pending.set(id, (message) => {
@@ -114,15 +165,16 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
         if (message.error) reject(new Error(`${method}: ${message.error.message}`));
         else resolve(message.result);
       });
-      socket.send(JSON.stringify({ id, method, params }));
+      socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
     });
 
   await send('Emulation.setDeviceMetricsOverride', {
     width,
     height,
     deviceScaleFactor: 1,
-    mobile: false,
+    mobile,
   });
+  if (mobile) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
   if (reducedMotion) {
     await send('Emulation.setEmulatedMedia', {
       features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],
@@ -130,11 +182,30 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   }
   if (noScript) await send('Emulation.setScriptExecutionDisabled', { value: true });
   await send('Page.enable');
-  const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', resolve));
-  await send('Page.navigate', { url });
-  await loaded;
+  /** Runs `command` and resolves once the page it loads has fired `load`. */
+  const load = async (command: () => Promise<unknown>) => {
+    const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', () => resolve()));
+    await command();
+    await loaded;
+  };
+  await load(() => send('Page.navigate', { url }));
 
   return {
+    send,
+    reload: () => load(() => send('Page.reload')),
+    answerDialogs(accept) {
+      listeners.set('Page.javascriptDialogOpening', ({ message }) =>
+        send('Page.handleJavaScriptDialog', { accept: accept(message) }),
+      );
+    },
+    async type(text: string) {
+      await send('Input.insertText', { text });
+    },
+    async press(key: string, modifiers = 0) {
+      const event = keyEvent(key, modifiers);
+      await send('Input.dispatchKeyEvent', { type: 'text' in event ? 'keyDown' : 'rawKeyDown', ...event });
+      await send('Input.dispatchKeyEvent', { type: 'keyUp', ...event });
+    },
     async evaluate<T>(expression: string) {
       const { result, exceptionDetails } = await send('Runtime.evaluate', {
         expression,
@@ -148,7 +219,9 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
       socket.close();
       chrome.kill();
       if (chrome.exitCode === null) await new Promise((resolve) => chrome.once('exit', resolve));
-      rmSync(profile, { recursive: true, force: true });
+      // Chrome's helper processes can still be writing to the profile for a
+      // moment after the browser exits (ENOTEMPTY); retry instead of failing.
+      rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
     },
   };
 }
