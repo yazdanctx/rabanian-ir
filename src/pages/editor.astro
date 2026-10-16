@@ -1,8 +1,10 @@
 ---
 import Base from '../layouts/Base.astro';
+import TopBar from '../components/TopBar.astro';
 import { COPY, SITE } from '../site';
 ---
 
 <Base title={`${COPY.editor.name} — ${SITE.domain}`} description={COPY.editor.description}>
+  <TopBar />
   <main></main>
 </Base>
