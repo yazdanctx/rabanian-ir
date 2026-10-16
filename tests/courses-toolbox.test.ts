@@ -143,4 +143,23 @@ describe('toolbox (#tools)', () => {
     expect(editor?.classList.contains('border-primary')).toBe(true);
     expect(text(editor)).toBe('ویرایشگر HTML فعال · ورود ←');
   });
+
+  it('shows the 7 Locked Tools as inert rows: no link, not focusable, aria-disabled, with a lock', () => {
+    const locked = rows.slice(1);
+    expect(locked).toHaveLength(7);
+    for (const row of locked) {
+      expect(row.tagName).toBe('DIV');
+      expect(row.querySelector('a, button, [href]')).toBeNull();
+      expect(row.hasAttribute('tabindex')).toBe(false);
+      expect(row.getAttribute('aria-disabled')).toBe('true');
+      expect(row.querySelector('[data-lock] svg')?.getAttribute('aria-hidden')).toBe('true');
+      expect(text(row).endsWith('ویژه دانش‌پذیران مسترکلاس')).toBe(true);
+      expect([...row.classList].some((c) => /^(hover|focus|focus-visible):/.test(c))).toBe(false);
+    }
+  });
+
+  it('has exactly one link in the Toolbox: the HTML Editor', () => {
+    const links = [...(tools?.querySelectorAll('a[href]') ?? [])];
+    expect(links.map((a) => a.getAttribute('href'))).toEqual(['/editor']);
+  });
 });
