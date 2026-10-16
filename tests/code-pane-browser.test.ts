@@ -475,6 +475,42 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       expect(await paneText(tab)).toBe('<h1>سلا دنیا</h1>');
     });
 
+    it('deletes the logically next letter with Delete', async () => {
+      await start();
+      // Just past <h1>, before «سلام» (offset 4).
+      for (let i = 0; i < 4; i++) await tab.press('ArrowRight');
+      expect((await caret(tab)).offset).toBe(4);
+      await tab.press('Delete');
+      expect(await paneText(tab)).toBe('<h1>لام دنیا</h1>');
+    });
+
+    it('puts the caret on the clicked side of a Farsi letter', async () => {
+      await start();
+      /** Clicks inside a character of LINE, by its offset, near its left or right edge. */
+      const click = async (offset: number, side: 'left' | 'right') => {
+        const point = await tab.evaluate<{ x: number; y: number }>(`(() => {
+          ${lib}
+          const walker = document.createTreeWalker(content().querySelector('.cm-line'), NodeFilter.SHOW_TEXT);
+          for (let node, start = 0; (node = walker.nextNode()); start += node.length) {
+            if (${offset} >= start + node.length) continue;
+            const range = document.createRange();
+            range.setStart(node, ${offset} - start);
+            range.setEnd(node, ${offset} - start + 1);
+            const box = range.getBoundingClientRect();
+            return { x: ${side === 'left'} ? box.left + 1.5 : box.right - 1.5, y: box.top + box.height / 2 };
+          }
+        })()`);
+        for (const type of ['mousePressed', 'mouseReleased']) {
+          await tab.send('Input.dispatchMouseEvent', { type, ...point, button: 'left', clickCount: 1 });
+        }
+        return (await caret(tab)).offset;
+      };
+      // «ل» (offset 5) reads right to left: its right edge is before it, its left edge after.
+      expect([await click(5, 'right'), await click(5, 'left'), await click(1, 'left'), await click(1, 'right')]).toEqual([
+        5, 6, 1, 2,
+      ]);
+    });
+
     it('draws Farsi in IRANYekanXFaNum, code and line numbers in JetBrains Mono', async () => {
       await pick(tab, 'HTML');
       await clear(tab);
