@@ -21,6 +21,30 @@ export const course = z.object({
   badge: z.string().optional(),
 });
 
+/** Glyph keys for Tool icon tiles; the SVG paths live in the component. */
+export const toolIcon = z.enum([
+  'code',
+  'dictionary',
+  'prompts',
+  'books',
+  'videos',
+  'contracts',
+  'snippets',
+  'downloads',
+]);
+
+const toolBase = { id: z.string(), title: z.string(), note: z.string(), icon: toolIcon };
+
+/**
+ * A Tool: Free (`locked: false`, opens `href`) or Locked (`locked: true`,
+ * presentational only — no link).
+ */
+export const tool = z.discriminatedUnion('locked', [
+  z.object({ ...toolBase, locked: z.literal(false), href: z.string() }),
+  z.object({ ...toolBase, locked: z.literal(true), href: z.undefined().optional() }),
+]);
+
 export const schemas = {
   courses: course,
+  tools: tool,
 };

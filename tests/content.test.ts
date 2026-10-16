@@ -37,3 +37,38 @@ describe('courses collection', () => {
     expect(courses.map((c) => c.url)).toEqual(Array(8).fill(undefined));
   });
 });
+
+describe('tools collection', () => {
+  const tools = collection('tools');
+
+  it('opens with the HTML Editor, the one Free Tool, linking to /editor', () => {
+    expect(tools[0]).toMatchObject({
+      title: 'ویرایشگر HTML',
+      locked: false,
+      href: '/editor',
+      note: 'فعال · ورود ←',
+    });
+    expect(tools.filter((t) => !t.locked)).toHaveLength(1);
+  });
+
+  it('follows with the seven Locked Tools in order, reserved for Masterclass Learners, with no link', () => {
+    const locked = tools.slice(1);
+    expect(locked.map((t) => t.title)).toEqual([
+      'دیکشنری اصطلاحات',
+      'مگاپرامپت‌ها',
+      'کتاب‌های مرجع',
+      'ویدئوها',
+      'نمونه قراردادها',
+      'نمونه کد وبسایت‌ها',
+      'دانلود نرم‌افزارها',
+    ]);
+    for (const tool of locked) {
+      expect(tool).toMatchObject({ locked: true, note: 'ویژه دانش‌پذیران مسترکلاس' });
+      expect(tool.href).toBeUndefined();
+    }
+  });
+
+  it('gives each Tool a distinct icon', () => {
+    expect(new Set(tools.map((t) => t.icon)).size).toBe(8);
+  });
+});
