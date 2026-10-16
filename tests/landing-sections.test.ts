@@ -64,3 +64,25 @@ describe('hero (#top)', () => {
     expect(hero?.textContent).not.toMatch(/[۰-۹٠-٩]/);
   });
 });
+
+describe('about (#about)', () => {
+  const about = doc.querySelector('main #about');
+
+  it('has its eyebrow and h2', () => {
+    expect(text(about?.querySelector('header p'))).toBe('من کی هستم؟');
+    expect(text(about?.querySelector('h2'))).toBe('یک مسیر؛ از مهندسی تا محصول');
+  });
+
+  it('tells the story with the four Brand names emphasised in ink', () => {
+    const paragraph = about?.querySelector('header + p');
+    expect(text(paragraph)).toBe(
+      'از دنیای مهندسی برق و کامپیوتر به فضای کسب‌وکارهای آنلاین رسیدم و الان 10 ساله که در توسعه و رشد کسب‌وکارهای بزرگ در ایران و انگلیس نقش داشتم. کسب‌وکارهایی مثل اسنپ، گروه صنعتی انتخاب، مستربلیط، سی‌آر‌ام دیدار و … فقط بخشی از کسب‌وکارهایی هستن که افتخار همراهی، مدیریت یا مشاوره‌شون رو داشتم.',
+    );
+    const brands = [...(paragraph?.querySelectorAll('strong') ?? [])];
+    expect(brands.map(text)).toEqual(['اسنپ', 'گروه صنعتی انتخاب', 'مستربلیط', 'سی‌آر‌ام دیدار']);
+    for (const brand of brands) {
+      expect(brand.classList.contains('font-semibold')).toBe(true);
+      expect(brand.classList.contains('text-ink')).toBe(true);
+    }
+  });
+});
