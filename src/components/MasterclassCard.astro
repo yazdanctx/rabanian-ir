@@ -2,6 +2,7 @@
 import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { COPY, courseLink } from '../site';
+import Price from './Price.astro';
 // To change the banner, replace this file (16:9, at least 1600px wide). Keep
 // the path and name: nothing else needs editing. Until Amin's banner arrives
 // it is a neutral placeholder.
@@ -53,10 +54,7 @@ const { course } = Astro.props;
       >
         {COPY.courses.enroll}
       </a>
-      <p data-price>
-        <b class="text-xl font-bold">{course.priceMillionToman}</b>{' '}
-        <span class="text-xs text-muted">{COPY.courses.priceUnitLong}</span>
-      </p>
+      <Price amount={course.priceMillionToman} unit={COPY.courses.priceUnitLong} large />
     </div>
   </div>
 </article>

@@ -1,0 +1,20 @@
+---
+/*
+ * A Course price: the amount at weight 600 (spec: prices), then the muted
+ * unit. `large` is the Masterclass size.
+ *
+ *   <Price amount={5} unit="میلیون" />
+ */
+interface Props {
+  amount: number;
+  unit: string;
+  large?: boolean;
+}
+
+const { amount, unit, large = false } = Astro.props;
+---
+
+<p data-price>
+  <b class:list={['font-semibold', large ? 'text-xl' : 'text-base']}>{amount}</b>{' '}
+  <span class="text-xs text-muted">{unit}</span>
+</p>
