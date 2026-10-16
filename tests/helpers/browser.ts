@@ -148,7 +148,9 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
       socket.close();
       chrome.kill();
       if (chrome.exitCode === null) await new Promise((resolve) => chrome.once('exit', resolve));
-      rmSync(profile, { recursive: true, force: true });
+      // Chrome's helper processes can still be writing to the profile for a
+      // moment after the browser exits (ENOTEMPTY); retry instead of failing.
+      rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 50 });
     },
   };
 }
