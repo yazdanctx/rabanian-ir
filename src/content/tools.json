@@ -1,0 +1,59 @@
+[
+  {
+    "id": "html-editor",
+    "title": "ویرایشگر HTML",
+    "locked": false,
+    "href": "/editor",
+    "note": "فعال · ورود ←",
+    "icon": "code"
+  },
+  {
+    "id": "glossary",
+    "title": "دیکشنری اصطلاحات",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "dictionary"
+  },
+  {
+    "id": "mega-prompts",
+    "title": "مگاپرامپت‌ها",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "prompts"
+  },
+  {
+    "id": "reference-books",
+    "title": "کتاب‌های مرجع",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "books"
+  },
+  {
+    "id": "videos",
+    "title": "ویدئوها",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "videos"
+  },
+  {
+    "id": "sample-contracts",
+    "title": "نمونه قراردادها",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "contracts"
+  },
+  {
+    "id": "website-code-samples",
+    "title": "نمونه کد وبسایت‌ها",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "snippets"
+  },
+  {
+    "id": "software-downloads",
+    "title": "دانلود نرم‌افزارها",
+    "locked": true,
+    "note": "ویژه دانش‌پذیران مسترکلاس",
+    "icon": "downloads"
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "msc-management-tehran",
+    "degree": "کارشناسی ارشد مدیریت",
+    "school": "دانشگاه تهران"
+  },
+  {
+    "id": "msc-electrical-iut",
+    "degree": "کارشناسی ارشد مهندسی برق",
+    "school": "دانشگاه صنعتی اصفهان"
+  },
+  {
+    "id": "bsc-electrical-iut",
+    "degree": "کارشناسی مهندسی برق",
+    "school": "دانشگاه صنعتی اصفهان"
+  }
+]
