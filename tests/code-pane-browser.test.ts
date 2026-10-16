@@ -244,4 +244,32 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     // Typing straight after emptying may land in the same undo step.
     expect(['', css]).toContain(await paneText(tab));
   });
+
+  it('indents by two spaces, with Tab and after Enter', async () => {
+    await pick(tab, 'CSS');
+    await clear(tab);
+    await typeKeys(tab, 'p {\nx');
+    await tab.press('Home');
+    await tab.press('Tab');
+    expect(await paneText(tab)).toBe('p {\n    x\n}');
+  });
+
+  it('wraps long lines instead of scrolling sideways', async () => {
+    await pick(tab, 'JS');
+    await clear(tab);
+    await tab.type('// ' + 'سلام دنیا hello world '.repeat(40));
+    const wrap = await tab.evaluate<{ lines: number; rows: number; overflow: number }>(`(() => {
+      ${lib}
+      const scroller = panel().querySelector('.cm-scroller');
+      const line = content().querySelector('.cm-line');
+      return {
+        lines: content().querySelectorAll('.cm-line').length,
+        rows: Math.round(line.getBoundingClientRect().height / parseFloat(getComputedStyle(line).lineHeight)),
+        overflow: scroller.scrollWidth - scroller.clientWidth,
+      };
+    })()`);
+    expect(wrap.lines).toBe(1);
+    expect(wrap.rows).toBeGreaterThan(1);
+    expect(wrap.overflow).toBe(0);
+  });
 });

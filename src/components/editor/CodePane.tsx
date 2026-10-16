@@ -1,8 +1,8 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { EditorState, type Extension } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
-import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
-import { syntaxHighlighting } from '@codemirror/language';
+import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
+import { indentUnit, syntaxHighlighting } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
@@ -50,7 +50,11 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       // HTML tags auto-close from html() itself.
       closeBrackets(),
       history(),
-      keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap]),
+      indentUnit.of('  '),
+      EditorState.tabSize.of(2),
+      EditorView.lineWrapping,
+      // Tab indents; Escape then Tab leaves the editor (CodeMirror's escape hatch).
+      keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
       LANGUAGE[file](),
       syntaxHighlighting(highlighter),
       EditorView.updateListener.of((update) => {
