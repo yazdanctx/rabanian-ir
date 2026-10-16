@@ -12,13 +12,22 @@ const sectionTitled = (title: string) =>
 
 describe('page assembly', () => {
   const sections = [...doc.querySelectorAll('main > section')];
-  const spec = ['top', 'about', 'courses', 'tools', 'resume'];
+  it('gives sections exactly the spec ids, in spec order', () => {
+    expect(sections.map((s) => s.id).filter(Boolean)).toEqual([
+      'top',
+      'about',
+      'courses',
+      'tools',
+      'resume',
+    ]);
+  });
 
-  it('gives sections only the spec ids, in spec order', () => {
-    // Courses and Toolbox (ticket 04) fill in between About and Résumé.
-    const ids = sections.map((s) => s.id).filter(Boolean);
-    expect(ids).toEqual(spec.filter((id) => ids.includes(id)));
-    expect(ids).toEqual(expect.arrayContaining(['top', 'about', 'resume']));
+  it('lands every in-page anchor on an element of the page', () => {
+    const targets = [...doc.querySelectorAll('a[href^="#"]')].map((a) => a.getAttribute('href')!);
+    expect(targets.length).toBeGreaterThan(0);
+    for (const target of new Set(targets)) {
+      expect(doc.getElementById(target.slice(1)), target).not.toBeNull();
+    }
   });
 
   it('ends main with Testimonials, Résumé and the CTA, then the footer', () => {
