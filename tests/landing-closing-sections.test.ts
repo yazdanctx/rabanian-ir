@@ -86,3 +86,35 @@ describe('résumé (#resume)', () => {
     ]);
   });
 });
+
+describe('CTA', () => {
+  const section = sectionTitled('سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟');
+  const block = section?.querySelector('h2')?.closest('.bg-ink');
+
+  it('sits on an ink block with an 18px radius and white text', () => {
+    expect(block).toBeTruthy();
+    expect(block?.classList.contains('rounded-cta')).toBe(true);
+    expect(block?.classList.contains('text-white')).toBe(true);
+  });
+
+  it('carries the Support eyebrow in the on-dark blue, and the line', () => {
+    const eyebrow = block?.querySelector('h2')?.previousElementSibling;
+    expect(text(eyebrow)).toBe('پشتیبانی');
+    expect(eyebrow?.classList.contains('text-[#56A6FF]')).toBe(true);
+    expect([...(block?.querySelectorAll('p') ?? [])].map(text)).toContain(
+      'همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.',
+    );
+  });
+
+  it('sends the visitor to Support with a primary «پیام در تلگرام» button', () => {
+    const button = block?.querySelector('a[href="https://t.me/codaminsupport"]');
+    expect(text(button)).toBe('پیام در تلگرام');
+    expect(button?.classList.contains('bg-primary')).toBe(true);
+    expect(button?.classList.contains('text-white')).toBe(true);
+  });
+
+  it('is the only dark surface on the page', () => {
+    // Palette P has no dark token besides ink (and no default palette to reach for).
+    expect([...doc.querySelectorAll('.bg-ink')]).toEqual([block]);
+  });
+});
