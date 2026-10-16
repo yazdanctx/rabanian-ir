@@ -1,3 +1,4 @@
+import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
@@ -84,6 +85,17 @@ const COMMENT = 'rgb(83, 96, 120) italic';
 
 const pick = (tab: BrowserPage, label: string) =>
   tab.evaluate(`(async () => { ${lib} await pick(${JSON.stringify(label)}); })()`);
+
+/** The colour on screen at a viewport point, as `[r, g, b]`. */
+async function pixel(tab: BrowserPage, x: number, y: number): Promise<number[]> {
+  const { data } = await tab.send('Page.captureScreenshot', {
+    format: 'png',
+    clip: { x: Math.round(x), y: Math.round(y), width: 1, height: 1, scale: 1 },
+  });
+  return [...(await sharp(Buffer.from(data, 'base64')).removeAlpha().raw().toBuffer())];
+}
+
+const distance = (a: number[], b: number[]) => Math.hypot(...a.map((v, i) => v - b[i]));
 
 const paneText = (tab: BrowserPage) => tab.evaluate<string>(`(() => { ${lib} return text(); })()`);
 
@@ -297,5 +309,49 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       };
     })()`);
     expect(chrome).toEqual({ gutters: ['cm-gutter cm-lineNumbers'], panels: 0 });
+  });
+
+  it('shades the caret line in surface and draws selections in primary-soft, on that line too', async () => {
+    const SURFACE = [245, 247, 250];
+    const PRIMARY_SOFT = [234, 241, 255];
+    await pick(tab, 'JS');
+    await clear(tab);
+    await tab.type('let a = 1;');
+    // A blank spot on the caret's line, right of the text.
+    const blank = await tab.evaluate<{ x: number; y: number }>(`(async () => {
+      ${lib}
+      await frames();
+      const line = content().querySelector('.cm-activeLine').getBoundingClientRect();
+      return { x: line.right - 8, y: line.top + 2 };
+    })()`);
+    const line = await pixel(tab, blank.x, blank.y);
+    line.forEach((value, i) => expect(Math.abs(value - SURFACE[i])).toBeLessThanOrEqual(1));
+
+    await tab.press('a', await modifier(tab));
+    const selected = await tab.evaluate<{ x: number; y: number } | null>(`(async () => {
+      ${lib}
+      await frames();
+      const box = panel().querySelector('.cm-selectionBackground')?.getBoundingClientRect();
+      return box ? { x: box.left + 1, y: box.top + 2 } : null;
+    })()`);
+    expect(selected).not.toBeNull();
+    const selection = await pixel(tab, selected!.x, selected!.y);
+    expect(distance(selection, PRIMARY_SOFT)).toBeLessThan(distance(selection, SURFACE));
+    expect(distance(selection, PRIMARY_SOFT)).toBeLessThan(15);
+  });
+
+  it('shows an ink caret and a primary focus ring while focused', async () => {
+    await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
+    await tab.press('End');
+    const look = await tab.evaluate<{ caret: string; ring: string }>(`(async () => {
+      ${lib}
+      await frames();
+      const editor = getComputedStyle(panel().querySelector('.cm-editor'));
+      return {
+        caret: getComputedStyle(panel().querySelector('.cm-cursor')).borderLeftColor,
+        ring: [editor.outlineStyle, editor.outlineWidth, editor.outlineColor].join(' '),
+      };
+    })()`);
+    expect(look).toEqual({ caret: 'rgb(5, 8, 22)', ring: 'solid 2px rgb(23, 105, 255)' });
   });
 });

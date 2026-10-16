@@ -1,6 +1,13 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { EditorState, type Extension } from '@codemirror/state';
-import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import {
+  EditorView,
+  drawSelection,
+  highlightActiveLine,
+  highlightActiveLineGutter,
+  keymap,
+  lineNumbers,
+} from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { bracketMatching, indentUnit, syntaxHighlighting } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
@@ -47,6 +54,9 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       EditorView.editorAttributes.of({ dir: 'ltr' }),
       EditorView.contentAttributes.of({ 'aria-label': `${COPY.editor.code} ${label}` }),
       lineNumbers(),
+      highlightActiveLine(),
+      highlightActiveLineGutter(),
+      drawSelection(),
       // HTML tags auto-close from html() itself.
       closeBrackets(),
       bracketMatching(),

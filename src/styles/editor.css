@@ -231,6 +231,33 @@
   font-family: var(--gutter-font);
 }
 
+/*
+ * The caret's line reads as surface (#F5F7FA) on white. It is a translucent
+ * tint, not the opaque token, because CodeMirror draws selections beneath
+ * the lines: an opaque line would hide the selection on it.
+ */
+.editor-code .cm-editor .cm-activeLine {
+  background-color: rgb(5 55 130 / 0.04);
+}
+
+.editor-code .cm-editor .cm-activeLineGutter {
+  background-color: var(--color-surface);
+}
+
+.editor-code .cm-editor .cm-selectionBackground,
+.editor-code .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
+  background: var(--color-primary-soft);
+}
+
+.editor-code .cm-editor .cm-cursor {
+  border-left-color: var(--color-ink);
+}
+
+.editor-code .cm-editor.cm-focused {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
 /* Syntax colours (spec: Code Pane). Everything else is ink. */
 .editor-code .code-tag {
   color: var(--color-primary-text);
