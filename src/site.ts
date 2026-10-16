@@ -117,4 +117,10 @@ export const COPY = {
     creditHeart: '♥',
     creditAfter: 'توسط آکادمی ربانیان',
   },
+  /** The HTML Editor at /editor. Tab labels (HTML, CSS, JS) are language names, not copy. */
+  editor: {
+    name: 'ویرایشگر HTML',
+    description:
+      'ویرایشگر HTML رایگان آکادمی ربانیان؛ HTML، CSS و جاوااسکریپت بنویس و نتیجه را همان لحظه در پیش‌نمایش ببین.',
+  },
 } as const;
