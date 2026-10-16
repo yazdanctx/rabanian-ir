@@ -13,7 +13,7 @@ A Farsi, RTL, light-mode-only personal site for Amin Rabanian (AI educator / pro
 
 - Astro 7, `output: 'static'`, TypeScript, npm. No adapter; hosting is a personal VPS, decided later — nothing here may depend on a platform.
 - Tailwind 4 (CSS-first `@theme`), palette tokens below as CSS variables.
-- React 19 islands **only** where motion runs (`@astrojs/react`); animation via `motion` v12 (`motion/react`), hydrated `client:visible`.
+- No React on the landing page: animation via `motion` v12's vanilla API (`animate`, `inView`, `stagger`) in one bundled Astro `<script>` (ADR-0003). `@astrojs/react` is installed only for the HTML Editor island.
 - Content in Astro content collections (`src/content/*.json`, Zod schemas). Components never hard-code copy, prices or links.
 - `<html lang="fa" dir="rtl">`. Light mode only: no dark theme, no `prefers-color-scheme` handling, no toggle.
 
@@ -71,10 +71,10 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 - Until Amin supplies the photo and banner, neutral placeholders sit in the exact slots with the pipeline already wired; dropping the files in is the only step.
 - Budget: Lighthouse mobile Performance ≥ 95.
 
-## Motion (`motion` v12, React islands)
+## Motion (`motion` v12, vanilla script — ADR-0003)
 
 - Hero: soft load stagger (badge → h1 → tagline → lead → photo → buttons → stats), 60ms apart, fade + 8px rise, ~400ms ease-out.
-- Sections: fade + 8px rise once on entering the viewport (`whileInView`, `once: true`); list/rail items staggered 60ms.
+- Sections: fade + 8px rise once on entering the viewport (`inView`, once); list/rail items staggered 60ms.
 - Cards and links: subtle hover lift (2px) / color transition.
 - Pulsing status dot: CSS keyframe (3s opacity), the one ambient animation kept.
 - **Removed from the design**: spinning orbit (rings are static), floating pill (static label).
