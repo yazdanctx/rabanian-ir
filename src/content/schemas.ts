@@ -8,7 +8,7 @@ import { z } from 'astro/zod';
  * Digits in all data are ASCII (ADR-0002); the FaNum font draws them Persian.
  */
 
-/** A Course. The Masterclass is the one `featured` entry and carries `badge`. */
+/** A Course. The Masterclass is the one entry with `masterclass: true`; it carries `badge`. */
 export const course = z.object({
   id: z.string(),
   title: z.string(),
@@ -17,7 +17,7 @@ export const course = z.object({
   priceMillionToman: z.number().positive(),
   /** Enrollment/details page; absent → Support (see `courseLink`). */
   url: z.url().optional(),
-  featured: z.boolean(),
+  masterclass: z.boolean(),
   badge: z.string().optional(),
 });
 
