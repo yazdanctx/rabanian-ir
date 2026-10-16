@@ -1,5 +1,22 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { collection } from './helpers/content';
+
+describe('content data', () => {
+  const files = [
+    ...readdirSync('src/content')
+      .filter((f) => f.endsWith('.json'))
+      .map((f) => join('src/content', f)),
+    'src/site.ts',
+  ];
+
+  it('stores digits as ASCII only — no Persian or Arabic-Indic numerals (ADR-0002)', () => {
+    for (const file of files) {
+      expect(readFileSync(file, 'utf8'), file).not.toMatch(/[۰-۹٠-٩]/);
+    }
+  });
+});
 
 describe('courses collection', () => {
   const courses = collection('courses');
