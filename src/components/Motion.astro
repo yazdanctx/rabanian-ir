@@ -1,0 +1,27 @@
+---
+/*
+ * Turns on landing-page motion (src/scripts/motion.ts). Place it first in
+ * the <body>, before any `data-reveal` content.
+ *
+ * The inline script runs before the content below it is parsed, so the
+ * hidden starting state (`html.motion` in global.css) applies before first
+ * paint: no flash. It does nothing under `prefers-reduced-motion: reduce`,
+ * and no-JS visitors never get the class, so they see the final state. If
+ * the bundled script has not started within 3s, it gives up and shows
+ * everything.
+ */
+---
+
+<script is:inline>
+  (function (root) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.classList.add('motion');
+    setTimeout(function () {
+      if (!('motionReady' in root.dataset)) root.classList.remove('motion');
+    }, 3000);
+  })(document.documentElement);
+</script>
+<script>
+  import { startMotion } from '../scripts/motion';
+  startMotion();
+</script>
