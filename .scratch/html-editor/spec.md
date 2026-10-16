@@ -1,6 +1,6 @@
 # HTML Editor (ویرایشگر HTML) — the one Free Tool
 
-Status: ready-for-agent
+Status: ready-for-human
 Decided: 2026-10-16 (grilling session). Vocabulary: `GLOSSARY.md`. Engine choice: `docs/adr/0001-codemirror-for-rtl-code-editing.md`.
 Depends on: `.scratch/landing-page/spec.md` (stack, palette, fonts, motion rules all apply here).
 

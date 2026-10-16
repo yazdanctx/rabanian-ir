@@ -1,6 +1,6 @@
 # 01 — `/editor` route, layout, tabs and action bar
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Page, Layout)
 Blocked by: landing-page/01 (theme + Base layout)
 
@@ -15,3 +15,7 @@ Blocked by: landing-page/01 (theme + Base layout)
 
 - Route renders, tabs switch the active pane with keyboard and mouse, layout reflows at 1024px.
 - Landing page bundle unchanged (no editor code or mono font in `index.html`'s graph).
+
+## Comments
+
+- 2026-10-17: resolved — merged into integration branch `html-editor` (bf443f6); code-review fixes in d824aed.

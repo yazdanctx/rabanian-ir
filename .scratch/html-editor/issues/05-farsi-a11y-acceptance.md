@@ -1,6 +1,6 @@
 # 05 — Farsi, accessibility and acceptance verification
 
-Status: ready-for-agent
+Status: ready-for-human
 Spec: ../spec.md (Farsi support — the definition, Acceptance)
 Blocked by: 04
 
@@ -134,3 +134,5 @@ npx -y lighthouse@13 http://localhost:4878/editor/ --quiet --chrome-flags="--hea
 - Item 5 on an iPhone: tap the pane's lower lines and confirm the HTML/CSS/JS tabs stay on screen above the keyboard.
 
 To automate this later: Develop → "Allow Remote Automation", then run `safaridriver --enable` once.
+
+- 2026-10-17: merged into integration branch `html-editor` (44a143b). The code-review fixes (d824aed) change three results above: the Preview now loads 269–296ms after the last keystroke (250ms debounce, `preview-latency-browser.test.ts`); Farsi split by inline tags (`<p>سلام <b>دنیا</b></p>`) keeps its order in the Code Pane (`code-pane-browser.test.ts`); and the console bridge sits in `<head>`, so `<script>`s in the HTML tab reach the console strip. Every Chrome item passes (`npm test` 261/261). `ready-for-human`: only the Safari cells and the real-phone keyboard check above remain; once they pass, set this ticket and the spec to `resolved`.

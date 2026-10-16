@@ -1,6 +1,6 @@
 # 03 — Sandboxed Preview and Farsi console strip
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Preview, Layout → Console strip)
 Blocked by: 01
 
@@ -15,3 +15,7 @@ Blocked by: 01
 
 - `<h1>سلام</h1>` renders RTL in Yekan without the learner writing `dir`; `html{direction:ltr}` in the CSS tab flips it.
 - `console.log('x')`, `console.error`, a thrown `ReferenceError` and a rejected promise all appear; a `postMessage` from the parent page itself or another frame is ignored.
+
+## Comments
+
+- 2026-10-17: resolved — merged into integration branch `html-editor` (6ba25ce); code-review fixes in d824aed.

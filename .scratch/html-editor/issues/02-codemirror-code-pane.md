@@ -1,6 +1,6 @@
 # 02 — Code Pane on CodeMirror 6 with Farsi bidi support
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Code Pane); ADR-0001
 Blocked by: 01
 
@@ -15,3 +15,7 @@ Blocked by: 01
 
 - Typing in each tab highlights correctly; auto-close works; no search panel on Ctrl/Cmd-F (browser default allowed).
 - Farsi inside markup renders in Yekan glyphs, caret moves logically through the run, selection highlights are contiguous.
+
+## Comments
+
+- 2026-10-17: resolved — merged into integration branch `html-editor` (6c8f8cf); code-review fixes in d824aed.

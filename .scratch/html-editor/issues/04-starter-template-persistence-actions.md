@@ -1,6 +1,6 @@
 # 04 — Starter Template, autosave, reset, download
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Starter Template, Persistence, Layout → Action bar)
 Blocked by: 02, 03
 
@@ -15,3 +15,7 @@ Blocked by: 02, 03
 ## Acceptance
 
 - First visit shows the template; edits survive reload; reset restores and clears; download opens as a working RTL page in a browser with no console bridge script inside.
+
+## Comments
+
+- 2026-10-17: resolved — merged into integration branch `html-editor` (c45ef2e); code-review fixes in d824aed.
