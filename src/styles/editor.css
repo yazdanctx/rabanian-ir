@@ -37,12 +37,6 @@
   --editor-width: 1280px;
   --code-font: 'JetBrains Mono', 'IRANYekanXFaNum', ui-monospace, monospace;
   --gutter-font: 'JetBrains Mono', ui-monospace, monospace;
-  /*
-   * Console levels. Not palette tokens: they only color console text. Both
-   * pass AA as text on surface (6.1:1 and 5.1:1) and on white.
-   */
-  --editor-error: #b42318;
-  --editor-warn: #b54708;
 }
 
 /* The top bar spans the editor's width here, not the 680px landing column. */
@@ -75,7 +69,8 @@
   }
 }
 
-.editor-output {
+/* The Preview's column: its card, then the console strip. */
+.editor-preview-column {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -183,12 +178,13 @@
   }
 }
 
+/* The site's focus ring (global.css). */
 .editor-tab:focus-visible,
 .editor-button:focus-visible,
 .editor-console-toggle:focus-visible,
 .editor-console-log:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Inset where the card would clip it. The log takes focus once it scrolls (Chrome). */
@@ -249,12 +245,15 @@
 }
 
 /*
- * The caret's line reads as surface (#F5F7FA) on white. It is a translucent
- * tint, not the opaque token, because CodeMirror draws selections beneath
- * the lines: an opaque line would hide the selection on it.
+ * The caret's line reads as surface on white. It is a translucent tint, not
+ * the opaque token, because CodeMirror draws selections beneath the lines:
+ * an opaque line would hide the selection on it. The tint is surface's own
+ * distance from white, 25 times over at 4%: over white, exactly surface.
  */
 .editor-code .cm-editor .cm-activeLine {
-  background-color: rgb(5 55 130 / 0.04);
+  background-color: rgb(
+    from var(--color-surface) calc(255 - (255 - r) * 25) calc(255 - (255 - g) * 25) calc(255 - (255 - b) * 25) / 4%
+  );
 }
 
 .editor-code .cm-editor .cm-activeLineGutter {
@@ -270,8 +269,9 @@
   border-left-color: var(--color-ink);
 }
 
+/* The focus ring, inset: the card would clip it. */
 .editor-code .cm-editor.cm-focused {
-  outline: 2px solid var(--color-primary);
+  outline: var(--focus-ring);
   outline-offset: -2px;
 }
 
@@ -289,7 +289,7 @@
 }
 
 .editor-code .code-string {
-  color: #1237c8;
+  color: var(--color-code-string);
 }
 
 .editor-code .code-comment {
@@ -297,7 +297,7 @@
   font-style: italic;
 }
 
-/* The Preview frame: the learner's page on white, filling the card. */
+/* The Preview frame: the visitor's page on white, filling the card. */
 .editor-preview {
   display: block;
   flex: 1;
@@ -333,6 +333,24 @@
   padding-inline: 14px;
   color: var(--color-ink);
   cursor: pointer;
+}
+
+.editor-console-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* How many entries the console holds, so output is seen with the strip shut. */
+.editor-console-count {
+  min-width: 22px;
+  padding-inline: 6px;
+  border-radius: var(--radius-btn);
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
 }
 
 .editor-console-clear {
@@ -374,11 +392,11 @@
 }
 
 .editor-console-entry[data-level='warn'] {
-  color: var(--editor-warn);
+  color: var(--color-warn);
 }
 
 .editor-console-entry[data-level='error'] {
-  color: var(--editor-error);
+  color: var(--color-error);
 }
 
 @media (prefers-reduced-motion: reduce) {

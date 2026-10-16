@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { saveWorkspace, type Workspace } from './persistence';
 
 /** How long edits must pause before they are saved (ticket 04). */
-export const SAVE_DELAY_MS = 500;
+const SAVE_DELAY_MS = 500;
 
 /**
  * Saves `workspace` once it stops changing for `SAVE_DELAY_MS`, or at once if

@@ -4,7 +4,7 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 /*
  * The HTML Editor's Preview and console strip (/editor) in a real (headless)
  * Chrome. The sandboxed Preview is out of process, so its facts are read
- * through the parent: its `srcdoc`, and what the learner's JS logs to the
+ * through the parent: its `srcdoc`, and what the visitor's JS logs to the
  * console strip. Skipped where no Chrome is installed (set CHROME_PATH).
  */
 
@@ -85,7 +85,7 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
     expect(shown).toBe(true);
   });
 
-  /** The learner's JS: logs the heading's direction, font stack and font load status. */
+  /** The visitor's JS: logs the heading's direction, font stack and font load status. */
   const reportHeading = `
     const h1 = document.querySelector('h1');
     document.fonts.load('700 32px IRANYekanXFaNum', h1.textContent).then((faces) => {
@@ -93,7 +93,7 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
       console.log(style.direction, style.fontFamily, faces.map((face) => face.status).join());
     });`;
 
-  it('renders <h1>سلام</h1> right to left in Yekan, without the learner writing dir', async () => {
+  it('renders <h1>سلام</h1> right to left in Yekan, without the visitor writing dir', async () => {
     const report = await tab.evaluate<string[]>(`(async () => {
       ${lib}
       await setFiles({ html: '<h1>سلام</h1>', js: ${JSON.stringify(reportHeading)} });
@@ -176,6 +176,35 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     ]);
   });
 
+  it("lists what the HTML tab's own scripts log and throw while the page loads", async () => {
+    const html = `<script>console.log('from html')</script>
+      <h1>سلام</h1>
+      <script>throw new Error('on load')</script>`;
+    const listed = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await setFiles({ html: ${JSON.stringify(html)}, js: "console.log('from js')" });
+      await waitFor(() => entries().includes('log from js'));
+      await sleep(200);
+      return entries();
+    })()`);
+    expect(listed).toEqual(['log from html', 'error Uncaught Error: on load', 'log from js']);
+  });
+
+  it('runs JS and CSS holding «</script>» and «</style>» whole', async () => {
+    const listed = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await setFiles({
+        html: '<p>سلام</p>',
+        css: 'body::after { content: "</style>" }',
+        js: "console.log('</script>', getComputedStyle(document.body, '::after').content)",
+      });
+      await waitFor(() => entries().some((entry) => entry.includes('</script>')));
+      await sleep(200);
+      return entries();
+    })()`);
+    expect(listed).toEqual(['log </script> "</style>"']);
+  });
+
   it('ignores messages from the editor page itself, from other frames, and untagged ones', async () => {
     const listed = await tab.evaluate<string[]>(`(async () => {
       ${lib}
@@ -225,6 +254,71 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
       return steps;
     })()`);
     expect(steps).toEqual([['log a', 'log b'], []]);
+  });
+
+  it('counts its entries beside «کنسول», in Persian digits, while collapsed too', async () => {
+    /** The toggle as seen and as read out: its label, the count and its font and visibility, its name. */
+    const toggle = async () => {
+      const shown = await tab.evaluate<{
+        expanded: string;
+        label: string;
+        count: string | null;
+        font: string | null;
+        visible: boolean;
+      }>(`(() => {
+        const toggle = document.querySelector('[data-console] button[aria-expanded]');
+        const walker = document.createTreeWalker(toggle, NodeFilter.SHOW_TEXT);
+        let count = null;
+        for (let node; (node = walker.nextNode()); ) if (/\\d/.test(node.data)) count = node.parentElement;
+        return {
+          expanded: toggle.getAttribute('aria-expanded'),
+          label: toggle.textContent.replace(/\\d+/, '').trim(),
+          count: count && count.textContent,
+          font: count && getComputedStyle(count).fontFamily.split(',')[0].replace(/["']/g, ''),
+          visible: !!count?.checkVisibility(),
+        };
+      })()`);
+      const { root } = await tab.send('DOM.getDocument', { depth: -1 });
+      const { nodeId } = await tab.send('DOM.querySelector', {
+        nodeId: root.nodeId,
+        selector: '[data-console] button[aria-expanded]',
+      });
+      const { nodes } = await tab.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
+      return { ...shown, name: nodes[0].name.value };
+    };
+    await tab.send('DOM.enable');
+    await tab.send('Accessibility.enable');
+    await tab.evaluate(`(async () => {
+      ${lib}
+      const toggle = document.querySelector('[data-console] button[aria-expanded]');
+      if (toggle.getAttribute('aria-expanded') === 'true') toggle.click();
+      await setFiles({ js: "console.log('a'); console.warn('b'); console.error('c')" });
+      await waitFor(() => entries().join() === 'log a,warn b,error c');
+    })()`);
+    // ASCII in the DOM; IRANYekanXFaNum draws it as «۳» (ADR-0002).
+    expect(await toggle()).toEqual({
+      expanded: 'false',
+      label: 'کنسول',
+      count: '3',
+      font: 'IRANYekanXFaNum',
+      visible: true,
+      name: 'کنسول، 3 پیام',
+    });
+    await tab.evaluate(`(async () => {
+      ${lib}
+      document.querySelector('[data-console] button[aria-expanded]').click();
+      await waitFor(() => !!button('پاک کردن'));
+      button('پاک کردن').click();
+      await sleep(50);
+    })()`);
+    expect(await toggle()).toEqual({
+      expanded: 'true',
+      label: 'کنسول',
+      count: null,
+      font: null,
+      visible: false,
+      name: 'کنسول',
+    });
   });
 
   it('colors each level, warnings and errors in tones that pass AA on the strip', async () => {

@@ -142,17 +142,17 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     /**
      * Every piece of the page's own text, shown (with the font it is set in)
      * or spoken (accessible names, no font). Code, the Preview and console
-     * messages are the learner's, not chrome.
+     * messages are the visitor's, not chrome.
      */
     const chrome = () =>
       tab.evaluate<{ text: string; font: string | null }[]>(`(() => {
-        const learners = '.cm-editor, iframe, [data-console] li';
+        const visitors = '.cm-editor, iframe, [data-console] li';
         const font = (el) => getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '');
         const out = [];
         const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
         for (let node; (node = walker.nextNode()); ) {
           const el = node.parentElement;
-          if (!node.data.trim() || el.closest(learners) || el.closest('script, style, [hidden]')) continue;
+          if (!node.data.trim() || el.closest(visitors) || el.closest('script, style, [hidden]')) continue;
           out.push({ text: node.data.trim(), font: font(el) });
         }
         for (const el of document.querySelectorAll('[aria-label], [title], [alt]')) {

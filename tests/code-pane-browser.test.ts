@@ -5,7 +5,7 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 
 /*
  * The Code Pane on /editor (spec: .scratch/html-editor/spec.md → Code Pane),
- * driven like a learner would: clicks, the keyboard (over the DevTools
+ * driven like a visitor would: clicks, the keyboard (over the DevTools
  * protocol) and what ends up on screen. Skipped where no Chrome is installed.
  */
 
@@ -424,6 +424,82 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       await tab.type(comment);
       expect(await onScreen(tab)).toBe(shown);
     });
+
+    it.each([
+      { file: 'HTML', line: '<p>سلام <b>دنیا</b></p>', shown: '<p>مالس <b>ایند</b></p>' },
+      {
+        file: 'HTML',
+        line: '<p>سلام <a href="#">دنیا</a> خوبی؟</p>',
+        shown: '<p>مالس <a href="#">ایند</a> ؟یبوخ</p>',
+      },
+      { file: 'JS', line: 'let s = `سلام ${name} دنیا`;', shown: 'let s = `مالس ${name} ایند`;' },
+    ])('keeps code between Farsi runs in place: $line', async ({ file, line, shown }) => {
+      await pick(tab, file);
+      await clear(tab);
+      await tab.type(line);
+      expect(await onScreen(tab)).toBe(shown);
+    });
+
+    /** Offsets strictly inside a Farsi word of `line`: between two of its letters. */
+    const insideFarsi = (line: string) =>
+      new Set([...line.matchAll(/[؀-ۿ]+/g)].flatMap(({ index, 0: word }) =>
+        Array.from({ length: word.length - 1 }, (_, i) => index + i + 1),
+      ));
+
+    describe.each(['<p>سلام <b>دنیا</b></p>', '<p>سلام <a href="#">دنیا</a> خوبی؟</p>'])(
+      'with inline tags between Farsi words: %s',
+      (line) => {
+        async function startOf() {
+          await pick(tab, 'HTML');
+          await clear(tab);
+          await tab.type(line);
+          await tab.press('Home');
+        }
+
+        it('walks the arrow keys through the tags in reading order', async () => {
+          await startOf();
+          const walk = [await caret(tab)];
+          for (let i = 0; i < line.length; i++) {
+            await tab.press('ArrowRight');
+            walk.push(await caret(tab));
+          }
+          const offsets = walk.map((c) => c.offset);
+          expect([...offsets].sort((a, b) => a - b)).toEqual([...Array(line.length + 1).keys()]);
+          for (let i = 1; i < walk.length; i++) expect(walk[i].x).toBeGreaterThanOrEqual(walk[i - 1].x);
+          // Outside the Farsi words, the caret passes the code left to right, in order.
+          const inside = insideFarsi(line);
+          const code = offsets.filter((offset) => !inside.has(offset));
+          expect(code).toEqual([...code].sort((a, b) => a - b));
+        });
+
+        it('selects from an inline tag to the line end as one stretch on screen', async () => {
+          await startOf();
+          const tag = line.indexOf('<', 1); // the inline tag's «<»
+          for (let i = 0; i < line.length && (await caret(tab)).offset !== tag; i++) await tab.press('ArrowRight');
+          expect((await caret(tab)).offset).toBe(tag);
+          await tab.press('End', 8); // Shift
+          const selection = await tab.evaluate<{ text: string; gaps: number; startsAtTag: boolean }>(`(async () => {
+            ${lib}
+            await frames();
+            const boxes = [...panel().querySelectorAll('.cm-selectionBackground')]
+              .map((b) => b.getBoundingClientRect())
+              .sort((a, b) => a.left - b.left);
+            const gaps = boxes.filter((box, i) => i > 0 && box.left > boxes[i - 1].right + 1).length;
+            const walker = document.createTreeWalker(content().querySelector('.cm-line'), NodeFilter.SHOW_TEXT);
+            let left = null;
+            for (let node, start = 0; (node = walker.nextNode()) && left === null; start += node.length) {
+              if (${tag} >= start + node.length) continue;
+              const range = document.createRange();
+              range.setStart(node, ${tag} - start);
+              range.setEnd(node, ${tag} - start + 1);
+              left = range.getBoundingClientRect().left;
+            }
+            return { text: getSelection().toString(), gaps, startsAtTag: Math.abs(boxes[0].left - left) <= 1 };
+          })()`);
+          expect(selection).toEqual({ text: line.slice(tag), gaps: 0, startsAtTag: true });
+        });
+      },
+    );
 
     const LINE = '<h1>سلام دنیا</h1>';
 

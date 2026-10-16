@@ -43,6 +43,10 @@ describe('Starter Template', () => {
     for (const colour of used) expect(palette).toContain(colour);
   });
 
+  it("CSS: rounds the button 8px, like the site's buttons (landing spec: Shape)", () => {
+    expect(css.match(/(^|\n)#greet\s*{([^}]*)}/)?.[2]).toMatch(/border-radius:\s*8px;/);
+  });
+
   it('CSS: names each rule\'s selector in a comment', () => {
     for (const selector of ['body', 'h1', '#greet']) {
       expect(comments.some((c) => c.startsWith(`${selector}:`))).toBe(true);

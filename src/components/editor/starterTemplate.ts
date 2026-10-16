@@ -43,7 +43,7 @@ h1 {
 #greet {
   padding: 8px 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   background: ${PALETTE.primary};
   color: ${PALETTE.white};
   font: inherit;

@@ -2,8 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildDocument } from './buildDocument';
 import type { Files } from './files';
 
-/** How long typing must pause before the Preview rebuilds (spec: Preview). */
-export const REBUILD_DELAY_MS = 300;
+/**
+ * How long typing must pause before the Preview rebuilds (spec: Preview,
+ * "~300ms"). 250, so that with the frame's own load the page shows within
+ * the 300ms the spec's acceptance asks for.
+ */
+const REBUILD_DELAY_MS = 250;
 
 export interface PreviewBuild {
   /** Counts rebuilds. A new id is a new Preview document, and a fresh console. */

@@ -33,7 +33,7 @@ A very minimal page at `/editor` where a Farsi-speaking beginner writes HTML, CS
 ## Preview
 
 - Sandboxed `<iframe sandbox="allow-scripts" srcdoc="…">` — no `allow-same-origin`, no network access needed. Rebuilt on a ~300ms debounce after typing and immediately on «اجرا».
-- The document is assembled as `<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><style>{preloaded IRANYekanXFaNum @font-face + body{font-family}}</style><style>{CSS}</style></head><body>{HTML}<script>{console bridge}</script><script>{JS}</script></body></html>`.
+- The document is assembled as `<!doctype html><html lang="fa" dir="rtl"><head><meta charset="utf-8"><style>{preloaded IRANYekanXFaNum @font-face + body{font-family}}</style><style>{CSS}</style><script>{console bridge}</script></head><body>{HTML}<script>{JS}</script></body></html>`. The bridge sits in `<head>` so it also hears `<script>`s typed in the HTML tab and errors thrown while the page loads; the downloaded `index.html` has no bridge. Any `</style` in the CSS and `</script` in the JS (any case) is written `<\/style` / `<\/script`, so a string holding it can't end the element early.
 - **RTL and Farsi by default**: a learner's first `<h1>سلام</h1>` looks right without knowing about `dir`. The learner edits body content only (the `<html>`/`<head>` wrapper is ours) and can override direction with `dir="ltr"` on their own elements or `html { direction: ltr }` in CSS. This default is deliberate and documented in the Starter Template comments.
 - Console bridge: the iframe patches `console.*` and `window.onerror`/`unhandledrejection` and posts messages to the parent via `postMessage`; the parent validates `event.source === iframe.contentWindow` before rendering.
 

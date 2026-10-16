@@ -2,27 +2,29 @@ import { FILES, type FileId, type Files } from './files';
 import { STARTER_TEMPLATE } from './starterTemplate';
 
 /** What the HTML Editor keeps between visits: the three files and the tab being edited. */
-export interface Workspace extends Files {
+export interface Workspace {
+  files: Files;
   activeTab: FileId;
 }
 
 /** The slice of Web Storage the autosave uses (`localStorage` by default). */
 export type WorkspaceStorage = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
 
-/** The key the workspace is saved under (spec: Persistence). */
+/**
+ * The key the workspace is saved under (spec: Persistence), as one flat
+ * object: `{ html, css, js, activeTab }`.
+ */
 const KEY = 'rabanian.editor.v1';
 
 const FIRST_TAB: FileId = FILES[0].id;
 
 const isFileId = (value: unknown): value is FileId => FILES.some((file) => file.id === value);
 
-/** The three files in `value`, if it holds all three as text. */
-function filesIn(value: unknown): Files | null {
-  if (typeof value !== 'object' || value === null) return null;
-  const saved = value as Record<string, unknown>;
-  const { html, css, js } = saved;
-  if (typeof html !== 'string' || typeof css !== 'string' || typeof js !== 'string') return null;
-  return { html, css, js };
+/** The files in a save, if it holds every one of them as text; nothing else from it. */
+function filesIn(saved: unknown): Files | null {
+  if (typeof saved !== 'object' || saved === null) return null;
+  const files = Object.fromEntries(FILES.map(({ id }) => [id, (saved as Record<string, unknown>)[id]]));
+  return Object.values(files).every((text) => typeof text === 'string') ? (files as Files) : null;
 }
 
 /**
@@ -37,18 +39,17 @@ export function loadWorkspace(storage?: WorkspaceStorage): Workspace {
     // Storage unavailable, or not JSON: as if nothing was saved.
   }
   const files = filesIn(saved);
-  if (!files) return { ...STARTER_TEMPLATE, activeTab: FIRST_TAB };
+  if (!files) return { files: STARTER_TEMPLATE, activeTab: FIRST_TAB };
   const { activeTab } = saved as { activeTab?: unknown };
-  return { ...files, activeTab: isFileId(activeTab) ? activeTab : FIRST_TAB };
+  return { files, activeTab: isFileId(activeTab) ? activeTab : FIRST_TAB };
 }
 
 /**
  * Saves the workspace for the next visit. Where storage is unavailable
  * (blocked, private mode) or full, the editor carries on unsaved.
  */
-export function saveWorkspace(workspace: Workspace, storage?: WorkspaceStorage): void {
-  const { html, css, js, activeTab } = workspace;
-  attempt(() => (storage ?? localStorage).setItem(KEY, JSON.stringify({ html, css, js, activeTab })));
+export function saveWorkspace({ files, activeTab }: Workspace, storage?: WorkspaceStorage): void {
+  attempt(() => (storage ?? localStorage).setItem(KEY, JSON.stringify({ ...files, activeTab })));
 }
 
 /** Forgets the saved workspace: the next visit opens the Starter Template. */

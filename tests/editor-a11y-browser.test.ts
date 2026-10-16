@@ -41,7 +41,7 @@ const RING = 'solid 2px rgb(23, 105, 255)';
 /**
  * Where the keyboard focus is: the control's name, and the ring drawn for it.
  * The Code Pane's ring is on the editor around its text; a focused Preview
- * is the learner's page, which draws its own.
+ * is the visitor's page, which draws its own.
  */
 const focused = (tab: BrowserPage) =>
   tab.evaluate<{ name: string; ring: string } | null>(`(async () => {
@@ -50,7 +50,7 @@ const focused = (tab: BrowserPage) =>
     const el = document.activeElement;
     if (!el || el === document.body) return null;
     const name = el.getAttribute('aria-label') ?? el.getAttribute('title') ?? el.textContent.trim();
-    if (el.tagName === 'IFRAME') return { name, ring: "the learner's page" };
+    if (el.tagName === 'IFRAME') return { name, ring: "the visitor's page" };
     const s = getComputedStyle(el.closest('.cm-editor') ?? el);
     return { name, ring: [s.outlineStyle, s.outlineWidth, s.outlineColor].join(' ') };
   })()`);
@@ -103,8 +103,9 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       { name: 'اجرا', ring: RING },
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
-      { name: 'پیش‌نمایش', ring: "the learner's page" },
-      { name: 'کنسول', ring: RING },
+      { name: 'پیش‌نمایش', ring: "the visitor's page" },
+      // Named with how many entries it holds.
+      { name: 'کنسول، 40 پیام', ring: RING },
       { name: 'پاک کردن', ring: RING },
       // The log scrolls, so Chrome lets the keyboard scroll it.
       { name: expect.stringMatching(/^0\s*1\s*2/), ring: RING },

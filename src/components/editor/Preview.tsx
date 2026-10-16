@@ -12,7 +12,7 @@ interface Props {
 
 /**
  * The Preview: the three files rendered as a page in a sandboxed frame. Only
- * `allow-scripts`: no same-origin access to the editor, so the learner's
+ * `allow-scripts`: no same-origin access to the editor, so the visitor's
  * page can't reach it. Every build remounts the frame, which reruns the page
  * even when nothing changed («اجرا») and gives it a new window, so messages
  * from an older build can't pass for the current one's.

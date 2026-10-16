@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { COPY } from '../../site';
 import ActionBar from './ActionBar';
 import CodePane from './CodePane';
@@ -20,23 +20,23 @@ const PREVIEW_TITLE_ID = 'editor-preview-title';
  */
 export default function EditorApp() {
   // The last visit's workspace, else the Starter Template.
-  const [state, setState] = useState<Workspace>(loadWorkspace);
+  const [workspace, setWorkspace] = useState<Workspace>(loadWorkspace);
   // The workspace as opened or last reset: nothing new to save until it changes.
-  const [opened, setOpened] = useState(state);
-  useAutosave(state, opened);
+  const [opened, setOpened] = useState(workspace);
+  useAutosave(workspace, opened);
   // Bumped to remount the Code Pane on files replaced from outside it.
   const [paneKey, setPaneKey] = useState(0);
-  const { activeTab, html, css, js } = state;
-  const files = useMemo(() => ({ html, css, js }), [html, css, js]);
+  // `files` is a new object only when one of them is edited, not on a tab switch.
+  const { activeTab, files } = workspace;
   const preview = usePreviewBuild(files);
   const frame = useRef<HTMLIFrameElement>(null);
 
   /** «بازنشانی»: once confirmed, the Starter Template again, and nothing saved. */
   function reset() {
     if (!confirm(COPY.editor.resetConfirm)) return;
-    const template = { ...STARTER_TEMPLATE, activeTab };
+    const template = { files: STARTER_TEMPLATE, activeTab };
     clearWorkspace();
-    setState(template);
+    setWorkspace(template);
     setOpened(template);
     setPaneKey((key) => key + 1);
   }
@@ -46,7 +46,7 @@ export default function EditorApp() {
       <section data-code className="editor-card">
         <TabBar
           active={activeTab}
-          onSelect={(file) => setState((s) => ({ ...s, activeTab: file }))}
+          onSelect={(file) => setWorkspace((w) => ({ ...w, activeTab: file }))}
           panelId={PANEL_ID}
           label={COPY.editor.filesLabel}
         />
@@ -54,12 +54,12 @@ export default function EditorApp() {
           <CodePane
             key={paneKey}
             file={activeTab}
-            initialFiles={state}
-            onChange={(file, text) => setState((s) => ({ ...s, [file]: text }))}
+            initialFiles={files}
+            onChange={(file, text) => setWorkspace((w) => ({ ...w, files: { ...w.files, [file]: text } }))}
           />
         </div>
       </section>
-      <div className="editor-output">
+      <div className="editor-preview-column">
         <section aria-labelledby={PREVIEW_TITLE_ID} className="editor-card">
           <div className="editor-card-head">
             <h2 id={PREVIEW_TITLE_ID} className="editor-card-title">

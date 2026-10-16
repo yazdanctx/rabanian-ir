@@ -41,27 +41,53 @@ describe('buildDocument', () => {
     expect(embedded[1].bytes.equals(font('Bold'))).toBe(true);
   });
 
-  it("sets the body in IRANYekanXFaNum with a 16px margin, before the learner's CSS", () => {
+  it("sets the body in IRANYekanXFaNum with a 16px margin, before the visitor's CSS", () => {
     const styles = [...dom(buildDocument(files)).querySelectorAll('head style')].map((s) => s.textContent);
     expect(styles).toHaveLength(2);
     expect(styles[0]).toMatch(/body\s*{\s*font-family:\s*IRANYekanXFaNum,\s*system-ui;\s*margin:\s*16px;?\s*}/);
     expect(styles[1]).toBe(files.css);
   });
 
-  it("puts the learner's HTML in the body, then the console bridge, then the learner's JS", () => {
-    const body = dom(buildDocument(files)).body;
-    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script', 'script']);
-    expect(body.querySelector('h1')?.textContent).toBe('سلام دنیا');
-    const [bridge, js] = body.querySelectorAll('script');
+  it("runs the console bridge in the head, after the styles, so it hears every script on the visitor's page", () => {
+    const head = dom(buildDocument(files)).head;
+    expect([...head.children].map((el) => el.localName)).toEqual(['meta', 'style', 'style', 'script']);
+    const bridge = head.querySelector('script')!;
     expect(bridge.textContent).toMatch(/parent\.postMessage\(/);
     expect(bridge.textContent).toMatch(/['"]rabanian-editor['"]/);
-    expect(js.textContent).toBe(files.js);
+  });
+
+  it("puts the visitor's HTML in the body, then the visitor's JS", () => {
+    const body = dom(buildDocument(files)).body;
+    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
+    expect(body.querySelector('h1')?.textContent).toBe('سلام دنیا');
+    expect(body.querySelector('script')?.textContent).toBe(files.js);
   });
 
   it('leaves the console bridge out when asked, for the downloaded page', () => {
-    const body = dom(buildDocument(files, { consoleBridge: false })).body;
-    expect([...body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
-    expect(body.querySelector('script')?.textContent).toBe(files.js);
+    const page = dom(buildDocument(files, { consoleBridge: false }));
+    expect(page.head.querySelector('script')).toBeNull();
+    expect([...page.body.children].map((el) => el.localName)).toEqual(['h1', 'script']);
+    expect(page.body.querySelector('script')?.textContent).toBe(files.js);
     expect(buildDocument(files, { consoleBridge: false })).not.toMatch(/postMessage|rabanian-editor/);
+  });
+
+  it.each([
+    { page: 'the Preview', options: {} },
+    { page: 'the download', options: { consoleBridge: false } },
+  ])('keeps «</script>» in the JS and «</style>» in the CSS from ending them early, in $page', ({ options }) => {
+    const tricky = {
+      html: '<p>سلام</p>',
+      css: 'p::after { content: "</style>" } p::before { content: "</STYLE >" }',
+      js: "console.log('</script>'); console.log(`</Script >`);",
+    };
+    const page = dom(buildDocument(tricky, options));
+    const styles = [...page.querySelectorAll('head style')];
+    expect(styles).toHaveLength(2);
+    // `<\/` is still `</` to CSS and in a JS string, but no end tag to HTML.
+    expect(styles[1].textContent).toBe('p::after { content: "<\\/style>" } p::before { content: "<\\/STYLE >" }');
+    expect([...page.body.children].map((el) => el.localName)).toEqual(['p', 'script']);
+    expect(page.body.querySelector('script')?.textContent).toBe(
+      "console.log('<\\/script>'); console.log(`<\\/Script >`);",
+    );
   });
 });

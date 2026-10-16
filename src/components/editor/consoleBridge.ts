@@ -1,6 +1,6 @@
 /*
  * The console bridge (spec: Preview): a script that runs inside the Preview
- * before the learner's JS and posts its console output and uncaught errors to
+ * before the visitor's JS and posts its console output and uncaught errors to
  * the editor, where the console strip lists them.
  */
 
@@ -76,7 +76,7 @@ export const CONSOLE_BRIDGE = `(() => {
       }
     }
   };
-  for (const level of ['log', 'info', 'warn', 'error']) {
+  for (const level of ${JSON.stringify(CONSOLE_LEVELS)}) {
     const original = console[level];
     console[level] = (...args) => {
       original.apply(console, args);

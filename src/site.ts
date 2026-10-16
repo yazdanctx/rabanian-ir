@@ -131,13 +131,18 @@ export const COPY = {
     /** The action bar's three buttons. */
     run: 'اجرا',
     reset: 'بازنشانی',
-    /** Asked before «بازنشانی» replaces the learner's files with the Starter Template. */
+    /** Asked before «بازنشانی» replaces the visitor's files with the Starter Template. */
     resetConfirm: 'با بازنشانی، کدی که نوشته‌ای پاک می‌شود و قالب شروع برمی‌گردد. ادامه می‌دهی؟',
     download: 'دانلود',
     /** Title of the Preview card. */
     preview: 'پیش‌نمایش',
     /** The console strip's toggle. */
     console: 'کنسول',
+    /**
+     * The toggle's name while the console holds entries; the count shows
+     * beside «کنسول». ASCII digits, drawn Persian by the font (ADR-0002).
+     */
+    consoleLabel: (count: number) => `کنسول، ${count} پیام`,
     /** Empties the console strip. */
     clearConsole: 'پاک کردن',
   },

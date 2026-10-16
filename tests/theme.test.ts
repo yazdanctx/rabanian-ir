@@ -17,6 +17,10 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     ['bg', '#FFFFFF'],
     // Spec "on dark block": the eyebrow on the ink CTA.
     ['primary-on-ink', '#56A6FF'],
+    // HTML Editor (.scratch/html-editor/spec.md): strings in code; console warnings and errors.
+    ['code-string', '#1237C8'],
+    ['warn', '#B54708'],
+    ['error', '#B42318'],
   ])('color %s = %s', async (token, hex) => {
     expect((await utilityValue(`bg-${token}`, 'background-color'))?.toUpperCase()).toBe(hex);
     expect((await utilityValue(`text-${token}`, 'color'))?.toUpperCase()).toBe(hex);
