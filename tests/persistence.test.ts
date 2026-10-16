@@ -23,7 +23,7 @@ function memoryStorage(entries: Record<string, string> = {}) {
   };
 }
 
-const firstVisit: Workspace = { ...STARTER_TEMPLATE, activeTab: 'html' };
+const firstVisit: Workspace = { files: STARTER_TEMPLATE, activeTab: 'html' };
 
 describe('loadWorkspace', () => {
   it('opens the Starter Template on the HTML tab when nothing is saved', () => {
@@ -32,15 +32,23 @@ describe('loadWorkspace', () => {
 
   it('restores what was saved: the three files, Farsi included, and the active tab', () => {
     const storage = memoryStorage();
-    const edited = {
-      html: '<h1>سلام دنیا</h1>',
-      css: 'h1 { color: #0d5be0 }',
-      js: "console.log('سلام')",
+    const edited: Workspace = {
+      files: { html: '<h1>سلام دنیا</h1>', css: 'h1 { color: #0d5be0 }', js: "console.log('سلام')" },
       activeTab: 'css',
-    } as const;
+    };
     saveWorkspace(edited, storage);
-    expect(storage.getItem('rabanian.editor.v1')).not.toBeNull();
     expect(loadWorkspace(storage)).toEqual(edited);
+  });
+
+  it('saves one flat object, as the editor always has, so earlier saves still open', () => {
+    const storage = memoryStorage();
+    saveWorkspace({ files: { html: '<p>a</p>', css: 'p {}', js: 'x()' }, activeTab: 'js' }, storage);
+    expect(JSON.parse(storage.getItem('rabanian.editor.v1')!)).toEqual({
+      html: '<p>a</p>',
+      css: 'p {}',
+      js: 'x()',
+      activeTab: 'js',
+    });
   });
 
   it.each([
@@ -59,21 +67,21 @@ describe('loadWorkspace', () => {
     const storage = memoryStorage({
       'rabanian.editor.v1': `{"html": "<p>a</p>", "css": "p {}", "js": "", "activeTab": ${tab}}`,
     });
-    expect(loadWorkspace(storage)).toEqual({ html: '<p>a</p>', css: 'p {}', js: '', activeTab: 'html' });
+    expect(loadWorkspace(storage)).toEqual({ files: { html: '<p>a</p>', css: 'p {}', js: '' }, activeTab: 'html' });
   });
 
   it('keeps only the files and the tab, whatever else was saved', () => {
     const storage = memoryStorage({
       'rabanian.editor.v1': '{"html": "<p>a</p>", "css": "", "js": "", "activeTab": "js", "theme": "dark"}',
     });
-    expect(loadWorkspace(storage)).toEqual({ html: '<p>a</p>', css: '', js: '', activeTab: 'js' });
+    expect(loadWorkspace(storage)).toEqual({ files: { html: '<p>a</p>', css: '', js: '' }, activeTab: 'js' });
   });
 });
 
 describe('clearWorkspace', () => {
   it('forgets the save, so the next visit opens the Starter Template', () => {
     const storage = memoryStorage();
-    saveWorkspace({ html: '<p>a</p>', css: '', js: '', activeTab: 'js' }, storage);
+    saveWorkspace({ files: { html: '<p>a</p>', css: '', js: '' }, activeTab: 'js' }, storage);
     clearWorkspace(storage);
     expect(loadWorkspace(storage)).toEqual(firstVisit);
   });
