@@ -18,8 +18,8 @@ A very minimal page at `/editor` where a Farsi-speaking beginner writes HTML, CS
 
 - Three **tabs** over a single Code Pane: `HTML` · `CSS` · `JS` (labels stay Latin — they are the languages' names). Active tab remembered within the session.
 - **Full screen**: the editor fills the viewport exactly and the page never scrolls; only the Code Pane, the Preview and the console log scroll, each inside itself. The viewport meta adds `interactive-widget=resizes-content` so an on-screen keyboard shrinks the layout and the tab bar stays above it.
-- Preview beside the Code Pane on ≥ 1024px (two columns, **Code Pane on the left, Preview on the right**; the Code Pane stays first in the DOM and Tab order; draggable divider not required); stacked below it, half the screen each, on narrower screens. Panes run edge to edge with hairline dividers.
-- Action bar, in this order so «اجرا» sits at the far left: «بازنشانی» (reset to Starter Template, with confirm), «دانلود» (download a single `index.html` with CSS inlined in `<style>` and JS in `<script>`), «اجرا» (run now, primary). Each has a small decorative line icon (reset arrow, download arrow, play). Nothing else — no file tree, no settings, no themes, no share.
+- Preview beside the Code Pane on ≥ 1024px (two columns, Code Pane on the right since the page is RTL, Preview on the left; draggable divider not required); stacked below it, half the screen each, on narrower screens. Panes run edge to edge with hairline dividers.
+- Action bar, in this order so «اجرا» sits at the far left: «بازنشانی» (reset to Starter Template, after an in-page modal dialog — «بازنشانی به قالب شروع؟», «انصراف» focused, «بازنشانی» in the error red; Escape or a click outside declines — not the browser's `confirm()`), «دانلود» (download a single `index.html` with CSS inlined in `<style>` and JS in `<script>`), «اجرا» (run now, primary). Each has a small decorative line icon (reset arrow, download arrow, play). Nothing else — no file tree, no settings, no themes, no share.
 - Console strip under the Preview, collapsible, Farsi label «کنسول»: lists `console.log/info/warn/error` output and uncaught errors from the Preview, newest last, with a clear button. Messages themselves are shown verbatim (they come from the browser).
 - Palette P: the head bars (tabs; Preview title + actions) and the console strip on `surface`, panes on white, hairline `line` borders; buttons and tabs keep the 8px radius.
 
@@ -62,7 +62,7 @@ The Template is what the editor opens with on first visit and what «بازنش�
 
 ## Motion
 
-Tab switch: 150ms crossfade of pane content. Console strip expand/collapse: height spring (`motion`), 200ms. Nothing else; all off under reduced motion.
+Tab switch: 150ms crossfade of pane content. Console strip expand/collapse: height spring (`motion`), 200ms. Reset dialog: 160ms fade and scale from 0.96 in, backdrop fade. Nothing else; all off under reduced motion.
 
 ## Out of scope
 

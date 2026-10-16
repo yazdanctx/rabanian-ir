@@ -133,8 +133,13 @@ export const COPY = {
     /** The action bar's three buttons. */
     run: 'اجرا',
     reset: 'بازنشانی',
-    /** Asked before «بازنشانی» replaces the visitor's files with the Starter Template. */
-    resetConfirm: 'با بازنشانی، کدی که نوشته‌ای پاک می‌شود و قالب شروع برمی‌گردد. ادامه می‌دهی؟',
+    /** The dialog that asks before «بازنشانی» replaces the visitor's files with the Starter Template. */
+    resetDialog: {
+      title: 'بازنشانی به قالب شروع؟',
+      message: 'کدی که نوشته‌ای پاک می‌شود و قالب شروع برمی‌گردد.',
+      confirm: 'بازنشانی',
+      cancel: 'انصراف',
+    },
     download: 'دانلود',
     /** Title of the Preview card. */
     preview: 'پیش‌نمایش',

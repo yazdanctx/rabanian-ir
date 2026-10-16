@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { COPY } from '../../site';
 import ActionBar from './ActionBar';
 import CodePane from './CodePane';
+import ConfirmDialog from './ConfirmDialog';
 import ConsoleStrip from './ConsoleStrip';
 import { downloadPage } from './downloadPage';
 import Preview from './Preview';
@@ -31,10 +32,12 @@ export default function EditorApp() {
   const { activeTab, files } = workspace;
   const preview = usePreviewBuild(files);
   const frame = useRef<HTMLIFrameElement>(null);
+  // «بازنشانی» asks first, in a dialog on the page.
+  const [askingReset, setAskingReset] = useState(false);
 
-  /** «بازنشانی»: once confirmed, the Starter Template again, and nothing saved. */
+  /** «بازنشانی», once confirmed: the Starter Template again, and nothing saved. */
   function reset() {
-    if (!confirm(COPY.editor.resetConfirm)) return;
+    setAskingReset(false);
     const template = { files: STARTER_TEMPLATE, activeTab };
     clearWorkspace();
     setWorkspace(template);
@@ -66,12 +69,21 @@ export default function EditorApp() {
             <h2 id={PREVIEW_TITLE_ID} className="editor-pane-title">
               {COPY.editor.preview}
             </h2>
-            <ActionBar onRun={preview.runNow} onReset={reset} onDownload={() => downloadPage(files)} />
+            <ActionBar onRun={preview.runNow} onReset={() => setAskingReset(true)} onDownload={() => downloadPage(files)} />
           </div>
           <Preview srcDoc={preview.srcDoc} build={preview.id} frameRef={frame} />
         </section>
         <ConsoleStrip frameRef={frame} build={preview.id} />
       </div>
+      <ConfirmDialog
+        open={askingReset}
+        title={COPY.editor.resetDialog.title}
+        message={COPY.editor.resetDialog.message}
+        confirmLabel={COPY.editor.resetDialog.confirm}
+        cancelLabel={COPY.editor.resetDialog.cancel}
+        onConfirm={reset}
+        onClose={() => setAskingReset(false)}
+      />
     </div>
   );
 }

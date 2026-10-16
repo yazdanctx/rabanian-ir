@@ -326,7 +326,7 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
 
     it(
       columns
-        ? 'puts the Code Pane and the Preview side by side, Code Pane on the left'
+        ? 'puts the Code Pane and the Preview side by side, Code Pane on the right'
         : 'stacks the Preview below the Code Pane',
       async () => {
         const { code, preview, overflow } = await tab.evaluate<{
@@ -337,7 +337,7 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
         expect(overflow).toBeLessThanOrEqual(0);
         // Edge to edge: the panes meet at a hairline.
         if (columns) {
-          expect(preview.left).toBeGreaterThanOrEqual(code.right);
+          expect(code.left).toBeGreaterThanOrEqual(preview.right);
           expect(code.top).toBe(preview.top);
         } else {
           expect(preview.top).toBeGreaterThanOrEqual(code.bottom);

@@ -40,8 +40,9 @@ const RING = 'solid 2px rgb(23, 105, 255)';
 
 /**
  * Where the keyboard focus is: the control's name, and the ring drawn for it.
- * The Code Pane's ring is on the editor around its text; a focused Preview
- * is the visitor's page, which draws its own.
+ * The Code Pane draws no frame: its blinking caret (and caret line) shows
+ * focus, as in a code editor. A focused Preview is the visitor's page, which
+ * draws its own.
  */
 const focused = (tab: BrowserPage) =>
   tab.evaluate<{ name: string; ring: string } | null>(`(async () => {
@@ -51,7 +52,14 @@ const focused = (tab: BrowserPage) =>
     if (!el || el === document.body) return null;
     const name = el.getAttribute('aria-label') ?? el.getAttribute('title') ?? el.textContent.trim();
     if (el.tagName === 'IFRAME') return { name, ring: "the visitor's page" };
-    const s = getComputedStyle(el.closest('.cm-editor') ?? el);
+    const editor = el.closest('.cm-editor');
+    if (editor) {
+      const caret = editor.querySelector('.cm-cursor-primary');
+      const shown = caret && getComputedStyle(caret).display !== 'none';
+      const frame = getComputedStyle(editor).outlineStyle;
+      return { name, ring: shown && frame === 'none' ? 'the caret, no frame' : 'frame: ' + frame };
+    }
+    const s = getComputedStyle(el);
     return { name, ring: [s.outlineStyle, s.outlineWidth, s.outlineColor].join(' ') };
   })()`);
 
@@ -95,7 +103,7 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
     }
     expect(stops).toEqual([
       { name: 'JS', ring: RING },
-      { name: 'کد JS', ring: RING },
+      { name: 'کد JS', ring: 'the caret, no frame' },
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
       { name: 'اجرا', ring: RING },

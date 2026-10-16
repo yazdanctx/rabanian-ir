@@ -184,19 +184,81 @@ describe.skipIf(!chromePath)('autosave', () => {
 });
 
 describe.skipIf(!chromePath)('«بازنشانی»', () => {
-  const reset = (tab: BrowserPage) => tab.evaluate(`(() => { ${lib} button('بازنشانی').click(); })()`);
+  // Focused first, as a real click or keypress leaves it: the dialog hands focus back there.
+  const reset = (tab: BrowserPage) =>
+    tab.evaluate(`(() => { ${lib} const reset = button('بازنشانی'); reset.focus(); reset.click(); })()`);
+  const { title, message, confirm, cancel } = COPY.editor.resetDialog;
 
-  it('asks first, in Farsi, and leaves the files alone when declined', async () => {
+  /** The page's modal dialog as a visitor meets it, once it is open. */
+  const dialog = (tab: BrowserPage) =>
+    tab.evaluate<{
+      modal: boolean;
+      title: string;
+      message: string;
+      buttons: string[];
+      focused: string;
+    } | null>(`(async () => {
+      ${lib}
+      if (!(await waitFor(() => document.querySelector('dialog')?.open, 2000))) return null;
+      const box = document.querySelector('dialog');
+      const text = (id) => document.getElementById(id)?.textContent.trim();
+      return {
+        modal: box.matches(':modal'),
+        title: text(box.getAttribute('aria-labelledby')),
+        message: text(box.getAttribute('aria-describedby')),
+        buttons: [...box.querySelectorAll('button')].map((b) => b.textContent.trim()),
+        focused: document.activeElement.textContent.trim(),
+      };
+    })()`);
+  const isOpen = (tab: BrowserPage) =>
+    tab.evaluate<boolean>(`(async () => {
+      ${lib}
+      await sleep(100);
+      return !!document.querySelector('dialog')?.open;
+    })()`);
+  const answer = (tab: BrowserPage, label: string) =>
+    tab.evaluate(`(() => {
+      [...document.querySelectorAll('dialog button')].find((b) => b.textContent.trim() === ${JSON.stringify(label)}).click();
+    })()`);
+
+  it('asks first, in a Farsi dialog on the page, and leaves the files alone when declined', async () => {
     const tab = await openEditor(site.origin);
     try {
       await edit(tab);
-      const asked: string[] = [];
-      tab.answerDialogs((message) => {
-        asked.push(message);
+      // Not the browser's own confirm(): the question is part of the page.
+      const native: string[] = [];
+      tab.answerDialogs((asked) => {
+        native.push(asked);
         return false;
       });
       await reset(tab);
-      expect(asked).toEqual([COPY.editor.resetConfirm]);
+      // Modal, so the page behind it is inert; it starts on «انصراف», the safe answer.
+      expect(await dialog(tab)).toEqual({ modal: true, title, message, buttons: [cancel, confirm], focused: cancel });
+      await answer(tab, cancel);
+      expect(await isOpen(tab)).toBe(false);
+      expect(native).toEqual([]);
+      expect(await tab.evaluate(`document.activeElement.textContent.trim()`)).toBe('بازنشانی');
+      expect((await shown(tab)).files).toEqual(edited);
+    } finally {
+      await tab.close();
+    }
+  });
+
+  it('is declined by Escape, and by a click outside it', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      await edit(tab);
+      await reset(tab);
+      expect(await dialog(tab)).not.toBeNull();
+      await tab.press('Escape');
+      expect(await isOpen(tab)).toBe(false);
+
+      await reset(tab);
+      expect(await dialog(tab)).not.toBeNull();
+      for (const type of ['mousePressed', 'mouseReleased']) {
+        await tab.send('Input.dispatchMouseEvent', { type, x: 4, y: 4, button: 'left', clickCount: 1 });
+      }
+      expect(await isOpen(tab)).toBe(false);
       expect((await shown(tab)).files).toEqual(edited);
     } finally {
       await tab.close();
@@ -208,8 +270,10 @@ describe.skipIf(!chromePath)('«بازنشانی»', () => {
     try {
       await edit(tab);
       await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // saved
-      tab.answerDialogs(() => true);
       await reset(tab);
+      expect(await dialog(tab)).not.toBeNull();
+      await answer(tab, confirm);
+      expect(await isOpen(tab)).toBe(false);
       // Checked without switching tabs, which would be an edit to save: the
       // open file in the Code Pane, all three in the Preview.
       const restored = await tab.evaluate<{ pane: string; previewed: boolean }>(`(async () => {

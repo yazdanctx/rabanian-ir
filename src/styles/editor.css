@@ -69,8 +69,7 @@ body {
 
 /*
  * Code Pane over Preview, half the screen each; from 1024px side by side,
- * Code Pane on the left and the Preview on the right, though the Code Pane
- * stays first in the page (and the Tab order). Hairlines between, edge to edge.
+ * Code Pane first, so on the right (RTL). Hairlines between, edge to edge.
  */
 .editor {
   display: grid;
@@ -89,15 +88,9 @@ body {
     grid-template-rows: minmax(0, 1fr);
   }
 
-  /* Grid columns run right to left (RTL): column 1 is the right one. */
   .editor-code-pane {
-    grid-area: 1 / 2;
     border-bottom: 0;
-    border-inline-start: 1px solid var(--color-line);
-  }
-
-  .editor-preview-column {
-    grid-area: 1 / 1;
+    border-inline-end: 1px solid var(--color-line);
   }
 }
 
@@ -215,6 +208,86 @@ body {
     background-color: var(--color-primary-text);
     color: var(--color-white);
   }
+
+  .editor-button-danger:hover {
+    border-color: var(--color-error);
+    background-color: rgb(from var(--color-error) calc(r * 0.85) calc(g * 0.85) calc(b * 0.85));
+    color: var(--color-white);
+  }
+}
+
+/* What can't be undone: «بازنشانی» in the reset dialog. */
+.editor-button-danger {
+  border-color: var(--color-error);
+  background-color: var(--color-error);
+  color: var(--color-white);
+}
+
+/*
+ * The reset dialog (ConfirmDialog.tsx): a card over the dimmed editor. The
+ * padding is on the panel inside, so a click on the dialog itself is a click
+ * on the page around it.
+ */
+.editor-dialog {
+  width: min(400px, calc(100% - 32px));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
+}
+
+.editor-dialog::backdrop {
+  background-color: rgb(from var(--color-ink) r g b / 40%);
+}
+
+.editor-dialog-panel {
+  padding: 20px;
+}
+
+.editor-dialog-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.editor-dialog-message {
+  margin-top: 8px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* At the end (left, RTL): «انصراف», then «بازنشانی» at the far left, like «اجرا». */
+.editor-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .editor-dialog[open] {
+    animation: editor-dialog-in 160ms cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .editor-dialog[open]::backdrop {
+    animation: editor-fade-in 160ms ease-out;
+  }
+}
+
+@keyframes editor-dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+@keyframes editor-fade-in {
+  from {
+    opacity: 0;
+  }
 }
 
 /* The site's focus ring (global.css). */
@@ -310,10 +383,12 @@ body {
   border-left-color: var(--color-ink);
 }
 
-/* The focus ring, inset: the pane would clip it. */
+/*
+ * No frame when focused (CodeMirror's default is a dotted one): the blinking
+ * caret and the caret line show focus, as in a code editor.
+ */
 .editor-code .cm-editor.cm-focused {
-  outline: var(--focus-ring);
-  outline-offset: -2px;
+  outline: none;
 }
 
 .editor-code .cm-editor .cm-matchingBracket {

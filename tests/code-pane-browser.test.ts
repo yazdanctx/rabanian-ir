@@ -423,7 +423,7 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     expect(distance(selection, PRIMARY_SOFT)).toBeLessThan(15);
   });
 
-  it('shows an ink caret and a primary focus ring while focused', async () => {
+  it('shows an ink caret while focused, and no frame around the pane', async () => {
     await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
     await tab.press('End');
     const look = await tab.evaluate<{ caret: string; ring: string }>(`(async () => {
@@ -432,10 +432,10 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       const editor = getComputedStyle(panel().querySelector('.cm-editor'));
       return {
         caret: getComputedStyle(panel().querySelector('.cm-cursor')).borderLeftColor,
-        ring: [editor.outlineStyle, editor.outlineWidth, editor.outlineColor].join(' '),
+        ring: editor.outlineStyle,
       };
     })()`);
-    expect(look).toEqual({ caret: 'rgb(5, 8, 22)', ring: 'solid 2px rgb(23, 105, 255)' });
+    expect(look).toEqual({ caret: 'rgb(5, 8, 22)', ring: 'none' });
   });
 
   describe('Farsi inside code', () => {
