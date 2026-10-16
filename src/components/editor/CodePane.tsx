@@ -19,6 +19,7 @@ import { tagHighlighter, tags } from '@lezer/highlight';
 import { COPY } from '../../site';
 import { FILES, type FileId, type Files } from './files';
 import { ltrIsolates } from './ltrIsolates';
+import { reducedMotion } from './reducedMotion';
 
 interface Props {
   /** The file shown: the active tab. */
@@ -99,7 +100,7 @@ const FADE: KeyframeAnimationOptions = { duration: 150, easing: 'ease-out' };
  * in. At once under reduced motion.
  */
 function crossfade(editor: EditorView, swap: () => void) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return swap();
+  if (reducedMotion()) return swap();
   const outgoing = editor.dom.cloneNode(true) as HTMLElement;
   outgoing.classList.remove('cm-focused');
   outgoing.classList.add('editor-code-outgoing');

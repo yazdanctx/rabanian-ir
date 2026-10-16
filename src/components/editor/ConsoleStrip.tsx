@@ -3,6 +3,7 @@ import { animate } from 'motion/mini';
 import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { COPY } from '../../site';
 import { consoleEntry, type ConsoleEntry } from './consoleBridge';
+import { reducedMotion } from './reducedMotion';
 
 const LOG_ID = 'editor-console-log';
 
@@ -11,8 +12,6 @@ const EXPAND = { type: spring, duration: 0.2, bounce: 0 } as const;
 
 /** Entries kept: the newest. Bounds a visitor's runaway `setInterval` log. */
 const MAX_ENTRIES = 500;
-
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 interface Props {
   /** The Preview frame: the only window whose messages are listed. */
