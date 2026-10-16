@@ -1,7 +1,14 @@
 import { configDefaults, defineConfig } from 'vitest/config';
 
-/** Tests that time the browser: they run alone, once the rest are done. */
-const TIMED = ['tests/**/*-latency-browser.test.ts', 'tests/motion-browser.test.ts'];
+/**
+ * Tests that time the browser, or drive it one key at a time: they run
+ * alone, once the rest are done, so other tests' browsers don't slow them.
+ */
+const TIMED = [
+  'tests/**/*-latency-browser.test.ts',
+  'tests/motion-browser.test.ts',
+  'tests/editor-a11y-browser.test.ts',
+];
 
 export default defineConfig({
   test: {
