@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
+import { COPY } from '../src/site';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
 /*
@@ -47,6 +48,7 @@ const lib = `
     document.execCommand('insertText', false, text);
   };
   const frame = () => document.querySelector('iframe[data-preview]');
+  const button = (label) => [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === label);
   const entries = () =>
     [...document.querySelectorAll('[data-console] li')].map((li) => li.dataset.level + ' ' + li.textContent);
 `;
@@ -167,6 +169,55 @@ describe.skipIf(!chromePath)('autosave', () => {
       await tab.reload();
       await waitForEditor(tab);
       expect(await shown(tab)).toEqual({ tab: 'CSS', files: edited });
+    } finally {
+      await tab.close();
+    }
+  });
+});
+
+describe.skipIf(!chromePath)('«بازنشانی»', () => {
+  const reset = (tab: BrowserPage) => tab.evaluate(`(() => { ${lib} button('بازنشانی').click(); })()`);
+
+  it('asks first, in Farsi, and leaves the files alone when declined', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      await edit(tab);
+      const asked: string[] = [];
+      tab.answerDialogs((message) => {
+        asked.push(message);
+        return false;
+      });
+      await reset(tab);
+      expect(asked).toEqual([COPY.editor.resetConfirm]);
+      expect((await shown(tab)).files).toEqual(edited);
+    } finally {
+      await tab.close();
+    }
+  });
+
+  it('once confirmed, restores the Starter Template and forgets the save', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      await edit(tab);
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // saved
+      tab.answerDialogs(() => true);
+      await reset(tab);
+      // Checked without switching tabs, which would be an edit to save: the
+      // open file in the Code Pane, all three in the Preview.
+      const restored = await tab.evaluate<{ pane: string; previewed: boolean }>(`(async () => {
+        ${lib}
+        const template = ${JSON.stringify(STARTER_TEMPLATE)};
+        const previewed = await waitFor(
+          () => [template.html, template.css, template.js].every((file) => frame().srcdoc.includes(file)),
+          1500,
+        );
+        return { pane: codeText(), previewed };
+      })()`);
+      expect(restored).toEqual({ pane: STARTER_TEMPLATE.css, previewed: true });
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // nothing to save
+      await tab.reload();
+      await waitForEditor(tab);
+      expect(await shown(tab)).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
     } finally {
       await tab.close();
     }

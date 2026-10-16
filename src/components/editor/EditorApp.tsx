@@ -5,7 +5,8 @@ import CodePane from './CodePane';
 import ConsoleStrip from './ConsoleStrip';
 import Preview from './Preview';
 import TabBar, { tabId } from './TabBar';
-import { loadWorkspace, type Workspace } from './persistence';
+import { clearWorkspace, loadWorkspace, type Workspace } from './persistence';
+import { STARTER_TEMPLATE } from './starterTemplate';
 import { useAutosave } from './useAutosave';
 import { usePreviewBuild } from './usePreviewBuild';
 
@@ -22,12 +23,24 @@ const notYet = () => {};
 export default function EditorApp() {
   // The last visit's workspace, else the Starter Template.
   const [state, setState] = useState<Workspace>(loadWorkspace);
-  const [opened] = useState(state);
+  const [opened, setOpened] = useState(state);
   useAutosave(state, opened);
+  // Bumped to remount the Code Pane on files replaced from outside it.
+  const [paneKey, setPaneKey] = useState(0);
   const { activeTab, html, css, js } = state;
   const files = useMemo(() => ({ html, css, js }), [html, css, js]);
   const preview = usePreviewBuild(files);
   const frame = useRef<HTMLIFrameElement>(null);
+
+  /** «بازنشانی»: once confirmed, the Starter Template again, and nothing saved. */
+  function reset() {
+    if (!confirm(COPY.editor.resetConfirm)) return;
+    const template = { ...STARTER_TEMPLATE, activeTab };
+    clearWorkspace();
+    setState(template);
+    setOpened(template);
+    setPaneKey((key) => key + 1);
+  }
 
   return (
     <div data-editor className="editor">
@@ -40,6 +53,7 @@ export default function EditorApp() {
         />
         <div role="tabpanel" id={PANEL_ID} aria-labelledby={tabId(activeTab)} className="editor-panel">
           <CodePane
+            key={paneKey}
             file={activeTab}
             initialFiles={state}
             onChange={(file, text) => setState((s) => ({ ...s, [file]: text }))}
@@ -52,7 +66,7 @@ export default function EditorApp() {
             <h2 id={PREVIEW_TITLE_ID} className="editor-card-title">
               {COPY.editor.preview}
             </h2>
-            <ActionBar onRun={preview.runNow} onReset={notYet} onDownload={notYet} />
+            <ActionBar onRun={preview.runNow} onReset={reset} onDownload={notYet} />
           </div>
           <Preview srcDoc={preview.srcDoc} build={preview.id} frameRef={frame} />
         </section>
