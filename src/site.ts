@@ -105,6 +105,8 @@ export const COPY = {
     ],
     /** «ساخته شده با ♥ توسط آکادمی ربانیان» — the heart is an inline SVG between the two. */
     creditBefore: 'ساخته شده با',
+    /** Screen-reader text for the heart SVG. */
+    creditHeart: '♥',
     creditAfter: 'توسط آکادمی ربانیان',
   },
 } as const;

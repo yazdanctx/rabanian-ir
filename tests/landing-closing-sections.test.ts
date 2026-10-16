@@ -118,3 +118,43 @@ describe('CTA', () => {
     expect([...doc.querySelectorAll('.bg-ink')]).toEqual([block]);
   });
 });
+
+describe('footer', () => {
+  const footer = doc.querySelector('body > footer');
+
+  it('closes the page, after main, on the light page background', () => {
+    expect(footer?.previousElementSibling?.tagName).toBe('MAIN');
+    expect(footer?.closest('.bg-ink')).toBeNull();
+  });
+
+  it('repeats the logo, linking to the top, and the one-line bio', () => {
+    const logo = footer?.querySelector('a[href="#top"]');
+    expect(text(logo)).toBe('rabanian.ir');
+    expect(logo?.querySelector('svg')).not.toBeNull();
+    expect([...(footer?.querySelectorAll('p') ?? [])].map(text)).toContain(
+      'با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.',
+    );
+  });
+
+  it('links Support, the Telegram channel and LinkedIn, each with a decorative icon', () => {
+    const links = [...(footer?.querySelectorAll('nav a') ?? [])];
+    expect(links.map((a) => [text(a), a.getAttribute('href')])).toEqual([
+      ['پشتیبانی و مشاوره', 'https://t.me/codaminsupport'],
+      ['کانال تلگرام', 'https://t.me/aminrabanian'],
+      ['لینکدین', 'https://www.linkedin.com/in/amin-rabanian/'],
+    ]);
+    for (const link of links) {
+      expect(link.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    }
+  });
+
+  it('credits Rabanian Academy with an inline primary heart, no gradient', () => {
+    const credit = [...(footer?.querySelectorAll('p') ?? [])].find((p) =>
+      text(p).startsWith('ساخته شده با'),
+    );
+    expect(text(credit)).toBe('ساخته شده با ♥ توسط آکادمی ربانیان');
+    const heart = credit?.querySelector('svg');
+    expect(heart?.classList.contains('text-primary')).toBe(true);
+    expect(credit?.innerHTML).not.toMatch(/gradient/i);
+  });
+});
