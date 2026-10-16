@@ -68,39 +68,59 @@ body {
 }
 
 /*
- * Code Pane over Preview, half the screen each; from 1024px side by side,
- * Code Pane first, so on the right (RTL). Hairlines between, edge to edge.
+ * The panel group (EditorApp.tsx: react-resizable-panels lays it out as a
+ * flex row, or a column when stacked): Preview and Code Pane, edge to edge,
+ * with the separator between them.
  */
 .editor {
-  display: grid;
   flex: 1;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
   min-height: 0;
-}
-
-.editor-code-pane {
-  border-bottom: 1px solid var(--color-line);
-}
-
-@media (width >= 1024px) {
-  .editor {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-template-rows: minmax(0, 1fr);
-  }
-
-  .editor-code-pane {
-    border-bottom: 0;
-    border-inline-end: 1px solid var(--color-line);
-  }
 }
 
 /* The Preview's column: its pane, then the console strip along the bottom. */
 .editor-preview-column {
-  display: flex;
-  flex-direction: column;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+}
+
+/*
+ * The separator: a hairline between the panes, drawn thicker in ink (the
+ * site's black) while hovered or dragged. The library grabs it from 10px around (20px by
+ * touch), so the line can stay thin.
+ */
+.editor-separator {
+  background-color: var(--color-line);
+  transition-property: background-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.editor-separator[aria-orientation='vertical'] {
+  width: 1px;
+}
+
+.editor-separator[aria-orientation='horizontal'] {
+  height: 1px;
+}
+
+.editor-separator[data-separator='hover'],
+.editor-separator[data-separator='active'] {
+  background-color: var(--color-ink);
+  box-shadow: 0 0 0 1px var(--color-ink);
+}
+
+.editor-separator:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 0;
+}
+
+/*
+ * While dragging, the Preview frame would take the pointer's moves for its
+ * own page. `:active` holds from the press itself, before the library marks
+ * the drag on its next render.
+ */
+.editor:has(.editor-separator:active, .editor-separator[data-separator='active']) .editor-preview {
+  pointer-events: none;
 }
 
 .editor-pane {
@@ -534,7 +554,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .editor-tab,
-  .editor-button {
+  .editor-button,
+  .editor-separator {
     transition: none;
   }
 }

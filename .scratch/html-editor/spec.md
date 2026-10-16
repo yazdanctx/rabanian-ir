@@ -18,7 +18,8 @@ A very minimal page at `/editor` where a Farsi-speaking beginner writes HTML, CS
 
 - Three **tabs** over a single Code Pane: `HTML` · `CSS` · `JS` (labels stay Latin — they are the languages' names). Active tab remembered within the session.
 - **Full screen**: the editor fills the viewport exactly and the page never scrolls; only the Code Pane, the Preview and the console log scroll, each inside itself. The viewport meta adds `interactive-widget=resizes-content` so an on-screen keyboard shrinks the layout and the tab bar stays above it.
-- Preview beside the Code Pane on ≥ 1024px (two columns, Code Pane on the right since the page is RTL, Preview on the left; draggable divider not required); stacked below it, half the screen each, on narrower screens. Panes run edge to edge with hairline dividers.
+- Preview beside the Code Pane on ≥ 1024px (Code Pane on the right, Preview on the left); stacked below 1024px with the **Preview on top and the Code Pane below**. Panes run edge to edge.
+- **Resizable**: a separator between the two panes (`react-resizable-panels`, the library behind shadcn's Resizable, styled in the editor's plain CSS) resizes them by drag or arrow keys; each pane keeps at least 20%. The sizes are saved per arrangement (side by side / stacked) in `localStorage` (`react-resizable-panels:rabanian.editor.layout.horizontal` / `.vertical`), only when the visitor resizes. The group runs left to right with the Preview first (the library has no RTL), so the Tab order is Preview column, separator, Code Pane.
 - Action bar, in this order so «اجرا» sits at the far left: «بازنشانی» (reset to Starter Template, after an in-page modal dialog — «بازنشانی به قالب شروع؟», «انصراف» focused, «بازنشانی» in the error red; Escape or a click outside declines — not the browser's `confirm()`), «دانلود» (download a single `index.html` with CSS inlined in `<style>` and JS in `<script>`), «اجرا» (run now, primary). Each has a small decorative line icon (reset arrow, download arrow, play). Nothing else — no file tree, no settings, no themes, no share.
 - Console strip under the Preview, collapsible, Farsi label «کنسول»: lists `console.log/info/warn/error` output and uncaught errors from the Preview, newest last, with a clear button. Messages themselves are shown verbatim (they come from the browser).
 - Palette P: the head bars (tabs; Preview title + actions) and the console strip on `surface`, panes on white, hairline `line` borders; buttons and tabs keep the 8px radius.
@@ -49,7 +50,7 @@ The Template is what the editor opens with on first visit and what «بازنش�
 
 ## Persistence
 
-- The three files autosave to `localStorage` (key `rabanian.editor.v1`, debounced), restored on reload. Reset clears to the Starter Template.
+- The three files autosave to `localStorage` (key `rabanian.editor.v1`, debounced), restored on reload. Reset clears to the Starter Template. The pane sizes are saved too (see Layout → Resizable).
 - No accounts, no server, no shareable links (compressed-hash sharing is an explicit v2 candidate, not built now).
 
 ## Farsi support — the definition

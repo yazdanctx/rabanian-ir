@@ -143,6 +143,8 @@ export const COPY = {
     download: 'دانلود',
     /** Title of the Preview card. */
     preview: 'پیش‌نمایش',
+    /** Screen-reader name of the bar between the panes that resizes them. */
+    resize: 'اندازهٔ پیش‌نمایش و کد',
     /** The console strip's toggle. */
     console: 'کنسول',
     /**

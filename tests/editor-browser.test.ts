@@ -327,7 +327,7 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     it(
       columns
         ? 'puts the Code Pane and the Preview side by side, Code Pane on the right'
-        : 'stacks the Preview below the Code Pane',
+        : 'stacks the Code Pane below the Preview',
       async () => {
         const { code, preview, overflow } = await tab.evaluate<{
           code: Box;
@@ -340,12 +340,121 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
           expect(code.left).toBeGreaterThanOrEqual(preview.right);
           expect(code.top).toBe(preview.top);
         } else {
-          expect(preview.top).toBeGreaterThanOrEqual(code.bottom);
+          expect(code.top).toBeGreaterThanOrEqual(preview.bottom);
           expect(preview.left).toBe(code.left);
           expect(preview.right).toBe(code.right);
         }
       },
     );
+  });
+
+  describe.each([
+    { width: 1280, height: 900, axis: 'horizontal', key: 'rabanian.editor.layout.horizontal' },
+    { width: 390, height: 844, axis: 'vertical', key: 'rabanian.editor.layout.vertical' },
+  ])('resizable panes at $width px', ({ width, height, axis, key }) => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openEditor(site.origin, width, height);
+    });
+    afterAll(() => tab?.close());
+
+    const horizontal = axis === 'horizontal';
+    /** The Code Pane's size along the axis the separator moves on. */
+    const codeSize = () =>
+      tab.evaluate<number>(`(() => {
+        const box = document.querySelector('[data-code]').getBoundingClientRect();
+        return Math.round(${horizontal ? 'box.width' : 'box.height'});
+      })()`);
+    const separator = () =>
+      tab.evaluate<{ x: number; y: number; label: string; orientation: string; tabIndex: number }>(`(() => {
+        const el = document.querySelector('[role="separator"]');
+        const box = el.getBoundingClientRect();
+        return {
+          x: box.left + box.width / 2,
+          y: box.top + box.height / 2,
+          label: el.getAttribute('aria-label'),
+          orientation: el.getAttribute('aria-orientation'),
+          tabIndex: el.tabIndex,
+        };
+      })()`);
+
+    it('has a named, focusable separator between the Preview and the Code Pane', async () => {
+      const { label, orientation, tabIndex } = await separator();
+      expect({ label, orientation, tabIndex }).toEqual({
+        label: 'اندازهٔ پیش‌نمایش و کد',
+        orientation: horizontal ? 'vertical' : 'horizontal',
+        tabIndex: 0,
+      });
+    });
+
+    it('turns black (ink) while hovered', async () => {
+      const { x, y } = await separator();
+      const color = () =>
+        tab.evaluate<string>(`getComputedStyle(document.querySelector('[role="separator"]')).backgroundColor`);
+      expect(await color()).toBe('rgb(220, 227, 238)'); // line
+      await tab.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y });
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 250))`); // past the 150ms colour change
+      expect(await color()).toBe('rgb(5, 8, 22)');
+      await tab.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x + 200, y: y + 200 });
+    });
+
+    it('resizes the panes by dragging the separator, and remembers it after a reload', async () => {
+      const before = await codeSize();
+      const { x, y } = await separator();
+      // Toward the Preview, over its frame: the Code Pane grows by what the separator moved.
+      const [dx, dy] = horizontal ? [-150, 0] : [0, -120];
+      await tab.send('Input.dispatchMouseEvent', { type: 'mousePressed', x, y, button: 'left', clickCount: 1 });
+      await tab.evaluate(`new Promise((r) => requestAnimationFrame(r))`); // a hand pauses between press and move
+      for (let step = 1; step <= 5; step++) {
+        await tab.send('Input.dispatchMouseEvent', {
+          type: 'mouseMoved',
+          x: x + (dx * step) / 5,
+          y: y + (dy * step) / 5,
+          button: 'left',
+          buttons: 1,
+        });
+      }
+      await tab.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: x + dx, y: y + dy, button: 'left', clickCount: 1 });
+      const after = await codeSize();
+      expect(after - before).toBeGreaterThan(Math.abs(dx || dy) - 10);
+      expect(after - before).toBeLessThan(Math.abs(dx || dy) + 10);
+
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 300))`);
+      expect(await tab.evaluate(`localStorage.getItem('react-resizable-panels:${key}') !== null`)).toBe(true);
+      await tab.reload();
+      await tab.evaluate(`(async () => { ${lib} await waitFor(() => tabs().length > 0 && code()); })()`);
+      expect(Math.abs((await codeSize()) - after)).toBeLessThanOrEqual(2);
+    });
+
+    it('resizes from the keyboard too: arrow keys move a focused separator', async () => {
+      const before = await codeSize();
+      await tab.evaluate(`document.querySelector('[role="separator"]').focus()`);
+      // Toward the Preview, as above: left, or up.
+      for (let i = 0; i < 3; i++) await tab.press(horizontal ? 'ArrowLeft' : 'ArrowUp');
+      expect(await codeSize()).toBeGreaterThan(before);
+    });
+  });
+
+  it('turns side by side into stacked when the window narrows, keeping the files', async () => {
+    const tab = await openEditor(site.origin, 1280, 900);
+    try {
+      await tab.evaluate(`(async () => {
+        ${lib}
+        code().focus();
+        document.execCommand('selectAll');
+        document.execCommand('insertText', false, '<p>هنوز اینجاست</p>');
+      })()`);
+      await tab.send('Emulation.setDeviceMetricsOverride', { width: 800, height: 900, deviceScaleFactor: 1, mobile: false });
+      const after = await tab.evaluate<{ stacked: boolean; text: string }>(`(async () => {
+        ${lib}
+        await new Promise((r) => setTimeout(r, 300));
+        const box = (hook) => document.querySelector(hook).closest('section').getBoundingClientRect();
+        return { stacked: box('[data-code]').top >= box('[data-preview]').bottom, text: codeText() };
+      })()`);
+      expect(after).toEqual({ stacked: true, text: '<p>هنوز اینجاست</p>' });
+    } finally {
+      await tab.close();
+    }
   });
 
   describe('on a phone, typing with the on-screen keyboard', () => {

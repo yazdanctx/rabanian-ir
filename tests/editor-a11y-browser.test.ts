@@ -101,9 +101,8 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       // Tab indents inside the Code Pane; Escape first lets it leave.
       if (stop.name.startsWith('کد ')) await tab.press('Escape');
     }
+    // The Preview's column comes first: it is the top pane on a phone.
     expect(stops).toEqual([
-      { name: 'JS', ring: RING },
-      { name: 'کد JS', ring: 'the caret, no frame' },
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
       { name: 'اجرا', ring: RING },
@@ -113,6 +112,10 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       { name: 'پاک کردن', ring: RING },
       // The log scrolls, so Chrome lets the keyboard scroll it.
       { name: expect.stringMatching(/^0\s*1\s*2/), ring: RING },
+      // Arrow keys resize the panes from here.
+      { name: 'اندازهٔ پیش‌نمایش و کد', ring: RING },
+      { name: 'JS', ring: RING },
+      { name: 'کد JS', ring: 'the caret, no frame' },
     ]);
     // Twenty-odd sequential key presses: slow when the whole suite shares the machine.
   }, 60_000);
