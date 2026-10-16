@@ -1,0 +1,38 @@
+/*
+ * IRANYekanXFaNum: the only family on the Farsi site. Its 0–9 glyphs are
+ * Persian numerals, so content keeps ASCII digits (ADR-0002).
+ * The plain IRANYekanX in assets/fonts/en/ is for a future English page only;
+ * do not declare it here.
+ */
+
+@font-face {
+  font-family: 'IRANYekanXFaNum';
+  src: url('../assets/fonts/fa/IRANYekanXFaNum-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanXFaNum';
+  src: url('../assets/fonts/fa/IRANYekanXFaNum-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanXFaNum';
+  src: url('../assets/fonts/fa/IRANYekanXFaNum-DemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'IRANYekanXFaNum';
+  src: url('../assets/fonts/fa/IRANYekanXFaNum-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

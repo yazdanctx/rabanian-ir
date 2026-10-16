@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+@theme static {
+  --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
+
+  --color-ink: #050816;
+  --color-bg: #ffffff;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
