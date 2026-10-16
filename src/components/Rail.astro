@@ -17,6 +17,9 @@
  * - itemWidth: each card's width on mobile, any CSS length (default
  *              "auto": sized by content). Cards fill their cell at md:.
  * - class:     extra classes on the <ul>.
+ *
+ * The Rail is a motion group (`data-stagger`): mark each <li> `data-reveal`
+ * and the cards stagger in 60ms apart when it scrolls into view.
  */
 interface Props {
   label: string;
@@ -31,6 +34,7 @@ const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3' }[cols];
 
 <ul
   data-rail
+  data-stagger
   aria-label={label}
   tabindex="0"
   style={{ '--rail-item': itemWidth }}

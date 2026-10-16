@@ -10,7 +10,8 @@ describe('page structure', () => {
   const sections = [...doc.querySelectorAll('main > section')];
 
   it('puts the top bar first, then Hero, About and Brands in spec order', () => {
-    expect(doc.body.firstElementChild?.tagName).toBe('HEADER');
+    const content = [...doc.body.children].filter((el) => el.tagName !== 'SCRIPT');
+    expect(content[0]?.tagName).toBe('HEADER');
     expect(sections.slice(0, 3).map((s) => s.id || text(s.querySelector('p')))).toEqual([
       'top',
       'about',

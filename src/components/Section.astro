@@ -14,6 +14,12 @@ import Eyebrow from './Eyebrow.astro';
  * - title:   the section's h2.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - rule:    false drops the bottom rule (default true).
+ * - stagger: make the column a motion group (`data-stagger`): its
+ *            `data-reveal` children reveal 60ms apart as it scrolls into
+ *            view, or on page load with "load" (src/scripts/motion.ts).
+ *
+ * The header is always a `data-reveal`; mark other content blocks
+ * with `data-reveal` (and lists with `data-stagger`) where they are written.
  */
 interface Props {
   id?: string;
@@ -21,16 +27,20 @@ interface Props {
   title?: string;
   class?: string;
   rule?: boolean;
+  stagger?: boolean | 'load';
 }
 
-const { id, eyebrow, title, class: className, rule = true } = Astro.props;
+const { id, eyebrow, title, class: className, rule = true, stagger } = Astro.props;
 ---
 
 <section id={id} class:list={[rule && 'border-b border-line']}>
-  <div class:list={['mx-auto max-w-page px-5 py-10', className]}>
+  <div
+    class:list={['mx-auto max-w-page px-5 py-10', className]}
+    data-stagger={stagger === 'load' ? 'load' : stagger ? '' : undefined}
+  >
     {
       title && (
-        <header class="mb-4.5">
+        <header data-reveal class="mb-4.5">
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
           <h2 class="mt-1.5 text-xl/normal font-bold tracking-[-0.01em] md:text-2xl/normal">
             {title}

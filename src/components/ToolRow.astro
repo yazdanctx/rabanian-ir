@@ -21,7 +21,7 @@ const attrs = tool.locked ? { 'aria-disabled': 'true' as const } : { href: tool.
   {...attrs}
   class:list={[
     'flex items-center gap-3 rounded-btn border bg-surface px-3.5 py-3 shadow-card',
-    tool.locked ? 'border-line' : 'border-primary transition-colors hover:bg-primary-soft',
+    tool.locked ? 'border-line' : 'border-primary lift hover:bg-primary-soft',
   ]}
 >
   <span
