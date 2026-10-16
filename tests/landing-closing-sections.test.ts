@@ -127,7 +127,7 @@ describe('CTA', () => {
   it('carries the Support eyebrow in the on-dark blue, and the line', () => {
     const eyebrow = block?.querySelector('h2')?.previousElementSibling;
     expect(text(eyebrow)).toBe('پشتیبانی');
-    expect(eyebrow?.classList.contains('text-[#56A6FF]')).toBe(true);
+    expect(eyebrow?.classList.contains('text-primary-on-ink')).toBe(true);
     expect([...(block?.querySelectorAll('p') ?? [])].map(text)).toContain(
       'همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.',
     );

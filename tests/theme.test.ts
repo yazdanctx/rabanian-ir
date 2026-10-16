@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { PALETTE } from '../src/palette';
 import { utilityValue } from './helpers/tailwind';
 
 // Palette P, radii and card shadow, as specified in .scratch/landing-page/spec.md.
@@ -12,6 +15,8 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     ['surface', '#F5F7FA'],
     ['line', '#DCE3EE'],
     ['bg', '#FFFFFF'],
+    // Spec "on dark block": the eyebrow on the ink CTA.
+    ['primary-on-ink', '#56A6FF'],
   ])('color %s = %s', async (token, hex) => {
     expect((await utilityValue(`bg-${token}`, 'background-color'))?.toUpperCase()).toBe(hex);
     expect((await utilityValue(`text-${token}`, 'color'))?.toUpperCase()).toBe(hex);
@@ -47,5 +52,22 @@ describe('theme tokens resolve as Tailwind utilities', () => {
 
   it('font-sans is IRANYekanXFaNum', async () => {
     expect(await utilityValue('font-sans', 'font-family')).toMatch(/^['"]?IRANYekanXFaNum['"]?,/);
+  });
+});
+
+describe('palette.ts (for code that cannot read CSS, e.g. the OG image)', () => {
+  const css = readFileSync(join(process.cwd(), 'src/styles/global.css'), 'utf8');
+  const cssColors = Object.fromEntries(
+    [...css.matchAll(/--color-([\w-]+):\s*(#[0-9a-f]+);/gi)].map(([, name, hex]) => [
+      name,
+      hex.toUpperCase(),
+    ]),
+  );
+  const kebab = (key: string) => key.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+
+  it('holds exactly the colors of the global.css theme, same hexes', () => {
+    expect(
+      Object.fromEntries(Object.entries(PALETTE).map(([key, hex]) => [kebab(key), hex.toUpperCase()])),
+    ).toEqual(cssColors);
   });
 });
