@@ -1,0 +1,22 @@
+---
+import { getOrderedCollection } from '../content/ordered';
+import { COPY } from '../site';
+import Section from './Section.astro';
+import ToolRow from './ToolRow.astro';
+
+const tools = await getOrderedCollection('tools');
+const { eyebrow, title, note } = COPY.tools;
+---
+
+<Section id="tools" eyebrow={eyebrow} title={title}>
+  <p class="mb-4 text-sm/[1.9] text-muted">{note}</p>
+  <ul class="grid gap-2">
+    {
+      tools.map(({ data }) => (
+        <li>
+          <ToolRow tool={data} />
+        </li>
+      ))
+    }
+  </ul>
+</Section>

@@ -1,0 +1,46 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+/*
+ * One Tool in the Toolbox list: icon tile, title, note.
+ * - Free Tool: an <a> to its `href`, with a `primary` border.
+ * - Locked Tool: a presentational <div aria-disabled="true"> with a lock;
+ *   not focusable, not a link, no hover or focus affordance.
+ */
+interface Props {
+  tool: CollectionEntry<'tools'>['data'];
+}
+
+const { tool } = Astro.props;
+const Tag = tool.locked ? 'div' : 'a';
+const attrs = tool.locked ? { 'aria-disabled': 'true' as const } : { href: tool.href };
+---
+
+<Tag
+  {...attrs}
+  class:list={[
+    'flex items-center gap-3 rounded-btn border bg-surface px-3.5 py-3 shadow-card',
+    tool.locked ? 'border-line' : 'border-primary transition-colors hover:bg-primary-soft',
+  ]}
+>
+  <span
+    data-icon
+    class="grid size-9 flex-none place-items-center rounded-[10px] bg-primary-soft text-primary"
+  >
+    <Icon name={tool.icon} size={20} />
+  </span>
+  <span class="flex-1">
+    <b data-title class="block text-sm font-semibold">{tool.title}</b>{' '}
+    <span class:list={['text-xs', tool.locked ? 'text-muted' : 'font-medium text-primary-text']}>
+      {tool.note}
+    </span>
+  </span>
+  {
+    tool.locked && (
+      <span data-lock class="text-muted">
+        <Icon name="lock" size={15} />
+      </span>
+    )
+  }
+</Tag>
