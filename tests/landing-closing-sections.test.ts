@@ -104,6 +104,17 @@ describe('résumé (#resume)', () => {
     ]);
   });
 
+  it('separates employer and period with a dot icon, read out as «·»', () => {
+    for (const item of itemsAfter('تجربهٔ حرفه‌ای')) {
+      const meta = item.querySelector('[data-meta]');
+      // The font's «·» glyph sits above the line's middle; an SVG dot is drawn instead.
+      expect(meta?.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+      expect(text(meta?.querySelector('.sr-only'))).toBe('·');
+      const visible = [...(meta?.childNodes ?? [])].filter((n) => n.nodeType === 3).map((n) => n.textContent);
+      expect(visible.join('')).not.toContain('·');
+    }
+  });
+
   it('draws the Experiences as a timeline: a line with the employer’s logo per entry', () => {
     expect(listAfter('تجربهٔ حرفه‌ای')?.hasAttribute('data-timeline')).toBe(true);
     const logos = itemsAfter('تجربهٔ حرفه‌ای').map((item) => item.querySelector('[data-logo] img'));

@@ -50,3 +50,37 @@ describe.skipIf(!chromePath)('Masterclass banner sizes', () => {
     },
   );
 });
+
+/**
+ * In the page, per résumé entry: the vertical center of the dot between
+ * employer and period, and of the en dash's ink in the same line, in px.
+ */
+const resumeDotCenters = `document.fonts.ready.then(() =>
+  [...document.querySelectorAll('#resume [data-meta]')].map((meta) => {
+    const ctx = document.createElement('canvas').getContext('2d');
+    const style = getComputedStyle(meta);
+    ctx.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
+    const range = document.createRange();
+    range.selectNodeContents([...meta.childNodes].find((n) => n.nodeType === 3 && n.textContent.trim()));
+    const baseline = range.getBoundingClientRect().top + ctx.measureText('–').fontBoundingBoxAscent;
+    const dash = ctx.measureText('–');
+    const dot = meta.querySelector('svg').getBoundingClientRect();
+    return {
+      dot: dot.top + dot.height / 2,
+      dash: baseline - (dash.actualBoundingBoxAscent - dash.actualBoundingBoxDescent) / 2,
+    };
+  }),
+)`;
+
+describe.skipIf(!chromePath)('résumé employer · period separator', () => {
+  it('centers the dot on the line of the period’s dash', async () => {
+    const tab = await openPage(`${site.origin}/`, { reducedMotion: true });
+    try {
+      const rows = await tab.evaluate<{ dot: number; dash: number }[]>(resumeDotCenters);
+      expect(rows).toHaveLength(4);
+      for (const { dot, dash } of rows) expect(Math.abs(dot - dash)).toBeLessThanOrEqual(0.5);
+    } finally {
+      await tab.close();
+    }
+  });
+});
