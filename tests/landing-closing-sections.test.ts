@@ -104,13 +104,20 @@ describe('résumé (#resume)', () => {
     ]);
   });
 
-  it('draws the Experiences as a timeline: a line with a primary dot per entry', () => {
+  it('draws the Experiences as a timeline: a line with the employer’s logo per entry', () => {
     expect(listAfter('تجربهٔ حرفه‌ای')?.hasAttribute('data-timeline')).toBe(true);
-    for (const item of itemsAfter('تجربهٔ حرفه‌ای')) {
-      const dot = item.querySelector('[data-dot]');
-      expect(dot?.getAttribute('aria-hidden')).toBe('true');
-      expect(dot?.classList.contains('bg-primary')).toBe(true);
+    const logos = itemsAfter('تجربهٔ حرفه‌ای').map((item) => item.querySelector('[data-logo] img'));
+    for (const img of logos) {
+      // Decorative: the employer's name is right next to it.
+      expect(img?.getAttribute('alt')).toBe('');
+      expect(img?.getAttribute('width')).toBe('36');
+      expect(img?.getAttribute('height')).toBe('36');
+      expect(img?.getAttribute('loading')).toBe('lazy');
     }
+    // One distinct logo per employer, each a built asset.
+    const srcs = logos.map((img) => img?.getAttribute('src') ?? '');
+    expect(new Set(srcs).size).toBe(4);
+    for (const src of srcs) expect(src).toMatch(/^\/_astro\//);
   });
 
   it('lists the three degrees with their universities', () => {

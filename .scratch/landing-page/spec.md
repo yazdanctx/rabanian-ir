@@ -58,7 +58,7 @@ Reference mock: `.scratch/palettes/index.html`, column P.
    - Each Course has an optional `url`. «ثبت‌نام» and «جزئیات» use it; when absent they fall back to Support `https://t.me/codaminsupport`. All ship without `url`.
 6. **Toolbox** `#tools` — eyebrow «جعبه‌ابزار», `h2` «ابزارها», note «ویرایشگر HTML برای همه آزاد است؛ باقی ابزارها ویژهٔ دانش‌پذیران دورهٔ مسترکلاس فعال می‌شوند.» List: **Free Tool** «ویرایشگر HTML» — «فعال · ورود ←» → `/editor`, highlighted border. **Locked Tools** (presentational only: lock icon, «ویژه دانش‌پذیران مسترکلاس», not clickable, no auth, no "coming soon"): دیکشنری اصطلاحات · مگاپرامپت‌ها · کتاب‌های مرجع · ویدئوها · نمونه قراردادها · نمونه کد وبسایت‌ها · دانلود نرم‌افزارها.
 7. **Testimonials** — eyebrow «تجربه دانش‌پذیران», `h2` «نظرات», Rail of 4 quote cards with initial-letter avatar, name, role «دانش‌پذیر مسترکلاس» (زهرا قاضی‌زاهدی · سارا اسفندیاری · میثم بدرقه · فرناز کاشی — texts verbatim from the design, emoji included).
-8. **Résumé** `#resume` — eyebrow «مسیر من», `h2` «خلاصه‌ای از سوابق». `h3` «تجربهٔ حرفه‌ای»: 4 Experiences (ویسِند انگلستان 2025–اکنون · مستربلیط 2024–2025 · سی‌آر‌ام دیدار 2023–2024 · اسنپ 2023) as a vertical timeline. `h3` «تحصیلات»: 3 entries.
+8. **Résumé** `#resume` — eyebrow «مسیر من», `h2` «خلاصه‌ای از سوابق». `h3` «تجربهٔ حرفه‌ای»: 4 Experiences (ویسِند انگلستان 2025–اکنون · مستربلیط 2024–2025 · سی‌آر‌ام دیدار 2023–2024 · اسنپ 2023) as a vertical timeline, each entry marked by the employer's logo in a 36px tile (`src/assets/logos/<experience id>.*`: Snapp and Mr Bilit from [Persian Labs icons](https://icons.persian-labs.ir/), Didar from didar.me, Wesend supplied). `h3` «تحصیلات»: 3 entries.
 9. **CTA** — dark `--ink` block, 18px radius: eyebrow, `h2` «سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟», line «همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.», button «پیام در تلگرام» → Support. (Replaces the design's light CTA card.)
 10. **Footer** — logo, one-line bio, links «پشتیبانی و مشاوره» (t.me/codaminsupport) · «کانال تلگرام» (t.me/aminrabanian) · «لینکدین» (linkedin.com/in/amin-rabanian/), line «ساخته شده با ♥ توسط آکادمی ربانیان» with a small inline heart SVG.
 
@@ -66,7 +66,7 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 
 ## Images
 
-- Slots: profile photo (hero), Masterclass banner, OG image. Nothing else is raster. Brands are text; course cards use category labels.
+- Slots: profile photo (hero and logo), Masterclass banner, OG image, résumé employer logos. Nothing else is raster. Brands are text; course cards use category labels.
 - Source files live in `src/assets/` (never `public/`) and render through Astro `<Picture>`: AVIF + WebP + fallback, `srcset`/`sizes` per breakpoint, explicit `width`/`height`, `loading="lazy"` + `decoding="async"` below the fold, `fetchpriority="high"` on the profile photo. No LQIP/blur placeholders.
 - Until Amin supplies the photo and banner, neutral placeholders sit in the exact slots with the pipeline already wired; dropping the files in is the only step.
 - Budget: Lighthouse mobile Performance ≥ 95.

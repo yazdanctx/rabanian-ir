@@ -1,10 +1,23 @@
 ---
 import { getOrderedCollection } from '../content/ordered';
 import { COPY } from '../site';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Section from './Section.astro';
+
+// One logo per Experience, named by its id: src/assets/logos/<id>.<ext> (see the README there).
+const logoFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/logos/*.{png,jpg,webp,svg}', {
+  eager: true,
+});
+const logos = Object.fromEntries(
+  Object.entries(logoFiles).map(([path, mod]) => [path.replace(/^.*\/|\.\w+$/g, ''), mod.default]),
+);
 
 const experiences = await getOrderedCollection('experiences');
 const education = await getOrderedCollection('education');
+for (const { id } of experiences) {
+  if (!logos[id]) throw new Error(`No logo for Experience "${id}": add src/assets/logos/${id}.<png|svg>`);
+}
 const { eyebrow, title, experienceTitle, educationTitle } = COPY.resume;
 const subheadingClasses = 'mb-4 text-[17px] font-bold';
 ---
@@ -14,16 +27,28 @@ const subheadingClasses = 'mb-4 text-[17px] font-bold';
   <ol
     data-timeline
     data-stagger
-    class="relative mb-8 flex flex-col gap-6 before:absolute before:start-1 before:top-2 before:bottom-2 before:w-px before:bg-primary"
+    class="relative mb-8 flex flex-col gap-6 before:absolute before:start-4.5 before:top-2 before:bottom-2 before:w-px before:bg-line"
   >
     {
-      experiences.map(({ data }) => (
-        <li data-reveal class="relative ps-6">
+      experiences.map(({ id, data }) => (
+        <li data-reveal class="relative ps-13">
           <span
-            data-dot
-            aria-hidden="true"
-            class="absolute start-0 top-2 size-2.25 rounded-full bg-primary ring-4 ring-bg"
-          />
+            data-logo
+            class="absolute start-0 top-0 size-9 overflow-hidden rounded-[10px] border border-line bg-bg ring-4 ring-bg"
+          >
+            <Image
+              src={logos[id]}
+              alt=""
+              width={36}
+              height={36}
+              {...(logos[id].format === 'svg'
+                ? { format: 'svg' }
+                : { format: 'webp', densities: [1, 2, 3] })}
+              loading="lazy"
+              decoding="async"
+              class="size-full object-contain"
+            />
+          </span>
           <b class="block text-[15px] font-semibold">{data.role}</b>{' '}
           <span class="mt-0.5 mb-1.5 block text-xs text-muted">
             {data.employer} · {data.period}
