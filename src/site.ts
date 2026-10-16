@@ -124,5 +124,13 @@ export const COPY = {
       'ویرایشگر HTML رایگان آکادمی ربانیان؛ HTML، CSS و جاوااسکریپت بنویس و نتیجه را همان لحظه در پیش‌نمایش ببین.',
     /** Screen-reader name of the HTML · CSS · JS tab list. */
     filesLabel: 'فایل‌ها',
+    /** The action bar's three buttons. */
+    run: 'اجرا',
+    reset: 'بازنشانی',
+    download: 'دانلود',
+    /** Title of the Preview card. */
+    preview: 'پیش‌نمایش',
+    /** The console strip's toggle. */
+    console: 'کنسول',
   },
 } as const;

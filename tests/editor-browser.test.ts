@@ -120,4 +120,47 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       expect(path).toEqual(['CSS', 'JS', 'HTML', 'JS', 'JS', 'HTML']);
     });
   });
+
+  describe('action bar, Preview and console strip', () => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openEditor(site.origin);
+    });
+    afterAll(() => tab?.close());
+
+    it('has the three actions, «اجرا» «بازنشانی» «دانلود», as plain buttons', async () => {
+      const actions = await tab.evaluate<string[]>(`(() => [
+        ...document.querySelectorAll('[data-actions] button'),
+      ].map((b) => b.type + ':' + b.textContent.trim()))()`);
+      expect(actions).toEqual(['button:اجرا', 'button:بازنشانی', 'button:دانلود']);
+    });
+
+    it('has a Preview region named «پیش‌نمایش»', async () => {
+      const name = await tab.evaluate<string | null>(`(() => {
+        const region = document.querySelector('[data-preview]')?.closest('section');
+        const label = region?.getAttribute('aria-labelledby');
+        return label ? document.getElementById(label).textContent.trim() : null;
+      })()`);
+      expect(name).toBe('پیش‌نمایش');
+    });
+
+    it('starts the console strip collapsed under «کنسول», and toggles it', async () => {
+      const states = await tab.evaluate<string[]>(`(async () => {
+        const toggle = document.querySelector('[data-console] button[aria-expanded]');
+        const body = document.getElementById(toggle.getAttribute('aria-controls'));
+        const state = () =>
+          toggle.textContent.trim() + ':' + toggle.getAttribute('aria-expanded') + ':' +
+          (body.checkVisibility() ? 'shown' : 'hidden');
+        const states = [state()];
+        toggle.click();
+        await new Promise((r) => setTimeout(r, 50));
+        states.push(state());
+        toggle.click();
+        await new Promise((r) => setTimeout(r, 50));
+        states.push(state());
+        return states;
+      })()`);
+      expect(states).toEqual(['کنسول:false:hidden', 'کنسول:true:shown', 'کنسول:false:hidden']);
+    });
+  });
 });
