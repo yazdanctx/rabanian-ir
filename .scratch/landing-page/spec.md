@@ -50,7 +50,7 @@ Reference mock: `.scratch/palettes/index.html`, column P.
 
 ## Sections (order fixed, content from the design)
 
-1. **Top bar** — logo (star mark in a `--primary` 30px tile + `rabanian.ir`, the `.ir` muted) linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
+1. **Top bar** — logo (Amin's profile photo in a 30px circle — same source file as the Hero photo — + «آکادمی ربانیان») linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
 2. **Hero** `#top` — status badge (pulsing dot + «متخصص هوش مصنوعی · مدیریت محصول»); `h1` «امین ربانیان»; tagline «با من هوش مصنوعی رو اصولی یاد بگیر!» in `--primary-text`; lead paragraph; profile photo (round, 150–180px, two **static** concentric dashed rings, pill «هوش مصنوعی کاربردی ✦» as a static label); two buttons «دوره‌ها» (`#courses`, filled) and «ابزارها» (`#tools`, outlined); three stat tiles: 10 سال تجربه · 8 دوره تخصصی · +2000 دانش‌پذیر.
 3. **About** `#about` — eyebrow «من کی هستم؟», `h2` «یک مسیر؛ از مهندسی تا محصول», paragraph with the four highlighted Brand names.
 4. **Brands** — caption «برندهایی که افتخار همکاری با آن‌ها را داشته‌ام», Rail of text chips: اسنپ · مستربلیط · گروه صنعتی انتخاب · سی‌آر‌ام دیدار · ویسِند انگلیس. Text only, no logos.
