@@ -201,14 +201,6 @@ body {
   flex: none;
 }
 
-/* The house link home: a square icon button, set a little apart from the actions. */
-.editor-actions .editor-home {
-  justify-content: center;
-  width: 32px;
-  margin-inline-end: 4px;
-  padding: 0;
-}
-
 .editor-button {
   border-color: var(--color-line);
   background-color: var(--color-bg);

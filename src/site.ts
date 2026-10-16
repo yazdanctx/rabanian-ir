@@ -130,8 +130,6 @@ export const COPY = {
     code: 'کد',
     /** Screen-reader description of the Code Pane: Tab indents there, so how to leave it. */
     codeHint: 'در کد، Tab فاصله می‌گذارد؛ برای بیرون رفتن، اول Esc و بعد Tab را بزن.',
-    /** The house link back to the home page, beside the actions: its name and tooltip. */
-    home: 'صفحهٔ اصلی',
     /** The action bar's three buttons. */
     run: 'اجرا',
     reset: 'بازنشانی',

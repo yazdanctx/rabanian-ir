@@ -103,7 +103,6 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
     }
     // The Preview's column comes first: it is the top pane on a phone.
     expect(stops).toEqual([
-      { name: 'صفحهٔ اصلی', ring: RING },
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
       { name: 'اجرا', ring: RING },
