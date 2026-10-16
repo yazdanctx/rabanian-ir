@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { page } from './helpers/dist';
 
 const doc = page('index.html');
-const text = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim();
+/** An element's text with whitespace collapsed; '' when it is missing. */
+const text = (el: Element | null | undefined) =>
+  el?.textContent?.replace(/\s+/g, ' ').trim() ?? '';
 
 describe('page structure', () => {
   const sections = [...doc.querySelectorAll('main > section')];
