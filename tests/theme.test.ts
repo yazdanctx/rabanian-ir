@@ -41,6 +41,10 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     expect(await utilityValue('text-blue-600', 'color')).toBeUndefined();
   });
 
+  it('the page column (max-w-page) is 680px wide', async () => {
+    expect(await utilityValue('max-w-page', 'max-width')).toBe('680px');
+  });
+
   it('font-sans is IRANYekanXFaNum', async () => {
     expect(await utilityValue('font-sans', 'font-family')).toMatch(/^['"]?IRANYekanXFaNum['"]?,/);
   });

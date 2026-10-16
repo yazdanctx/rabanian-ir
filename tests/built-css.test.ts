@@ -50,6 +50,11 @@ describe('built stylesheet', () => {
     );
   });
 
+  it('hides the Rail scrollbar in every engine', () => {
+    expect(css).toMatch(/\.rail[^{]*{[^}]*scrollbar-width:\s*none/);
+    expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
+  });
+
   it('has no gradients and no dark-mode styles', () => {
     expect(css).not.toMatch(/gradient\(/);
     expect(css).not.toMatch(/prefers-color-scheme/);

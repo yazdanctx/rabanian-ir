@@ -4,6 +4,27 @@ import { page } from './helpers/dist';
 const doc = page('index.html');
 const text = (el: Element | null | undefined) => el?.textContent?.replace(/\s+/g, ' ').trim();
 
+describe('page structure', () => {
+  const sections = [...doc.querySelectorAll('main > section')];
+
+  it('puts the top bar first, then Hero, About and Brands in spec order', () => {
+    expect(doc.body.firstElementChild?.tagName).toBe('HEADER');
+    expect(sections.slice(0, 3).map((s) => s.id || text(s.querySelector('p')))).toEqual([
+      'top',
+      'about',
+      'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام',
+    ]);
+  });
+
+  it('separates sections with a 1px line rule and centers them in the page column', () => {
+    for (const section of sections) {
+      expect(section.classList.contains('border-b')).toBe(true);
+      expect(section.classList.contains('border-line')).toBe(true);
+      expect(section.firstElementChild?.classList.contains('max-w-page')).toBe(true);
+    }
+  });
+});
+
 describe('top bar', () => {
   const header = doc.querySelector('body > header');
 
@@ -84,5 +105,37 @@ describe('about (#about)', () => {
       expect(brand.classList.contains('font-semibold')).toBe(true);
       expect(brand.classList.contains('text-ink')).toBe(true);
     }
+  });
+});
+
+describe('brands', () => {
+  const caption = 'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام';
+  const brands = [...doc.querySelectorAll('main > section')].find((s) =>
+    text(s).startsWith(caption),
+  );
+  const rail = brands?.querySelector('ul[data-rail]');
+
+  it('captions a Rail of the five Brands, by name only, in order', () => {
+    expect(brands).toBeDefined();
+    const chips = [...(rail?.querySelectorAll(':scope > li') ?? [])];
+    expect(chips.map(text)).toEqual([
+      'اسنپ',
+      'مستربلیط',
+      'گروه صنعتی انتخاب',
+      'سی‌آر‌ام دیدار',
+      'ویسِند انگلیس',
+    ]);
+    expect(rail?.querySelector('img, svg, picture')).toBeNull();
+  });
+
+  it('makes the Rail a named, keyboard-scrollable list', () => {
+    expect(rail?.getAttribute('aria-label')).toBe(caption);
+    expect(rail?.getAttribute('tabindex')).toBe('0');
+  });
+
+  it('snaps the Rail horizontally on mobile and turns it into a grid at md', () => {
+    const classes = [...(rail?.classList ?? [])];
+    expect(classes).toEqual(expect.arrayContaining(['snap-x', 'snap-mandatory', 'md:grid']));
+    expect(classes.some((c) => /^md:grid-cols-[23]$/.test(c))).toBe(true);
   });
 });
