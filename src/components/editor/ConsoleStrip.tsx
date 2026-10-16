@@ -31,7 +31,8 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
   const [closing, setClosing] = useState(false);
   const [entries, setEntries] = useState<ConsoleEntry[]>([]);
   const body = useRef<HTMLDivElement>(null);
-  const spinning = useRef<ReturnType<typeof animate> | null>(null);
+  // The body's open/close height spring, while it runs.
+  const heightSpring = useRef<ReturnType<typeof animate> | null>(null);
   const toggled = useRef(false);
 
   // Cleared during render, so in the same commit that mounts the new frame:
@@ -64,19 +65,19 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
     const el = body.current;
     if (!el || !toggled.current) return;
     // From wherever an interrupted spring left it.
-    const from = spinning.current || !open ? el.getBoundingClientRect().height : 0;
-    spinning.current?.stop();
-    spinning.current = null;
+    const from = heightSpring.current || !open ? el.getBoundingClientRect().height : 0;
+    heightSpring.current?.stop();
+    heightSpring.current = null;
     if (reducedMotion()) {
       el.style.height = '';
       return;
     }
     const to = open ? el.scrollHeight : 0;
     const run = animate(el, { height: [`${from}px`, `${to}px`] }, EXPAND);
-    spinning.current = run;
+    heightSpring.current = run;
     run.finished.then(() => {
-      if (spinning.current !== run) return;
-      spinning.current = null;
+      if (heightSpring.current !== run) return;
+      heightSpring.current = null;
       // Open: back to its natural height, to grow with new entries. Closed:
       // hidden, keeping height 0 for the next opening.
       if (open) el.style.height = '';

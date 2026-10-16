@@ -7,7 +7,7 @@ import type { Files } from './files';
  * "~300ms"). 250, so that with the frame's own load the page shows within
  * the 300ms the spec's acceptance asks for.
  */
-export const REBUILD_DELAY_MS = 250;
+const REBUILD_DELAY_MS = 250;
 
 export interface PreviewBuild {
   /** Counts rebuilds. A new id is a new Preview document, and a fresh console. */
