@@ -477,3 +477,73 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     });
   });
 });
+
+/** Clicks a tab and reports the fades running in the pane right after. */
+const switchTo = (tab: BrowserPage, label: string) =>
+  tab.evaluate<{
+    fades: { on: string; opacity: string; duration: number }[];
+    outgoing: { text: string; hidden: boolean; inert: boolean } | null;
+  }>(`(async () => {
+    ${lib}
+    tabs().find((t) => t.textContent.trim() === ${JSON.stringify(label)}).click();
+    await waitFor(() => content().getAttribute('aria-label') === ${JSON.stringify(`کد ${label}`)});
+    const live = panel().querySelector('.cm-editor');
+    const outgoing = panel().querySelector('.cm-editor[aria-hidden="true"]');
+    const fades = panel()
+      .getAnimations({ subtree: true })
+      .filter((a) => !(a instanceof CSSAnimation)) // not the caret's blink
+      .map((a) => ({
+        on: a.effect.target === live ? 'incoming' : a.effect.target === outgoing ? 'outgoing' : 'other',
+        opacity: a.effect.getKeyframes().map((k) => k.opacity).join(' → '),
+        duration: a.effect.getTiming().duration,
+      }))
+      .sort((a, b) => a.on.localeCompare(b.on));
+    return {
+      fades,
+      outgoing: outgoing && {
+        text: [...outgoing.querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n'),
+        hidden: outgoing.getAttribute('aria-hidden') === 'true',
+        inert: outgoing.inert,
+      },
+    };
+  })()`);
+
+describe.skipIf(!chromePath)('Code Pane tab switch', () => {
+  it('crossfades from one file to the next over 150ms', async () => {
+    const tab = await openEditor(site.origin, { reducedMotion: false });
+    try {
+      await clear(tab);
+      await tab.type('<p>html</p>');
+      const { fades, outgoing } = await switchTo(tab, 'CSS');
+      expect(fades).toEqual([
+        { on: 'incoming', opacity: '0 → 1', duration: 150 },
+        { on: 'outgoing', opacity: '1 → 0', duration: 150 },
+      ]);
+      // The outgoing file is a picture only: hidden from assistive tech, not focusable.
+      expect(outgoing).toEqual({ text: '<p>html</p>', hidden: true, inert: true });
+      const after = await tab.evaluate<{ editors: number; opacity: string }>(`(async () => {
+        ${lib}
+        // Gone once faded (generous budget: a busy machine may drop frames).
+        await waitFor(() => panel().querySelectorAll('.cm-editor').length === 1, 2000);
+        return {
+          editors: panel().querySelectorAll('.cm-editor').length,
+          opacity: getComputedStyle(panel().querySelector('.cm-editor')).opacity,
+        };
+      })()`);
+      expect(after).toEqual({ editors: 1, opacity: '1' });
+    } finally {
+      await tab.close();
+    }
+  });
+
+  it('switches at once under reduced motion', async () => {
+    const tab = await openEditor(site.origin, { reducedMotion: true });
+    try {
+      await clear(tab);
+      await tab.type('<p>html</p>');
+      expect(await switchTo(tab, 'CSS')).toEqual({ fades: [], outgoing: null });
+    } finally {
+      await tab.close();
+    }
+  });
+});

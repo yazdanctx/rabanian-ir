@@ -79,6 +79,29 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
   });
 }
 
+const FADE: KeyframeAnimationOptions = { duration: 150, easing: 'ease-out' };
+
+/**
+ * Runs `swap` (which changes what the editor shows) as a 150ms crossfade:
+ * a still copy of the outgoing file fades out over the incoming one fading
+ * in. At once under reduced motion.
+ */
+function crossfade(editor: EditorView, swap: () => void) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return swap();
+  const outgoing = editor.dom.cloneNode(true) as HTMLElement;
+  outgoing.classList.remove('cm-focused');
+  outgoing.classList.add('editor-code-outgoing');
+  outgoing.inert = true;
+  outgoing.setAttribute('aria-hidden', 'true');
+  const { scrollTop } = editor.scrollDOM;
+  swap();
+  editor.dom.parentElement?.querySelectorAll('.editor-code-outgoing').forEach((old) => old.remove());
+  editor.dom.after(outgoing);
+  outgoing.querySelector('.cm-scroller')!.scrollTop = scrollTop;
+  outgoing.animate({ opacity: [1, 0] }, FADE).onfinish = () => outgoing.remove();
+  editor.dom.animate({ opacity: [0, 1] }, FADE);
+}
+
 /**
  * The Code Pane (CodeMirror 6, see ADR-0001): one editor view showing one of
  * the three files at a time, swapping per-file states on a tab switch.
@@ -112,7 +135,7 @@ export default function CodePane({ file, initialFiles, onChange }: Props) {
     if (!editor || shown.current === file) return;
     states.current[shown.current] = editor.state;
     shown.current = file;
-    editor.setState(states.current[file]!);
+    crossfade(editor, () => editor.setState(states.current[file]!));
   }, [file]);
 
   return <div ref={host} dir="ltr" className="editor-code" />;

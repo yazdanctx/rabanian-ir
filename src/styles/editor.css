@@ -200,10 +200,18 @@
  * card: the editor scrolls inside whatever height the layout gives it.
  */
 .editor-code {
+  position: relative;
   flex: 1;
   min-width: 0;
   height: max(280px, 50dvh);
   contain: size;
+}
+
+/* The still copy of the outgoing file, fading out over the incoming one on a tab switch. */
+.editor-code .editor-code-outgoing {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 /*
