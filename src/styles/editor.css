@@ -69,7 +69,8 @@
   }
 }
 
-.editor-output {
+/* The Preview's column: its card, then the console strip. */
+.editor-preview-column {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -294,7 +295,7 @@
   font-style: italic;
 }
 
-/* The Preview frame: the learner's page on white, filling the card. */
+/* The Preview frame: the visitor's page on white, filling the card. */
 .editor-preview {
   display: block;
   flex: 1;

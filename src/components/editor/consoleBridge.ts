@@ -1,6 +1,6 @@
 /*
  * The console bridge (spec: Preview): a script that runs inside the Preview
- * before the learner's JS and posts its console output and uncaught errors to
+ * before the visitor's JS and posts its console output and uncaught errors to
  * the editor, where the console strip lists them.
  */
 

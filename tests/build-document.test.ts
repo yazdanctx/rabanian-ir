@@ -41,7 +41,7 @@ describe('buildDocument', () => {
     expect(embedded[1].bytes.equals(font('Bold'))).toBe(true);
   });
 
-  it("sets the body in IRANYekanXFaNum with a 16px margin, before the learner's CSS", () => {
+  it("sets the body in IRANYekanXFaNum with a 16px margin, before the visitor's CSS", () => {
     const styles = [...dom(buildDocument(files)).querySelectorAll('head style')].map((s) => s.textContent);
     expect(styles).toHaveLength(2);
     expect(styles[0]).toMatch(/body\s*{\s*font-family:\s*IRANYekanXFaNum,\s*system-ui;\s*margin:\s*16px;?\s*}/);

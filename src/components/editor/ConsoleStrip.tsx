@@ -9,7 +9,7 @@ const LOG_ID = 'editor-console-log';
 /** Expand/collapse: a 200ms height spring, no bounce (spec: Motion). */
 const EXPAND = { type: spring, duration: 0.2, bounce: 0 } as const;
 
-/** Entries kept: the newest. Bounds a learner's runaway `setInterval` log. */
+/** Entries kept: the newest. Bounds a visitor's runaway `setInterval` log. */
 const MAX_ENTRIES = 500;
 
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

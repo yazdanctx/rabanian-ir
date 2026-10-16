@@ -79,7 +79,7 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       indentUnit.of('  '),
       EditorState.tabSize.of(2),
       EditorView.lineWrapping,
-      // Tab indents; Escape then Tab leaves the editor (CodeMirror's escape
+      // Tab indents; Escape then Tab leaves the Code Pane (CodeMirror's escape
       // hatch), as the pane's description tells screen-reader users.
       keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
       LANGUAGE[file](),
@@ -94,7 +94,7 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
 const FADE: KeyframeAnimationOptions = { duration: 150, easing: 'ease-out' };
 
 /**
- * Runs `swap` (which changes what the editor shows) as a 150ms crossfade:
+ * Runs `swap` (which changes what the Code Pane shows) as a 150ms crossfade:
  * a still copy of the outgoing file fades out over the incoming one fading
  * in. At once under reduced motion.
  */

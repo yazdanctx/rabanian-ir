@@ -59,7 +59,7 @@ export default function EditorApp() {
           />
         </div>
       </section>
-      <div className="editor-output">
+      <div className="editor-preview-column">
         <section aria-labelledby={PREVIEW_TITLE_ID} className="editor-card">
           <div className="editor-card-head">
             <h2 id={PREVIEW_TITLE_ID} className="editor-card-title">

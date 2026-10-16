@@ -5,7 +5,7 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 
 /*
  * The Code Pane on /editor (spec: .scratch/html-editor/spec.md → Code Pane),
- * driven like a learner would: clicks, the keyboard (over the DevTools
+ * driven like a visitor would: clicks, the keyboard (over the DevTools
  * protocol) and what ends up on screen. Skipped where no Chrome is installed.
  */
 

@@ -4,7 +4,7 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 /*
  * The HTML Editor's Preview and console strip (/editor) in a real (headless)
  * Chrome. The sandboxed Preview is out of process, so its facts are read
- * through the parent: its `srcdoc`, and what the learner's JS logs to the
+ * through the parent: its `srcdoc`, and what the visitor's JS logs to the
  * console strip. Skipped where no Chrome is installed (set CHROME_PATH).
  */
 
@@ -85,7 +85,7 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
     expect(shown).toBe(true);
   });
 
-  /** The learner's JS: logs the heading's direction, font stack and font load status. */
+  /** The visitor's JS: logs the heading's direction, font stack and font load status. */
   const reportHeading = `
     const h1 = document.querySelector('h1');
     document.fonts.load('700 32px IRANYekanXFaNum', h1.textContent).then((faces) => {
@@ -93,7 +93,7 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
       console.log(style.direction, style.fontFamily, faces.map((face) => face.status).join());
     });`;
 
-  it('renders <h1>سلام</h1> right to left in Yekan, without the learner writing dir', async () => {
+  it('renders <h1>سلام</h1> right to left in Yekan, without the visitor writing dir', async () => {
     const report = await tab.evaluate<string[]>(`(async () => {
       ${lib}
       await setFiles({ html: '<h1>سلام</h1>', js: ${JSON.stringify(reportHeading)} });
