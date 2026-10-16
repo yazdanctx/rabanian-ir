@@ -1,0 +1,30 @@
+---
+import { COPY, SITE } from '../site';
+import Icon from './Icon.astro';
+
+/*
+ * Hero photo: a 150px circle inside two static dashed rings, with the static
+ * pill label. The circle is a neutral placeholder until ticket 06 puts the
+ * real <Picture> (alt = SITE.name, fetchpriority="high") in its place.
+ */
+---
+
+<div data-profile-photo class="relative mx-auto my-13 size-37.5">
+  <span aria-hidden="true" class="absolute -inset-4 rounded-full border border-dashed border-line"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="absolute -inset-8.5 rounded-full border border-dashed border-line opacity-60"></span>
+  <div
+    role="img"
+    aria-label={SITE.name}
+    class="relative grid size-full place-items-center overflow-hidden rounded-full border border-line bg-surface text-muted"
+  >
+    <Icon name="person" size={42} />
+  </div>
+  <span
+    class="absolute -start-12 bottom-0 rounded-full border border-line bg-bg px-3 py-1.5 text-xs font-semibold whitespace-nowrap shadow-card"
+  >
+    {COPY.hero.photoPill}
+  </span>
+</div>
