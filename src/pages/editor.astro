@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import TopBar from '../components/TopBar.astro';
+import EditorApp from '../components/editor/EditorApp';
+import { COPY, SITE } from '../site';
+import '../styles/editor.css';
+---
+
+<Base title={`${COPY.editor.name} — ${SITE.domain}`} description={COPY.editor.description}>
+  <TopBar class="editor-wide" />
+  <main class="editor-page">
+    <h1 class="editor-title">{COPY.editor.name}</h1>
+    <EditorApp client:only="react" />
+  </main>
+</Base>

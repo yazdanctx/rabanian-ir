@@ -1,0 +1,265 @@
+/*
+ * The HTML Editor's stylesheet, imported by src/pages/editor.astro only, so
+ * nothing here (JetBrains Mono included) reaches the landing page.
+ *
+ * JetBrains Mono: the Latin subset (Fontsource 5.3.0, SIL OFL 1.1, see
+ * assets/fonts/mono/OFL.txt). Farsi inside code falls through to
+ * IRANYekanXFaNum in the code font stack.
+ */
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/mono/JetBrainsMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/mono/JetBrainsMono-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
+    U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/*
+ * Layout and chrome. Plain CSS on palette P's variables (global.css keeps
+ * every token on :root): the editor's files are left out of Tailwind's
+ * class scan (`@source not` in global.css) so its utilities can't grow the
+ * landing page's stylesheet.
+ */
+:root {
+  --editor-width: 1280px;
+  --code-font: 'JetBrains Mono', 'IRANYekanXFaNum', ui-monospace, monospace;
+}
+
+/* The top bar spans the editor's width here, not the 680px landing column. */
+.editor-wide {
+  max-width: var(--editor-width);
+}
+
+.editor-page {
+  max-width: var(--editor-width);
+  margin-inline: auto;
+  padding: 20px 20px 32px;
+}
+
+.editor-title {
+  margin-bottom: 14px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* One column, stacked; two from 1024px, Code Pane first, so on the right (RTL). */
+.editor {
+  display: grid;
+  gap: 12px;
+}
+
+@media (width >= 1024px) {
+  .editor {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.editor-output {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.editor-card,
+.editor-console {
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background-color: var(--color-surface);
+}
+
+.editor-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* The two card heads (tab bar; Preview title + actions) line up side by side. */
+.editor-tabs,
+.editor-card-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 46px;
+  padding: 6px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.editor-card-head {
+  justify-content: space-between;
+  gap: 8px;
+  padding-inline-start: 14px;
+}
+
+.editor-card-title,
+.editor-console-toggle {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.editor-card-title {
+  color: var(--color-muted);
+}
+
+.editor-tab,
+.editor-button {
+  height: 32px;
+  padding-inline: 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-btn);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: color, background-color, border-color;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+.editor-tab {
+  color: var(--color-muted);
+}
+
+.editor-tab[aria-selected='true'] {
+  border-color: var(--color-line);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-card);
+}
+
+.editor-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.editor-button {
+  border-color: var(--color-line);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.editor-button-primary {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+@media (hover: hover) {
+  .editor-tab:hover {
+    color: var(--color-ink);
+  }
+
+  .editor-button:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary-text);
+  }
+
+  .editor-button-primary:hover {
+    border-color: var(--color-primary-text);
+    background-color: var(--color-primary-text);
+    color: var(--color-white);
+  }
+}
+
+.editor-tab:focus-visible,
+.editor-button:focus-visible,
+.editor-console-toggle:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.editor-console-toggle:focus-visible {
+  outline-offset: -2px;
+}
+
+/* Code Pane: LTR code on white, filling the card. */
+.editor-panel {
+  display: flex;
+  flex: 1;
+  background-color: var(--color-bg);
+}
+
+.editor-code {
+  flex: 1;
+  width: 100%;
+  height: max(280px, 50dvh);
+  padding: 12px 14px;
+  resize: none;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--code-font);
+  font-size: 14px;
+  line-height: 1.7;
+  tab-size: 2;
+}
+
+.editor-code:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+}
+
+.editor-preview {
+  flex: 1;
+  min-height: 320px;
+  background-color: var(--color-bg);
+}
+
+/* Side by side, both columns reach the bottom of the viewport together. */
+@media (width >= 1024px) {
+  .editor-code {
+    height: auto;
+  }
+
+  .editor-preview {
+    min-height: max(420px, 100dvh - 290px);
+  }
+}
+
+.editor-console-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 44px;
+  padding-inline: 14px;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.editor-chevron {
+  color: var(--color-muted);
+}
+
+.editor-console-toggle[aria-expanded='true'] .editor-chevron {
+  transform: rotate(180deg);
+}
+
+.editor-console-log {
+  min-height: 96px;
+  max-height: 200px;
+  overflow: auto;
+  border-top: 1px solid var(--color-line);
+  background-color: var(--color-bg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-tab,
+  .editor-button {
+    transition: none;
+  }
+}
