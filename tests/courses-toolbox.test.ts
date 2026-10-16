@@ -100,3 +100,47 @@ describe('courses (#courses)', () => {
     });
   });
 });
+
+describe('toolbox (#tools)', () => {
+  const tools = doc.querySelector('main > section#tools');
+  const rows = [...(tools?.querySelectorAll('ul > li > *') ?? [])];
+
+  it('follows Courses, with its eyebrow, h2 and note', () => {
+    expect(tools?.previousElementSibling?.id).toBe('courses');
+    expect(text(tools?.querySelector('header p'))).toBe('جعبه‌ابزار');
+    expect(text(tools?.querySelector('h2'))).toBe('ابزارها');
+    expect(text(tools?.querySelector('header + p'))).toBe(
+      'ویرایشگر HTML برای همه آزاد است؛ باقی ابزارها ویژهٔ دانش‌پذیران دورهٔ مسترکلاس فعال می‌شوند.',
+    );
+  });
+
+  it('lists the 8 Tools in order', () => {
+    expect(rows.map((row) => text(row.querySelector('[data-title]')))).toEqual([
+      'ویرایشگر HTML',
+      'دیکشنری اصطلاحات',
+      'مگاپرامپت‌ها',
+      'کتاب‌های مرجع',
+      'ویدئوها',
+      'نمونه قراردادها',
+      'نمونه کد وبسایت‌ها',
+      'دانلود نرم‌افزارها',
+    ]);
+  });
+
+  it('gives every Tool an icon tile: a primary glyph on primary-soft', () => {
+    for (const row of rows) {
+      const tile = row.querySelector('[data-icon]');
+      expect(tile?.classList.contains('bg-primary-soft')).toBe(true);
+      expect(tile?.classList.contains('text-primary')).toBe(true);
+      expect(tile?.querySelector('svg path')).not.toBeNull();
+    }
+  });
+
+  it('opens the HTML Editor, the Free Tool, as a link to /editor with a primary border', () => {
+    const editor = rows[0];
+    expect(editor?.tagName).toBe('A');
+    expect(editor?.getAttribute('href')).toBe('/editor');
+    expect(editor?.classList.contains('border-primary')).toBe(true);
+    expect(text(editor)).toBe('ویرایشگر HTML فعال · ورود ←');
+  });
+});

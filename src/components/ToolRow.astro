@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+
+/*
+ * One Tool in the Toolbox list: icon tile, title, note. A Free Tool is a
+ * link with a `primary` border.
+ */
+interface Props {
+  tool: CollectionEntry<'tools'>['data'];
+}
+
+const { tool } = Astro.props;
+const row = 'flex items-center gap-3 rounded-btn border bg-surface px-3.5 py-3 shadow-card';
+---
+
+{
+  tool.locked ? (
+    <div class:list={[row, 'border-line']}>
+      <span data-icon class="grid size-9 flex-none place-items-center rounded-[10px] bg-primary-soft text-primary">
+        <Icon name={tool.icon} size={20} />
+      </span>
+      <span class="flex-1">
+        <b data-title class="block text-sm font-semibold">{tool.title}</b>{' '}
+        <span class="text-xs text-muted">{tool.note}</span>
+      </span>
+    </div>
+  ) : (
+    <a href={tool.href} class:list={[row, 'border-primary transition-colors hover:bg-primary-soft']}>
+      <span data-icon class="grid size-9 flex-none place-items-center rounded-[10px] bg-primary-soft text-primary">
+        <Icon name={tool.icon} size={20} />
+      </span>
+      <span class="flex-1">
+        <b data-title class="block text-sm font-semibold">{tool.title}</b>{' '}
+        <span class="text-xs font-medium text-primary-text">{tool.note}</span>
+      </span>
+    </a>
+  )
+}
