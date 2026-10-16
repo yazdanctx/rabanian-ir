@@ -9,7 +9,7 @@ import {
   lineNumbers,
 } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
-import { bracketMatching, indentUnit, syntaxHighlighting } from '@codemirror/language';
+import { bidiIsolates, bracketMatching, indentUnit, syntaxHighlighting } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
@@ -50,8 +50,12 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
   return EditorState.create({
     doc,
     extensions: [
-      // The page is RTL; code is LTR everywhere.
+      // The page is RTL; code is LTR everywhere. Farsi runs inside it are
+      // bidi-isolated per syntax node (tags, attribute values, strings,
+      // comments), so `<p title="سلام">دنیا</p>` doesn't jumble. No
+      // perLineTextDirection: every line is LTR, so it would change nothing.
       EditorView.editorAttributes.of({ dir: 'ltr' }),
+      bidiIsolates(),
       EditorView.contentAttributes.of({ 'aria-label': `${COPY.editor.code} ${label}` }),
       lineNumbers(),
       highlightActiveLine(),

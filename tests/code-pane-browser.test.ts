@@ -97,6 +97,25 @@ async function pixel(tab: BrowserPage, x: number, y: number): Promise<number[]> 
 
 const distance = (a: number[], b: number[]) => Math.hypot(...a.map((v, i) => v - b[i]));
 
+/** The first line's characters as they sit on screen, left to right. */
+const onScreen = (tab: BrowserPage) =>
+  tab.evaluate<string>(`(async () => {
+    ${lib}
+    await frames();
+    const line = content().querySelector('.cm-line');
+    const range = document.createRange();
+    const chars = [];
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    for (let node; (node = walker.nextNode()); ) {
+      for (let i = 0; i < node.length; i++) {
+        range.setStart(node, i);
+        range.setEnd(node, i + 1);
+        chars.push([node.data[i], range.getBoundingClientRect().left]);
+      }
+    }
+    return chars.sort((a, b) => a[1] - b[1]).map(([c]) => c).join('');
+  })()`);
+
 const paneText = (tab: BrowserPage) => tab.evaluate<string>(`(() => { ${lib} return text(); })()`);
 
 let site: Awaited<ReturnType<typeof serveDist>>;
@@ -353,5 +372,15 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       };
     })()`);
     expect(look).toEqual({ caret: 'rgb(5, 8, 22)', ring: 'solid 2px rgb(23, 105, 255)' });
+  });
+
+  describe('Farsi inside code', () => {
+    it('keeps attribute values and text apart: <p title="سلام">دنیا</p> is not jumbled', async () => {
+      await pick(tab, 'HTML');
+      await clear(tab);
+      await tab.type('<p title="سلام">دنیا</p>');
+      // Each Farsi run reads right to left, so on screen its letters are reversed.
+      expect(await onScreen(tab)).toBe('<p title="مالس">ایند</p>');
+    });
   });
 });
