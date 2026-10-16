@@ -116,6 +116,33 @@ const onScreen = (tab: BrowserPage) =>
     return chars.sort((a, b) => a[1] - b[1]).map(([c]) => c).join('');
   })()`);
 
+/** The caret as a logical offset into the first line, and where it is drawn. */
+const caret = (tab: BrowserPage) =>
+  tab.evaluate<{ offset: number; x: number }>(`(async () => {
+    ${lib}
+    await frames();
+    const selection = getSelection();
+    const range = document.createRange();
+    range.setStart(content().querySelector('.cm-line'), 0);
+    range.setEnd(selection.focusNode, selection.focusOffset);
+    const drawn = panel().querySelector('.cm-cursor-primary').getBoundingClientRect();
+    return { offset: range.toString().length, x: drawn.left };
+  })()`);
+
+/**
+ * The fonts that actually drew a node's own text (not its children's), by
+ * family, as Chrome reports them.
+ */
+async function drawnIn(tab: BrowserPage, selector: string): Promise<string[]> {
+  await tab.evaluate(`(async () => { ${lib} await document.fonts.ready; await frames(); })()`);
+  await tab.send('DOM.enable');
+  await tab.send('CSS.enable');
+  const { root } = await tab.send('DOM.getDocument', { depth: -1 });
+  const { nodeId } = await tab.send('DOM.querySelector', { nodeId: root.nodeId, selector });
+  const { fonts } = await tab.send('CSS.getPlatformFontsForNode', { nodeId });
+  return fonts.map((font: { familyName: string }) => font.familyName).sort();
+}
+
 const paneText = (tab: BrowserPage) => tab.evaluate<string>(`(() => { ${lib} return text(); })()`);
 
 let site: Awaited<ReturnType<typeof serveDist>>;
@@ -381,6 +408,72 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       await tab.type('<p title="سلام">دنیا</p>');
       // Each Farsi run reads right to left, so on screen its letters are reversed.
       expect(await onScreen(tab)).toBe('<p title="مالس">ایند</p>');
+    });
+
+    const LINE = '<h1>سلام دنیا</h1>';
+
+    /** Puts the caret at the start of LINE, freshly typed. */
+    async function start() {
+      await pick(tab, 'HTML');
+      await clear(tab);
+      await tab.type(LINE);
+      await tab.press('Home');
+    }
+
+    it('reaches every position with the arrow keys, the caret always moving the way pressed', async () => {
+      await start();
+      const walk = [await caret(tab)];
+      for (let i = 0; i < LINE.length; i++) {
+        await tab.press('ArrowRight');
+        walk.push(await caret(tab));
+      }
+      // Arrows move visually (as in a textarea): through the Farsi run
+      // logical offsets count down, but every one of them is visited once…
+      const offsets = walk.map((c) => c.offset);
+      expect([...offsets].sort((a, b) => a - b)).toEqual([...Array(LINE.length + 1).keys()]);
+      // …and the caret only ever moves right on screen.
+      for (let i = 1; i < walk.length; i++) expect(walk[i].x).toBeGreaterThanOrEqual(walk[i - 1].x);
+      expect(walk.at(-1)!.x).toBeGreaterThan(walk[0].x);
+    });
+
+    it('highlights a selection inside the Farsi run as one contiguous block', async () => {
+      await start();
+      for (let i = 0; i < 4; i++) await tab.press('ArrowRight'); // just past <h1>
+      for (let i = 0; i < 4; i++) await tab.press('ArrowRight', 8); // Shift
+      const selection = await tab.evaluate<{ text: string; blocks: number }>(`(async () => {
+        ${lib}
+        await frames();
+        return {
+          text: getSelection().toString(),
+          blocks: panel().querySelectorAll('.cm-selectionBackground').length,
+        };
+      })()`);
+      expect(selection).toEqual({ text: 'سلام ', blocks: 1 });
+    });
+
+    it('deletes the logically previous letter with Backspace', async () => {
+      await start();
+      // Walk right until the caret sits after «سلام» (offset 8).
+      for (let i = 0; i < LINE.length && (await caret(tab)).offset !== 8; i++) await tab.press('ArrowRight');
+      expect((await caret(tab)).offset).toBe(8);
+      await tab.press('Backspace');
+      expect(await paneText(tab)).toBe('<h1>سلا دنیا</h1>');
+    });
+
+    it('draws Farsi in IRANYekanXFaNum, code and line numbers in JetBrains Mono', async () => {
+      await pick(tab, 'HTML');
+      await clear(tab);
+      await tab.type('<b>سلام</b>');
+      const line = '[role="tabpanel"] .cm-line';
+      expect({
+        farsi: await drawnIn(tab, line),
+        tag: await drawnIn(tab, `${line} .code-tag:not(:empty)`),
+        lineNumber: await drawnIn(tab, '[role="tabpanel"] .cm-lineNumbers .cm-activeLineGutter'),
+      }).toEqual({
+        farsi: ['IRANYekanXFaNum'],
+        tag: ['JetBrains Mono'],
+        lineNumber: ['JetBrains Mono'],
+      });
     });
   });
 });
