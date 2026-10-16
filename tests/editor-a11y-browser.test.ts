@@ -21,7 +21,7 @@ const lib = `
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const content = () => document.querySelector('[role="tabpanel"] .cm-content');
   const consoleToggle = () => document.querySelector('[data-console] button[aria-expanded]');
-  const run = () => document.querySelector('[data-actions] button');
+  const run = () => [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === 'اجرا');
 `;
 
 /** Opens /editor and waits for the client-only island to render. */
@@ -82,10 +82,8 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       await waitFor(() => document.querySelectorAll('[data-console] li').length === 40);
       document.activeElement.blur();
     })()`);
-    // Tab from the top of the page: a click there moves the keyboard's starting point.
-    for (const type of ['mousePressed', 'mouseReleased']) {
-      await tab.send('Input.dispatchMouseEvent', { type, x: 2, y: 2, button: 'left', clickCount: 1 });
-    }
+    // Tab from the start of the page: focus on <main> moves the keyboard's starting point there.
+    await tab.evaluate(`(() => { const main = document.querySelector('main'); main.tabIndex = -1; main.focus(); })()`);
     const stops = [];
     for (let i = 0; i < 20; i++) {
       await tab.press('Tab');
@@ -96,13 +94,11 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       if (stop.name.startsWith('کد ')) await tab.press('Escape');
     }
     expect(stops).toEqual([
-      { name: 'آکادمی ربانیان', ring: RING },
-      { name: 'پشتیبانی تلگرام', ring: RING },
       { name: 'JS', ring: RING },
       { name: 'کد JS', ring: RING },
-      { name: 'اجرا', ring: RING },
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
+      { name: 'اجرا', ring: RING },
       { name: 'پیش‌نمایش', ring: "the visitor's page" },
       // Named with how many entries it holds.
       { name: 'کنسول، 40 پیام', ring: RING },

@@ -78,11 +78,17 @@ const tokens = (tab: BrowserPage) =>
     }));
   })()`);
 
-/** Palette P's syntax colours (spec: Code Pane). */
-const TAG = 'rgb(13, 91, 224)';
-const ATTRIBUTE = 'rgb(83, 96, 120)';
-const STRING = 'rgb(18, 55, 200)';
-const COMMENT = 'rgb(83, 96, 120) italic';
+/** The light syntax palette (spec: Code Pane; tokens `--color-code-*`). */
+const KEYWORD = 'rgb(207, 34, 46)';
+const TAG = 'rgb(17, 99, 41)';
+const ATTRIBUTE = 'rgb(5, 80, 174)';
+const STRING = 'rgb(10, 48, 105)';
+const CONSTANT = 'rgb(5, 80, 174)';
+const FUNCTION = 'rgb(111, 66, 193)';
+const DEFINITION = 'rgb(149, 56, 0)';
+const PUNCTUATION = 'rgb(83, 96, 120)';
+// Not italic: slanted Farsi reads poorly, and comments here are mostly Farsi.
+const COMMENT = 'rgb(83, 96, 120)';
 
 const pick = (tab: BrowserPage, label: string) =>
   tab.evaluate(`(async () => { ${lib} await pick(${JSON.stringify(label)}); })()`);
@@ -222,35 +228,62 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     });
   });
 
-  it('highlights HTML: tags, attribute names, values and comments', async () => {
+  it('highlights HTML: tags, brackets, attribute names, values, entities and comments', async () => {
     await pick(tab, 'HTML');
     await clear(tab);
-    await tab.type('<!-- c --><h1 class="t">سلام</h1>');
+    await tab.type('<!-- c --><h1 class="t">سلام &amp;</h1>');
     expect(await tokens(tab)).toMatchObject({
       '<!-- c -->': COMMENT,
-      '<': TAG,
+      '<': PUNCTUATION,
       h1: TAG,
-      '>': TAG,
-      '</': TAG,
+      '>': PUNCTUATION,
+      '</': PUNCTUATION,
       class: ATTRIBUTE,
       '"t"': STRING,
+      '&amp;': CONSTANT,
     });
   });
 
-  it('highlights CSS: selectors, strings and comments', async () => {
+  it('highlights CSS: selectors, properties, values, numbers, at-rules and comments', async () => {
     await pick(tab, 'CSS');
     await clear(tab);
-    await tab.type('/* c */ body { font-family: "x"; }');
-    expect(await tokens(tab)).toMatchObject({ '/* c */': COMMENT, body: TAG, '"x"': STRING });
+    await tab.type('/* c */ body .box { font-family: "x"; color: #fff; margin: 4px; display: flex !important; }');
+    await tab.press('Enter');
+    await tab.type('@media (width > 600px) {}');
+    expect(await tokens(tab)).toMatchObject({
+      '/* c */': COMMENT,
+      body: TAG,
+      box: FUNCTION,
+      'font-family': ATTRIBUTE,
+      '"x"': STRING,
+      '#fff': CONSTANT,
+      '4px': CONSTANT,
+      flex: CONSTANT,
+      '!important': KEYWORD,
+      '@media': KEYWORD,
+    });
   });
 
-  it('highlights JS: strings and comments', async () => {
+  it('highlights JS: keywords, definitions, calls, numbers, literals, strings and comments', async () => {
     await pick(tab, 'JS');
     await clear(tab);
     await tab.type('// c');
     await tab.press('Enter');
-    await tab.type("console.log('s');");
-    expect(await tokens(tab)).toMatchObject({ '// c': COMMENT, "'s'": STRING });
+    await tab.type("function greet(name) { const n = 42; if (true) return null; console.log('s', name); }");
+    expect(await tokens(tab)).toMatchObject({
+      '// c': COMMENT,
+      function: KEYWORD,
+      greet: FUNCTION,
+      const: KEYWORD,
+      n: DEFINITION,
+      '42': CONSTANT,
+      if: KEYWORD,
+      true: CONSTANT,
+      return: KEYWORD,
+      null: CONSTANT,
+      log: FUNCTION,
+      "'s'": STRING,
+    });
   });
 
   it('closes HTML tags as they are opened', async () => {

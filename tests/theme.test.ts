@@ -17,8 +17,15 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     ['bg', '#FFFFFF'],
     // Spec "on dark block": the eyebrow on the ink CTA.
     ['primary-on-ink', '#56A6FF'],
-    // HTML Editor (.scratch/html-editor/spec.md): strings in code; console warnings and errors.
-    ['code-string', '#1237C8'],
+    // HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax colours;
+    // console warnings and errors.
+    ['code-keyword', '#CF222E'],
+    ['code-tag', '#116329'],
+    ['code-attribute', '#0550AE'],
+    ['code-string', '#0A3069'],
+    ['code-constant', '#0550AE'],
+    ['code-function', '#6F42C1'],
+    ['code-definition', '#953800'],
     ['warn', '#B54708'],
     ['error', '#B42318'],
   ])('color %s = %s', async (token, hex) => {

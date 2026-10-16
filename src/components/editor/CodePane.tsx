@@ -43,14 +43,33 @@ const LANGUAGE: Record<FileId, () => Extension> = { html, css, js: javascript };
 const HINT_ID = 'editor-code-hint';
 
 /**
- * Syntax tokens get plain classes, coloured on palette P in editor.css.
- * Sub-tags follow their parent: `string` covers attribute values and JS
- * template strings; `comment` covers line and block comments.
+ * Syntax tokens get plain classes, coloured in editor.css. A tag takes its
+ * most specific rule, else its parent's: `keyword` covers JS's control,
+ * definition and module keywords, CSS at-rules and `!important`; `string`
+ * covers attribute values and template strings. Plain names and operators
+ * stay ink.
  */
 const highlighter = tagHighlighter([
-  { tag: [tags.tagName, tags.angleBracket], class: 'code-tag' },
-  { tag: tags.attributeName, class: 'code-attribute' },
-  { tag: tags.string, class: 'code-string' },
+  { tag: tags.keyword, class: 'code-keyword' },
+  { tag: tags.tagName, class: 'code-tag' },
+  { tag: [tags.attributeName, tags.propertyName], class: 'code-attribute' },
+  { tag: [tags.string, tags.regexp], class: 'code-string' },
+  {
+    tag: [tags.number, tags.bool, tags.null, tags.atom, tags.unit, tags.color, tags.character, tags.escape],
+    class: 'code-constant',
+  },
+  {
+    tag: [
+      tags.function(tags.variableName),
+      tags.function(tags.propertyName),
+      tags.function(tags.definition(tags.variableName)),
+      tags.className,
+      tags.labelName,
+    ],
+    class: 'code-function',
+  },
+  { tag: tags.definition(tags.variableName), class: 'code-definition' },
+  { tag: [tags.angleBracket, tags.meta], class: 'code-punctuation' },
   { tag: tags.comment, class: 'code-comment' },
 ]);
 

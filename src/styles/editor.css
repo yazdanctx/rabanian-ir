@@ -34,87 +34,116 @@
  * landing page's stylesheet.
  */
 :root {
-  --editor-width: 1280px;
   --code-font: 'JetBrains Mono', 'IRANYekanXFaNum', ui-monospace, monospace;
   --gutter-font: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-/* The top bar spans the editor's width here, not the 680px landing column. */
-.editor-wide {
-  max-width: var(--editor-width);
+/*
+ * The editor is the whole screen and the page never scrolls: only the Code
+ * Pane, the Preview and the console log do, each inside itself. `dvh`
+ * follows the browser's bars and, with `interactive-widget=resizes-content`
+ * (editor.astro), the on-screen keyboard.
+ */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .editor-page {
-  max-width: var(--editor-width);
-  margin-inline: auto;
-  padding: 20px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
 }
 
+/* For screen readers only: the tabs already say where you are. */
 .editor-title {
-  margin-bottom: 14px;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
-/* One column, stacked; two from 1024px, Code Pane first, so on the right (RTL). */
+/*
+ * Code Pane over Preview, half the screen each; from 1024px side by side,
+ * Code Pane on the left and the Preview on the right, though the Code Pane
+ * stays first in the page (and the Tab order). Hairlines between, edge to edge.
+ */
 .editor {
   display: grid;
-  gap: 12px;
+  flex: 1;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  min-height: 0;
+}
+
+.editor-code-pane {
+  border-bottom: 1px solid var(--color-line);
 }
 
 @media (width >= 1024px) {
   .editor {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Grid columns run right to left (RTL): column 1 is the right one. */
+  .editor-code-pane {
+    grid-area: 1 / 2;
+    border-bottom: 0;
+    border-inline-start: 1px solid var(--color-line);
+  }
+
+  .editor-preview-column {
+    grid-area: 1 / 1;
   }
 }
 
-/* The Preview's column: its card, then the console strip. */
+/* The Preview's column: its pane, then the console strip along the bottom. */
 .editor-preview-column {
   display: flex;
   flex-direction: column;
-  gap: 12px;
   min-width: 0;
-}
-
-.editor-card,
-.editor-console {
+  min-height: 0;
   overflow: hidden;
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-card);
-  background-color: var(--color-surface);
 }
 
-.editor-card {
+.editor-pane {
   display: flex;
+  flex: 1;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
+  background-color: var(--color-bg);
 }
 
-/* The two card heads (tab bar; Preview title + actions) line up side by side. */
-.editor-tabs,
-.editor-card-head {
+/* The two head bars (tab bar; Preview title + actions), on surface, line up side by side. */
+.editor-bar {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 4px;
   min-height: 46px;
   padding: 6px;
   border-bottom: 1px solid var(--color-line);
+  background-color: var(--color-surface);
 }
 
-.editor-card-head {
+.editor-preview-bar {
   justify-content: space-between;
   gap: 8px;
   padding-inline-start: 14px;
 }
 
-.editor-card-title,
+.editor-pane-title,
 .editor-console-toggle {
   font-size: 13px;
   font-weight: 600;
 }
 
-.editor-card-title {
+.editor-pane-title {
   color: var(--color-muted);
 }
 
@@ -147,6 +176,16 @@
 .editor-actions {
   display: flex;
   gap: 6px;
+}
+
+.editor-actions .editor-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.editor-button-icon {
+  flex: none;
 }
 
 .editor-button {
@@ -187,28 +226,28 @@
   outline-offset: var(--focus-ring-offset);
 }
 
-/* Inset where the card would clip it. The log takes focus once it scrolls (Chrome). */
+/* Inset where the pane would clip it. The log takes focus once it scrolls (Chrome). */
 .editor-console-toggle:focus-visible,
 .editor-console-log:focus-visible {
   outline-offset: -2px;
 }
 
-/* Code Pane: LTR code on white, filling the card. */
+/* Code Pane: LTR code on white, filling its pane. */
 .editor-panel {
   display: flex;
   flex: 1;
+  min-height: 0;
   background-color: var(--color-bg);
 }
 
 /*
  * The CodeMirror host. `contain: size` keeps a long file from growing the
- * card: the editor scrolls inside whatever height the layout gives it.
+ * pane: the editor scrolls inside whatever height the layout gives it.
  */
 .editor-code {
   position: relative;
   flex: 1;
   min-width: 0;
-  height: max(280px, 50dvh);
   contain: size;
 }
 
@@ -234,6 +273,8 @@
 .editor-code .cm-editor .cm-scroller {
   font-family: var(--code-font);
   line-height: 1.7;
+  /* Every character as typed: JetBrains Mono would draw `=>` as an arrow and `<!--` as one glyph. */
+  font-variant-ligatures: none;
 }
 
 .editor-code .cm-editor .cm-gutters {
@@ -269,7 +310,7 @@
   border-left-color: var(--color-ink);
 }
 
-/* The focus ring, inset: the card would clip it. */
+/* The focus ring, inset: the pane would clip it. */
 .editor-code .cm-editor.cm-focused {
   outline: var(--focus-ring);
   outline-offset: -2px;
@@ -279,43 +320,59 @@
   background-color: var(--color-primary-soft);
 }
 
-/* Syntax colours (spec: Code Pane). Everything else is ink. */
+/* Syntax colours (spec: Code Pane; classes from CodePane.tsx). Everything else is ink. */
+.editor-code .code-keyword {
+  color: var(--color-code-keyword);
+}
+
 .editor-code .code-tag {
-  color: var(--color-primary-text);
+  color: var(--color-code-tag);
 }
 
 .editor-code .code-attribute {
-  color: var(--color-muted);
+  color: var(--color-code-attribute);
 }
 
 .editor-code .code-string {
   color: var(--color-code-string);
 }
 
-.editor-code .code-comment {
-  color: var(--color-muted);
-  font-style: italic;
+.editor-code .code-constant {
+  color: var(--color-code-constant);
 }
 
-/* The Preview frame: the visitor's page on white, filling the card. */
+.editor-code .code-function {
+  color: var(--color-code-function);
+}
+
+.editor-code .code-definition {
+  color: var(--color-code-definition);
+}
+
+.editor-code .code-punctuation {
+  color: var(--color-muted);
+}
+
+/* Not italic: slanted Farsi reads poorly, and comments here are mostly Farsi. */
+.editor-code .code-comment {
+  color: var(--color-muted);
+}
+
+/* The Preview frame: the visitor's page on white, filling its pane. */
 .editor-preview {
   display: block;
   flex: 1;
   width: 100%;
-  min-height: 320px;
+  min-height: 0;
   border: 0;
   background-color: var(--color-bg);
 }
 
-/* Side by side, both columns reach the bottom of the viewport together. */
-@media (width >= 1024px) {
-  .editor-code {
-    height: auto;
-  }
-
-  .editor-preview {
-    min-height: max(420px, 100dvh - 290px);
-  }
+/* The console strip, along the bottom of the Preview's column. */
+.editor-console {
+  flex: none;
+  border-top: 1px solid var(--color-line);
+  background-color: var(--color-surface);
 }
 
 /* The console strip's head: the toggle across it, «پاک کردن» at its end when open. */
@@ -373,7 +430,7 @@
 
 .editor-console-log {
   min-height: 96px;
-  max-height: 200px;
+  max-height: min(200px, 30dvh);
   overflow: auto;
   border-top: 1px solid var(--color-line);
   background-color: var(--color-bg);
@@ -385,6 +442,7 @@
   border-bottom: 1px solid var(--color-line);
   color: var(--color-ink);
   font-family: var(--code-font);
+  font-variant-ligatures: none;
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;

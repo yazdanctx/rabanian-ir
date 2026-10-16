@@ -39,20 +39,15 @@ describe('editor page (dist/editor/index.html)', () => {
     expect(island.children).toHaveLength(0);
   });
 
-  describe('top bar, as on the landing page', () => {
-    const header = doc.querySelector('body > header');
+  it('has no top bar: the editor is the whole page', () => {
+    expect(doc.querySelector('header')).toBeNull();
+    expect(doc.querySelector('a[href="https://t.me/codaminsupport"]')).toBeNull();
+  });
 
-    it('links the logo home, since this page has no #top', () => {
-      const logo = header?.querySelector('a');
-      expect(logo?.getAttribute('href')).toBe('/');
-      expect(logo?.textContent?.trim()).toBe('آکادمی ربانیان');
-      expect(logo?.querySelector('picture img')?.getAttribute('alt')).toBe('');
-    });
-
-    it('has the Telegram button to Support', () => {
-      const support = header?.querySelector('a[href="https://t.me/codaminsupport"]');
-      expect(support?.getAttribute('aria-label')).toBe('پشتیبانی تلگرام');
-    });
+  it('lets an on-screen keyboard shrink the page, so the editor stays above it', () => {
+    const viewport = (d: Document) => d.querySelector('meta[name="viewport"]')?.getAttribute('content');
+    expect(viewport(doc)).toBe('width=device-width, initial-scale=1, interactive-widget=resizes-content');
+    expect(viewport(page('index.html'))).toBe('width=device-width, initial-scale=1');
   });
 });
 

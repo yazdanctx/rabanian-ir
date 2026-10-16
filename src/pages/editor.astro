@@ -1,13 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
-import TopBar from '../components/TopBar.astro';
 import EditorApp from '../components/editor/EditorApp';
 import { COPY, SITE } from '../site';
 import '../styles/editor.css';
+
+/*
+ * The editor is the whole page: no top bar, nothing to scroll past. The
+ * viewport lets an on-screen keyboard shrink the page instead of covering
+ * it, so the tab bar stays above the keyboard.
+ */
 ---
 
-<Base title={`${COPY.editor.name} — ${SITE.domain}`} description={COPY.editor.description}>
-  <TopBar class="editor-wide" />
+<Base
+  title={`${COPY.editor.name} — ${SITE.domain}`}
+  description={COPY.editor.description}
+  viewport="width=device-width, initial-scale=1, interactive-widget=resizes-content"
+>
   <main class="editor-page">
     <h1 class="editor-title">{COPY.editor.name}</h1>
     <EditorApp client:only="react" />

@@ -33,10 +33,17 @@
   /* Spec "on dark block": the eyebrow on the ink CTA. */
   --color-primary-on-ink: #56a6ff;
   /*
-   * HTML Editor (.scratch/html-editor/spec.md): strings in code, and the
-   * console strip's warnings and errors. All pass AA as text on surface and white.
+   * HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax
+   * colours, and the console strip's warnings and errors. All pass AA as text
+   * on white, surface and primary-soft (the selection).
    */
-  --color-code-string: #1237c8;
+  --color-code-keyword: #cf222e;
+  --color-code-tag: #116329;
+  --color-code-attribute: #0550ae;
+  --color-code-string: #0a3069;
+  --color-code-constant: #0550ae;
+  --color-code-function: #6f42c1;
+  --color-code-definition: #953800;
   --color-warn: #b54708;
   --color-error: #b42318;
 

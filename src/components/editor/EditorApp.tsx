@@ -15,8 +15,9 @@ const PANEL_ID = 'editor-panel';
 const PREVIEW_TITLE_ID = 'editor-preview-title';
 
 /**
- * The HTML Editor: tabs over one Code Pane, and beside it (below it on
- * narrow screens) the Preview with the action bar and the console strip.
+ * The HTML Editor, filling the screen: tabs over one Code Pane, and beside
+ * it (below it on narrow screens) the Preview with the action bar and the
+ * console strip.
  */
 export default function EditorApp() {
   // The last visit's workspace, else the Starter Template.
@@ -43,7 +44,7 @@ export default function EditorApp() {
 
   return (
     <div data-editor className="editor">
-      <section data-code className="editor-card">
+      <section data-code className="editor-pane editor-code-pane">
         <TabBar
           active={activeTab}
           onSelect={(file) => setWorkspace((w) => ({ ...w, activeTab: file }))}
@@ -60,9 +61,9 @@ export default function EditorApp() {
         </div>
       </section>
       <div className="editor-preview-column">
-        <section aria-labelledby={PREVIEW_TITLE_ID} className="editor-card">
-          <div className="editor-card-head">
-            <h2 id={PREVIEW_TITLE_ID} className="editor-card-title">
+        <section aria-labelledby={PREVIEW_TITLE_ID} className="editor-pane">
+          <div className="editor-bar editor-preview-bar">
+            <h2 id={PREVIEW_TITLE_ID} className="editor-pane-title">
               {COPY.editor.preview}
             </h2>
             <ActionBar onRun={preview.runNow} onReset={reset} onDownload={() => downloadPage(files)} />

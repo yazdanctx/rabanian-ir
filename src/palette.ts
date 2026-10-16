@@ -16,8 +16,17 @@ export const PALETTE = {
   white: '#FFFFFF',
   /** Spec "on dark block": the eyebrow on the ink CTA. */
   primaryOnInk: '#56A6FF',
-  /** HTML Editor: strings in the Code Pane. */
-  codeString: '#1237C8',
+  /**
+   * HTML Editor: the Code Pane's syntax colours, a GitHub-light style
+   * palette (comments and brackets are `muted`; plain names stay `ink`).
+   */
+  codeKeyword: '#CF222E',
+  codeTag: '#116329',
+  codeAttribute: '#0550AE',
+  codeString: '#0A3069',
+  codeConstant: '#0550AE',
+  codeFunction: '#6F42C1',
+  codeDefinition: '#953800',
   /** HTML Editor: the console strip's warnings and errors. */
   warn: '#B54708',
   error: '#B42318',

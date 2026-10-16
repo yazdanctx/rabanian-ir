@@ -11,23 +11,24 @@ A very minimal page at `/editor` where a Farsi-speaking beginner writes HTML, CS
 ## Page
 
 - Route `/editor` inside the same Astro site; linked from the Toolbox row «ویرایشگر HTML · فعال · ورود ←».
-- Farsi `<title>`: «ویرایشگر HTML — rabanian.ir». Same top bar as the landing page (logo home link, Telegram icon).
+- Farsi `<title>`: «ویرایشگر HTML — rabanian.ir». No top bar: the editor is the whole page (decided 2026-10-17).
 - The editor app is one React island, `client:only="react"` (CodeMirror has no SSR value). Nothing from it loads on the landing page.
 
 ## Layout
 
 - Three **tabs** over a single Code Pane: `HTML` · `CSS` · `JS` (labels stay Latin — they are the languages' names). Active tab remembered within the session.
-- Preview beside the Code Pane on ≥ 1024px (two columns, Code Pane on the right since the page is RTL, draggable divider not required); stacked below it on narrower screens.
-- Action bar: «اجرا» (run now), «بازنشانی» (reset to Starter Template, with confirm), «دانلود» (download a single `index.html` with CSS inlined in `<style>` and JS in `<script>`). Nothing else — no file tree, no settings, no themes, no share.
+- **Full screen**: the editor fills the viewport exactly and the page never scrolls; only the Code Pane, the Preview and the console log scroll, each inside itself. The viewport meta adds `interactive-widget=resizes-content` so an on-screen keyboard shrinks the layout and the tab bar stays above it.
+- Preview beside the Code Pane on ≥ 1024px (two columns, **Code Pane on the left, Preview on the right**; the Code Pane stays first in the DOM and Tab order; draggable divider not required); stacked below it, half the screen each, on narrower screens. Panes run edge to edge with hairline dividers.
+- Action bar, in this order so «اجرا» sits at the far left: «بازنشانی» (reset to Starter Template, with confirm), «دانلود» (download a single `index.html` with CSS inlined in `<style>` and JS in `<script>`), «اجرا» (run now, primary). Each has a small decorative line icon (reset arrow, download arrow, play). Nothing else — no file tree, no settings, no themes, no share.
 - Console strip under the Preview, collapsible, Farsi label «کنسول»: lists `console.log/info/warn/error` output and uncaught errors from the Preview, newest last, with a clear button. Messages themselves are shown verbatim (they come from the browser).
-- Palette P, surface chrome, 12px radius, hairline borders — same tokens as the landing page.
+- Palette P: the head bars (tabs; Preview title + actions) and the console strip on `surface`, panes on white, hairline `line` borders; buttons and tabs keep the 8px radius.
 
 ## Code Pane (CodeMirror 6)
 
 - Extensions: `@codemirror/lang-html`, `lang-css`, `lang-javascript`; line numbers (Latin digits); bracket matching; auto-close tags/brackets; history; 2-space indent; line wrapping on. Search panel, lint gutter, fold gutter and command palette **disabled**.
 - Direction: the Code Pane is **LTR** — code is LTR everywhere. Farsi runs inside the code are bidi-isolated (`EditorView.bidiIsolatedRanges` / `bidiIsolate` on string and text content, `perLineTextDirection`) so cursor movement and selection over `<h1>سلام دنیا</h1>` behave correctly.
-- Font: JetBrains Mono (self-hosted, 400 + 700, woff2, loaded only on this route) with `IRANYekanXFaNum` as the fallback so Farsi glyphs inside code render in Yekan. Size 14px, line-height 1.7.
-- Light theme built from palette P tokens (tags `#0D5BE0`, attributes `#536078`, strings `#1237C8`, comments `#536078` italic, selection `#EAF1FF`). No dark theme.
+- Font: JetBrains Mono (self-hosted, 400 + 700, woff2, loaded only on this route) with `IRANYekanXFaNum` as the fallback so Farsi glyphs inside code render in Yekan. Size 14px, line-height 1.7. Ligatures off: a beginner sees `=>` and `<!--` as typed, not as arrows.
+- Light theme with full syntax highlighting in a GitHub-light style palette, as `--color-code-*` tokens (all AA on white, surface and the selection): keywords `#CF222E` (incl. CSS at-rules and `!important`), tag names `#116329`, attribute and property names `#0550AE`, strings and attribute values `#0A3069`, numbers/literals/units/colours/entities `#0550AE`, function names, calls and class/id selectors `#6F42C1`, new variable names `#953800`; comments, angle brackets and doctype `muted`, not italic (slanted Farsi reads poorly); plain names and operators `ink`. Selection `#EAF1FF`. No dark theme.
 - Mobile: the pane is usable with the on-screen keyboard; tab bar stays above the keyboard.
 
 ## Preview

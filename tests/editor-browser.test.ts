@@ -25,8 +25,8 @@ const lib = `
 `;
 
 /** Opens /editor and waits for the client-only island to render. */
-async function openEditor(origin: string, width = 1280): Promise<BrowserPage> {
-  const tab = await openPage(`${origin}/editor/`, { width, height: 900, reducedMotion: true });
+async function openEditor(origin: string, width = 1280, height = 900): Promise<BrowserPage> {
+  const tab = await openPage(`${origin}/editor/`, { width, height, reducedMotion: true });
   const ready = await tab.evaluate<boolean>(`(async () => {
     ${lib}
     return waitFor(() => tabs().length > 0 && code());
@@ -185,11 +185,19 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     });
     afterAll(() => tab?.close());
 
-    it('has the three actions, «اجرا» «بازنشانی» «دانلود», as plain buttons', async () => {
+    it('has the three actions, «بازنشانی» «دانلود» «اجرا», as plain buttons, each with a decorative icon', async () => {
       const actions = await tab.evaluate<string[]>(`(() => [
         ...document.querySelectorAll('[data-actions] button'),
-      ].map((b) => b.type + ':' + b.textContent.trim()))()`);
-      expect(actions).toEqual(['button:اجرا', 'button:بازنشانی', 'button:دانلود']);
+      ].map((b) => [b.type, b.textContent.trim(), b.querySelector('svg')?.getAttribute('aria-hidden')].join(':')))()`);
+      expect(actions).toEqual(['button:بازنشانی:true', 'button:دانلود:true', 'button:اجرا:true']);
+    });
+
+    it('puts «اجرا» at the far left of the bar', async () => {
+      const lefts = await tab.evaluate<Record<string, number>>(`(() => Object.fromEntries(
+        [...document.querySelectorAll('[data-actions] button')].map((b) => [b.textContent.trim(), b.getBoundingClientRect().left]),
+      ))()`);
+      expect(lefts['اجرا']).toBeLessThan(lefts['دانلود']);
+      expect(lefts['دانلود']).toBeLessThan(lefts['بازنشانی']);
     });
 
     it('has a Preview region named «پیش‌نمایش»', async () => {
@@ -220,22 +228,24 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       expect(states).toEqual(['کنسول:false:hidden', 'کنسول:true:shown', 'کنسول:false:hidden']);
     });
 
-    it('dresses the Code Pane and Preview cards in palette P: surface, 12px radius, line border', async () => {
-      const cards = await tab.evaluate<string[]>(`(() =>
-        ['[data-code]', '[data-preview]'].map((hook) => {
-          const s = getComputedStyle(document.querySelector(hook).closest('section'));
-          return [s.backgroundColor, s.borderRadius, s.borderTopWidth, s.borderTopColor].join(' ');
+    it('heads the Code Pane and the Preview with palette P bars: surface, a line beneath', async () => {
+      const bars = await tab.evaluate<string[]>(`(() =>
+        [document.querySelector('[role="tablist"]'), document.querySelector('[data-actions]').parentElement].map((bar) => {
+          const s = getComputedStyle(bar);
+          return [s.backgroundColor, s.borderBottomWidth, s.borderBottomStyle, s.borderBottomColor].join(' ');
         }))()`);
-      const card = 'rgb(245, 247, 250) 12px 1px rgb(220, 227, 238)';
-      expect(cards).toEqual([card, card]);
+      const bar = 'rgb(245, 247, 250) 1px solid rgb(220, 227, 238)';
+      expect(bars).toEqual([bar, bar]);
     });
 
-    it('sets code left-to-right in the code font stack', async () => {
-      const style = await tab.evaluate<{ direction: string; fontFamily: string }>(`(() => {
+    it('sets code left-to-right in the code font stack, every character as typed (no ligatures)', async () => {
+      const style = await tab.evaluate<{ direction: string; fontFamily: string; ligatures: string }>(`(() => {
         const s = getComputedStyle(document.querySelector('[role="tabpanel"] .cm-content'));
-        return { direction: s.direction, fontFamily: s.fontFamily };
+        return { direction: s.direction, fontFamily: s.fontFamily, ligatures: s.fontVariantLigatures };
       })()`);
       expect(style.direction).toBe('ltr');
+      // JetBrains Mono would draw `=>` as an arrow and `<!--` as one glyph.
+      expect(style.ligatures).toBe('none');
       expect(style.fontFamily.replace(/["']/g, '')).toBe(
         'JetBrains Mono, IRANYekanXFaNum, ui-monospace, monospace',
       );
@@ -243,16 +253,64 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
   });
 
   describe.each([
-    { width: 1280, columns: true },
-    { width: 1024, columns: true },
-    { width: 1023, columns: false },
-    { width: 390, columns: false },
-  ])('layout at $width px', ({ width, columns }) => {
+    { width: 1280, height: 900, columns: true },
+    { width: 1024, height: 768, columns: true },
+    { width: 1023, height: 768, columns: false },
+    { width: 390, height: 844, columns: false },
+  ])('layout at $width×$height px', ({ width, height, columns }) => {
     let tab: BrowserPage;
     beforeAll(async () => {
-      tab = await openEditor(site.origin, width);
+      tab = await openEditor(site.origin, width, height);
     });
     afterAll(() => tab?.close());
+
+    /** The editor's box against the viewport's, and how far the page itself scrolls. */
+    const fit = `(() => {
+      const { top, left, bottom, right } = document.querySelector('[data-editor]').getBoundingClientRect();
+      scrollTo(0, 10_000);
+      const scrolled = scrollY;
+      scrollTo(0, 0);
+      return {
+        editor: [top, left, bottom, right],
+        screen: [0, 0, innerHeight, innerWidth],
+        overflow: document.documentElement.scrollHeight - innerHeight,
+        scrolled,
+      };
+    })()`;
+    type Fit = { editor: number[]; screen: number[]; overflow: number; scrolled: number };
+
+    it('fills the screen exactly, and the page itself never scrolls', async () => {
+      const { editor, screen, overflow, scrolled } = await tab.evaluate<Fit>(fit);
+      expect(editor).toEqual(screen);
+      expect(overflow).toBeLessThanOrEqual(0);
+      expect(scrolled).toBe(0);
+    });
+
+    it('scrolls a long file and a long console inside themselves, not the page', async () => {
+      const inner = await tab.evaluate<{ code: boolean; log: boolean }>(`(async () => {
+        ${lib}
+        tabs()[2].click();
+        await waitFor(() => selected() === tabs()[2]);
+        code().focus();
+        document.execCommand('selectAll');
+        const lines = Array.from({ length: 300 }, (_, i) => '// ' + i).join('\\n');
+        document.execCommand('insertText', false, 'for (let i = 0; i < 100; i++) console.log(i);\\n' + lines);
+        const toggle = document.querySelector('[data-console] button[aria-expanded]');
+        if (toggle.getAttribute('aria-expanded') === 'false') toggle.click();
+        await waitFor(() => document.querySelectorAll('[data-console] li').length === 100);
+        await new Promise((r) => setTimeout(r, 300));
+        const scrolls = (el) => el.scrollHeight > el.clientHeight + 1;
+        return {
+          code: scrolls(panel().querySelector('.cm-scroller')),
+          log: scrolls(document.querySelector('[data-console] ol, [data-console] ul')),
+        };
+      })()`);
+      expect(inner).toEqual({ code: true, log: true });
+      const { editor, screen, overflow, scrolled } = await tab.evaluate<Fit>(fit);
+      expect(editor).toEqual(screen);
+      expect(overflow).toBeLessThanOrEqual(0);
+      expect(scrolled).toBe(0);
+    });
 
     const boxes = `(() => {
       const box = (hook) => document.querySelector(hook).closest('section').getBoundingClientRect();
@@ -268,7 +326,7 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
 
     it(
       columns
-        ? 'puts the Code Pane and the Preview side by side, Code Pane on the right'
+        ? 'puts the Code Pane and the Preview side by side, Code Pane on the left'
         : 'stacks the Preview below the Code Pane',
       async () => {
         const { code, preview, overflow } = await tab.evaluate<{
@@ -277,11 +335,12 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
           overflow: number;
         }>(boxes);
         expect(overflow).toBeLessThanOrEqual(0);
+        // Edge to edge: the panes meet at a hairline.
         if (columns) {
-          expect(code.left).toBeGreaterThan(preview.right);
+          expect(preview.left).toBeGreaterThanOrEqual(code.right);
           expect(code.top).toBe(preview.top);
         } else {
-          expect(preview.top).toBeGreaterThan(code.bottom);
+          expect(preview.top).toBeGreaterThanOrEqual(code.bottom);
           expect(preview.left).toBe(code.left);
           expect(preview.right).toBe(code.right);
         }

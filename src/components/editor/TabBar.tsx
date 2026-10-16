@@ -38,7 +38,7 @@ export default function TabBar({ active, onSelect, panelId, label }: Props) {
   }
 
   return (
-    <div role="tablist" aria-label={label} onKeyDown={onKeyDown} className="editor-tabs">
+    <div role="tablist" aria-label={label} onKeyDown={onKeyDown} className="editor-bar editor-tabs">
       {FILES.map((file, index) => {
         const selected = file.id === active;
         return (
