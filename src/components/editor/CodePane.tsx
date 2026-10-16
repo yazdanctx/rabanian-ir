@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import { EditorState, type Extension } from '@codemirror/state';
 import { EditorView, keymap, lineNumbers } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
-import { indentUnit, syntaxHighlighting } from '@codemirror/language';
+import { bracketMatching, indentUnit, syntaxHighlighting } from '@codemirror/language';
 import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
@@ -49,6 +49,7 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       lineNumbers(),
       // HTML tags auto-close from html() itself.
       closeBrackets(),
+      bracketMatching(),
       history(),
       indentUnit.of('  '),
       EditorState.tabSize.of(2),

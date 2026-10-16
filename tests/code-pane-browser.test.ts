@@ -272,4 +272,30 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     expect(wrap.rows).toBeGreaterThan(1);
     expect(wrap.overflow).toBe(0);
   });
+
+  it('marks the bracket matching the one at the caret', async () => {
+    await pick(tab, 'JS');
+    await clear(tab);
+    await typeKeys(tab, 'f(1');
+    const matched = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await frames();
+      return [...content().querySelectorAll('.cm-matchingBracket')].map((b) => b.textContent);
+    })()`);
+    expect(matched).toEqual(['(', ')']);
+  });
+
+  it('has only the line-number gutter, and leaves Ctrl/Cmd-F to the browser', async () => {
+    await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
+    await tab.press('f', await modifier(tab));
+    const chrome = await tab.evaluate<{ gutters: string[]; panels: number }>(`(async () => {
+      ${lib}
+      await frames();
+      return {
+        gutters: [...panel().querySelectorAll('.cm-gutter')].map((g) => g.className.trim()),
+        panels: panel().querySelectorAll('.cm-panels, .cm-search').length,
+      };
+    })()`);
+    expect(chrome).toEqual({ gutters: ['cm-gutter cm-lineNumbers'], panels: 0 });
+  });
 });
