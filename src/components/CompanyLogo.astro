@@ -20,9 +20,15 @@ const { id, size, class: className } = Astro.props;
 const files = import.meta.glob<{ default: ImageMetadata }>('../assets/logos/*.{png,jpg,webp,svg}', {
   eager: true,
 });
-const logo = Object.entries(files).find(([path]) => path.replace(/^.*\/|\.\w+$/g, '') === id)?.[1]
-  .default;
-if (!logo) throw new Error(`No logo for "${id}": add src/assets/logos/${id}.<png|svg>`);
+const matches = Object.entries(files).filter(([path]) => path.replace(/^.*\/|\.\w+$/g, '') === id);
+if (matches.length !== 1) {
+  throw new Error(
+    matches.length
+      ? `Several logos for "${id}" in src/assets/logos/: keep one`
+      : `No logo for "${id}": add src/assets/logos/${id}.<png|svg>`,
+  );
+}
+const logo = matches[0][1].default;
 ---
 
 <span
