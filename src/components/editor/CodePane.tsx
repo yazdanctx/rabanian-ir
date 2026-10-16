@@ -38,6 +38,9 @@ interface Props {
 
 const LANGUAGE: Record<FileId, () => Extension> = { html, css, js: javascript };
 
+/** DOM id of the Code Pane's screen-reader description (`COPY.editor.codeHint`). */
+const HINT_ID = 'editor-code-hint';
+
 /**
  * Syntax tokens get plain classes, coloured on palette P in editor.css.
  * Sub-tags follow their parent: `string` covers attribute values and JS
@@ -61,7 +64,10 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       // LTR, so it would change nothing.
       EditorView.editorAttributes.of({ dir: 'ltr' }),
       ltrIsolates(),
-      EditorView.contentAttributes.of({ 'aria-label': `${COPY.editor.code} ${label}` }),
+      EditorView.contentAttributes.of({
+        'aria-label': `${COPY.editor.code} ${label}`,
+        'aria-describedby': HINT_ID,
+      }),
       lineNumbers(),
       highlightActiveLine(),
       highlightActiveLineGutter(),
@@ -73,7 +79,8 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       indentUnit.of('  '),
       EditorState.tabSize.of(2),
       EditorView.lineWrapping,
-      // Tab indents; Escape then Tab leaves the editor (CodeMirror's escape hatch).
+      // Tab indents; Escape then Tab leaves the editor (CodeMirror's escape
+      // hatch), as the pane's description tells screen-reader users.
       keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
       LANGUAGE[file](),
       syntaxHighlighting(highlighter),
@@ -129,7 +136,18 @@ export default function CodePane({ file, initialFiles, onChange }: Props) {
     }
     const editor = new EditorView({ parent: host.current!, state: states.current[shown.current] });
     view.current = editor;
+    // The pane's height follows the viewport, which an on-screen keyboard can
+    // shrink: then keep the line being typed on in view.
+    let height = host.current!.clientHeight;
+    const keyboard = new ResizeObserver(([{ target }]) => {
+      if (editor.hasFocus && target.clientHeight < height) {
+        editor.dispatch({ effects: EditorView.scrollIntoView(editor.state.selection.main.head) });
+      }
+      height = target.clientHeight;
+    });
+    keyboard.observe(host.current!);
     return () => {
+      keyboard.disconnect();
       states.current[shown.current] = editor.state;
       editor.destroy();
       view.current = null;
@@ -145,5 +163,13 @@ export default function CodePane({ file, initialFiles, onChange }: Props) {
     crossfade(editor, () => editor.setState(states.current[file]!));
   }, [file]);
 
-  return <div ref={host} dir="ltr" className="editor-code" />;
+  return (
+    <>
+      <div ref={host} dir="ltr" className="editor-code" />
+      {/* Hidden, yet read out as the pane's description (aria-describedby). */}
+      <p id={HINT_ID} hidden>
+        {COPY.editor.codeHint}
+      </p>
+    </>
+  );
 }

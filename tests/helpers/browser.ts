@@ -57,6 +57,8 @@ export interface PageOptions {
   reducedMotion?: boolean;
   /** Run the page with JavaScript disabled. */
   noScript?: boolean;
+  /** Emulate a phone: a mobile viewport and touch input (`Input.dispatchTouchEvent`). */
+  mobile?: boolean;
   width?: number;
   height?: number;
 }
@@ -116,7 +118,7 @@ function keyEvent(key: string, modifiers: number) {
 
 /** Launches Chrome, opens `url` with the given emulation, resolves on load. */
 export async function openPage(url: string, options: PageOptions = {}): Promise<BrowserPage> {
-  const { reducedMotion = false, noScript = false, width = 390, height = 844 } = options;
+  const { reducedMotion = false, noScript = false, mobile = false, width = 390, height = 844 } = options;
   const profile = mkdtempSync(join(tmpdir(), 'rabanian-chrome-'));
   const chrome: ChildProcess = spawn(
     chromePath!,
@@ -170,8 +172,9 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
     width,
     height,
     deviceScaleFactor: 1,
-    mobile: false,
+    mobile,
   });
+  if (mobile) await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
   if (reducedMotion) {
     await send('Emulation.setEmulatedMedia', {
       features: [{ name: 'prefers-reduced-motion', value: 'reduce' }],

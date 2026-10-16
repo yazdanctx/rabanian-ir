@@ -126,6 +126,8 @@ export const COPY = {
     filesLabel: 'فایل‌ها',
     /** Screen-reader name of the Code Pane, before the file's name: «کد HTML». */
     code: 'کد',
+    /** Screen-reader description of the Code Pane: Tab indents there, so how to leave it. */
+    codeHint: 'در کد، Tab فاصله می‌گذارد؛ برای بیرون رفتن، اول Esc و بعد Tab را بزن.',
     /** The action bar's three buttons. */
     run: 'اجرا',
     reset: 'بازنشانی',
