@@ -1,0 +1,25 @@
+---
+import { COPY, SUPPORT_URL } from '../site';
+import Eyebrow from './Eyebrow.astro';
+import Icon from './Icon.astro';
+import Section from './Section.astro';
+
+/* The page's only dark surface: an `ink` block (spec palette, "on dark block"). */
+const { eyebrow, title, line, button } = COPY.cta;
+---
+
+<Section>
+  <div class="rounded-cta bg-ink px-5.5 py-6.5 text-center text-white md:px-10 md:py-10">
+    <Eyebrow onInk class="justify-center text-[#56A6FF]">{eyebrow}</Eyebrow>
+    <h2 class="mt-1.5 mb-2 text-xl/normal font-bold tracking-[-0.01em] md:text-2xl/normal">
+      {title}
+    </h2>
+    <p class="mb-4.5 text-[13.5px]/[1.9] text-white/75">{line}</p>
+    <a
+      href={SUPPORT_URL}
+      class="inline-flex items-center gap-2 rounded-btn bg-primary px-5.5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-text"
+    >
+      <Icon name="telegram" size={17} />{button}
+    </a>
+  </div>
+</Section>

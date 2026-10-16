@@ -1,17 +1,11 @@
 ---
-import { COPY, SITE, SUPPORT_URL } from '../site';
+import { COPY, SUPPORT_URL } from '../site';
 import Icon from './Icon.astro';
-
-const [domainName, tld] = SITE.domain.split(/(?=\.)/);
+import Logo from './Logo.astro';
 ---
 
 <header class="mx-auto flex max-w-page items-center justify-between px-5 pt-4.5">
-  <a href="#top" dir="ltr" class="inline-flex items-center gap-2.25 text-[15px] font-bold tracking-[-0.01em]">
-    <span class="grid size-7.5 place-items-center rounded-[9px] bg-primary text-white">
-      <Icon name="star" size={16} />
-    </span>
-    <span>{domainName}<span class="font-medium text-muted">{tld}</span></span>
-  </a>
+  <Logo />
   <a
     href={SUPPORT_URL}
     aria-label={COPY.topBar.supportLabel}
