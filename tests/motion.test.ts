@@ -1,10 +1,34 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { distDir, page } from './helpers/dist';
+import { builtCss, distDir, page } from './helpers/dist';
 import { gzippedBytes, pageScripts } from './helpers/scripts';
 
 const doc = page('index.html');
+
+/** Flat `selector { declarations }` rules in CSS, at-rule wrappers ignored. */
+function rules(css: string): { selector: string; body: string }[] {
+  return [...css.matchAll(/([^{}]+){([^{}]*)}/g)].map(([, selector, body]) => ({
+    selector: selector.trim(),
+    body,
+  }));
+}
+
+describe('reveal starting state', () => {
+  const hiding = rules(builtCss()).filter(
+    (r) => r.selector.includes('[data-reveal]') && /opacity:\s*0\b|transform:/.test(r.body),
+  );
+
+  it('hides reveal targets before they animate in', () => {
+    expect(hiding.length).toBeGreaterThan(0);
+  });
+
+  it('hides nothing unless the script has put .motion on <html>', () => {
+    for (const { selector } of hiding) {
+      for (const part of selector.split(',')) expect(part.trim()).toMatch(/^(html)?\.motion\s/);
+    }
+  });
+});
 
 describe('landing-page JavaScript (ADR-0003)', () => {
   const scripts = pageScripts(doc);

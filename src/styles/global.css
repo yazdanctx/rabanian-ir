@@ -47,3 +47,13 @@
     }
   }
 }
+
+/*
+ * Reveal starting state (src/scripts/motion.ts). Only under `html.motion`,
+ * which Motion.astro's inline script adds when JS runs and reduced motion is
+ * off; no-JS and reduced-motion visitors see everything in its final place.
+ */
+.motion [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+  transform: translateY(8px);
+}
