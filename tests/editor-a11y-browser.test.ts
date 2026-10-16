@@ -110,4 +110,21 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       { name: expect.stringMatching(/^0\s*1\s*2/), ring: RING },
     ]);
   });
+
+  it('tells screen readers how to leave the Code Pane, where Tab indents', async () => {
+    await tab.send('DOM.enable');
+    await tab.send('Accessibility.enable');
+    const { root } = await tab.send('DOM.getDocument', { depth: -1 });
+    const { nodeId } = await tab.send('DOM.querySelector', {
+      nodeId: root.nodeId,
+      selector: '[role="tabpanel"] .cm-content',
+    });
+    const { nodes } = await tab.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
+    const [pane] = nodes;
+    expect({ role: pane.role.value, name: pane.name.value, description: pane.description?.value }).toEqual({
+      role: 'textbox',
+      name: 'کد JS',
+      description: 'در کد، Tab فاصله می‌گذارد؛ برای بیرون رفتن، اول Esc و بعد Tab را بزن.',
+    });
+  });
 });
