@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نمونه پالت‌ها — rabanian.ir</title>
+<style>
+  @font-face { font-family: 'Yekan'; src: url('../../src/assets/fonts/fa/IRANYekanXFaNum-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+  @font-face { font-family: 'Yekan'; src: url('../../src/assets/fonts/fa/IRANYekanXFaNum-Medium.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+  @font-face { font-family: 'Yekan'; src: url('../../src/assets/fonts/fa/IRANYekanXFaNum-DemiBold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+  @font-face { font-family: 'Yekan'; src: url('../../src/assets/fonts/fa/IRANYekanXFaNum-Bold.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'Yekan', system-ui, sans-serif; background: #e9e9ea; color: #111; -webkit-font-smoothing: antialiased; }
+  .intro { max-width: 1240px; margin: 28px auto 0; padding: 0 20px; font-size: 13px; color: #444; }
+  .wrap { display: grid; grid-template-columns: repeat(auto-fill, 390px); gap: 28px; justify-content: center; padding: 20px 20px 80px; }
+  .col h2 { font-size: 15px; margin: 0 0 6px; }
+  .col .meta { font-size: 11.5px; color: #555; margin: 0 0 12px; display: flex; gap: 10px; flex-wrap: wrap; font-family: ui-monospace, Menlo, monospace; direction: ltr; }
+  .sw { display: inline-flex; align-items: center; gap: 5px; }
+  .sw i { width: 13px; height: 13px; border-radius: 4px; display: inline-block; border: 1px solid rgba(0,0,0,.08); }
+
+  /* ----- the mock phone; every color is a variable set per column ----- */
+  .col { --r-btn: 14px; --r-card: 20px; --r-sm: 11px; --shadow-card: none; --accent-text: var(--accent); }
+  .phone { background: var(--bg); color: var(--text); border-radius: 28px; padding: 18px 20px 24px; box-shadow: 0 1px 0 rgba(0,0,0,.05), 0 20px 50px -20px rgba(0,0,0,.25); border: 1px solid rgba(0,0,0,.06); }
+  a { color: inherit; text-decoration: none; }
+  p { margin: 0; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; }
+  .logo { display: inline-flex; align-items: center; gap: 9px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; direction: ltr; }
+  .logo .mark { width: 30px; height: 30px; border-radius: 9px; background: var(--accent); display: grid; place-items: center; color: var(--on-accent); }
+  .logo .tld { color: var(--muted); font-weight: 500; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 11px; background: var(--surface); border: 1px solid var(--border); display: grid; place-items: center; color: var(--text); }
+
+  .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hi, var(--accent)); animation: pulsed 3s ease-in-out infinite; }
+  @keyframes pulsed { 0%,100%{opacity:.45} 50%{opacity:1} }
+  h1 { font-size: 34px; line-height: 1.15; margin: 16px 0 6px; font-weight: 700; letter-spacing: -.02em; }
+  .tag { font-size: 17px; font-weight: 600; color: var(--accent-text); margin-bottom: 10px; }
+  .lead { font-size: 14px; line-height: 1.9; color: var(--muted); }
+
+  .avatar { margin: 24px auto 20px; width: 150px; height: 150px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: grid; place-items: center; color: var(--muted); font-size: 12px; position: relative; }
+  .avatar::before, .avatar::after { content: ''; position: absolute; inset: -16px; border-radius: 50%; border: 1px dashed var(--border); }
+  .avatar::after { inset: -34px; opacity: .6; }
+
+  .ctas { display: flex; gap: 10px; margin: 14px 0 22px; }
+  .btn { flex: 1; text-align: center; padding: 13px 16px; border-radius: var(--r-btn); font-weight: 600; font-size: 14px; }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.ghost { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-btn); padding: 12px 10px; text-align: center; }
+  .stat b { display: block; font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  .stat span { font-size: 11.5px; color: var(--muted); }
+
+  .sec { margin-top: 30px; }
+  .eyebrow { font-size: 12px; font-weight: 500; color: var(--accent-text); display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--accent); border-radius: 2px; }
+  h3 { margin: 0 0 14px; font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); overflow: hidden; box-shadow: var(--shadow-card); }
+  .card .banner { height: 110px; background: var(--accent-soft); display: flex; align-items: flex-end; justify-content: space-between; padding: 12px; color: var(--muted); font-size: 12px; }
+  .card .banner .pill { background: var(--hi, var(--accent)); color: var(--on-hi, var(--on-accent)); font-size: 11px; font-weight: 600; padding: 5px 10px; border-radius: 999px; }
+  .card .body { padding: 14px 16px 16px; }
+  .card h4 { margin: 0 0 6px; font-size: 15.5px; font-weight: 700; line-height: 1.5; }
+  .card p { font-size: 13px; color: var(--muted); line-height: 1.8; }
+  .card .row { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+  .price b { font-size: 20px; font-weight: 700; }
+  .price span { font-size: 12px; color: var(--muted); margin-inline-start: 4px; }
+  .btn.sm { flex: 0; padding: 9px 16px; font-size: 13px; border-radius: var(--r-sm); }
+
+  .tools { display: grid; gap: 8px; }
+  .tool { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: var(--r-btn); box-shadow: var(--shadow-card); border: 1px solid var(--border); background: var(--surface); }
+  .tool .ic { width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); display: grid; place-items: center; color: var(--accent); font-weight: 700; font-size: 13px; direction: ltr; }
+  .tool .t { flex: 1; }
+  .tool .t b { display: block; font-size: 14px; font-weight: 600; }
+  .tool .t span { font-size: 12px; color: var(--muted); }
+  .tool.active { border-color: var(--accent); }
+  .tool.active .t span { color: var(--accent-text); font-weight: 500; }
+  .tool.locked { opacity: .7; }
+  .tool .lock { color: var(--muted); font-size: 13px; }
+
+  .editor { border: 1px solid var(--border); border-radius: var(--r-card); box-shadow: var(--shadow-card); overflow: hidden; background: var(--surface); }
+  .tabs { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); direction: ltr; }
+  .tab { font: 12px/1 ui-monospace, Menlo, monospace; padding: 7px 12px; border-radius: 9px; color: var(--muted); }
+  .tab.on { background: var(--bg); color: var(--text); font-weight: 600; box-shadow: 0 1px 0 rgba(0,0,0,.04); }
+  .tabs .run { margin-inline-start: auto; font-family: 'Yekan'; font-size: 12px; background: var(--accent); color: var(--on-accent); padding: 7px 12px; border-radius: 9px; font-weight: 600; }
+  .code { direction: ltr; text-align: left; font: 12.5px/1.75 ui-monospace, Menlo, monospace; padding: 12px 14px; background: var(--bg); color: var(--text); white-space: pre; overflow: hidden; }
+  .code .ln { color: var(--border); display: inline-block; width: 22px; user-select: none; }
+  .code .k { color: var(--code-tag, var(--accent)); }
+  .code .s { color: var(--muted); }
+  .code .fa { font-family: 'Yekan', sans-serif; font-size: 12.5px; unicode-bidi: isolate; }
+  .preview { padding: 14px; border-top: 1px solid var(--border); font-size: 13px; }
+  .preview b { display: block; font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+  .preview span { color: var(--muted); }
+
+  .cta { margin-top: 30px; background: var(--ink-block, var(--text)); color: var(--on-ink, #fff); border-radius: var(--r-cta, var(--r-card)); padding: 26px 22px; text-align: center; }
+  .cta .eyebrow { justify-content: center; color: var(--on-ink-eyebrow, var(--on-ink, #fff)); opacity: .9; }
+  .cta .eyebrow::before { background: currentColor; }
+  .cta h3 { color: inherit; margin-bottom: 8px; }
+  .cta p { font-size: 13.5px; line-height: 1.9; opacity: .75; margin-bottom: 18px; }
+  .cta .btn { display: inline-block; flex: none; background: var(--on-ink, #fff); color: var(--ink-block, var(--text)); padding: 12px 22px; }
+  .cta .btn.blue { background: var(--cta-btn, var(--on-ink, #fff)); color: var(--cta-btn-text, var(--ink-block, var(--text))); }
+  .foot { margin-top: 26px; font-size: 11.5px; color: var(--muted); text-align: center; }
+  .foot a { text-decoration: underline; text-underline-offset: 3px; }
+</style>
+</head>
+<body>
+<p class="intro">هر ستون همان محتوای واقعی سایت است با یک پالت. فقط رنگ‌ها فرق می‌کنند؛ تایپوگرافی و چیدمان در همه یکی است.</p>
+<div class="wrap" id="wrap"></div>
+
+<template id="phone">
+  <div class="phone">
+    <div class="top">
+      <a class="logo" href="#"><span class="mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" fill="currentColor"/></svg></span>rabanian<span class="tld">.ir</span></a>
+      <span class="icon-btn"><svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"/></svg></span>
+    </div>
+    <span class="badge"><span class="dot"></span>متخصص هوش مصنوعی · مدیریت محصول</span>
+    <h1>امین ربانیان</h1>
+    <p class="tag">با من هوش مصنوعی رو اصولی یاد بگیر!</p>
+    <p class="lead">تجربیاتم از دل دنیای کسب‌وکار و هوش مصنوعی رو باهات به اشتراک می‌ذارم تا درآمدت رو افزایش بدی!</p>
+    <div class="avatar">عکس پروفایل</div>
+    <div class="ctas"><a class="btn primary" href="#">دوره‌ها</a><a class="btn ghost" href="#">ابزارها</a></div>
+    <div class="stats"><div class="stat"><b>10</b><span>سال تجربه</span></div><div class="stat"><b>8</b><span>دوره تخصصی</span></div><div class="stat"><b>+2000</b><span>دانش‌پذیر</span></div></div>
+
+    <div class="sec">
+      <div class="eyebrow">آموزش</div><h3>دوره‌های من</h3>
+      <div class="card">
+        <div class="banner"><span>جای بنر</span><span class="pill">دوره پرچم‌دار</span></div>
+        <div class="body">
+          <h4>مسترکلاس برنامه‌نویسی و طراحی سایت با هوش مصنوعی</h4>
+          <p>آموزش طراحی سایت و برنامه‌نویسی با هوش مصنوعی از صفر، بدون هیچ پیش‌نیاز.</p>
+          <div class="row"><a class="btn primary sm" href="#">ثبت‌نام</a><div class="price"><b>15</b><span>میلیون تومان</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="eyebrow">جعبه‌ابزار</div><h3>ابزارها</h3>
+      <div class="tools">
+        <a class="tool active" href="#"><span class="ic">&lt;/&gt;</span><span class="t"><b>ویرایشگر HTML</b><span>فعال · ورود ←</span></span></a>
+        <div class="tool locked"><span class="ic">Aa</span><span class="t"><b>دیکشنری اصطلاحات</b><span>ویژه دانش‌پذیران مسترکلاس</span></span><span class="lock">🔒</span></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="eyebrow">ابزار</div><h3>ویرایشگر HTML</h3>
+      <div class="editor">
+        <div class="tabs"><span class="tab on">HTML</span><span class="tab">CSS</span><span class="tab">JS</span><span class="run">اجرا</span></div>
+        <div class="code"><span class="ln">1</span><span class="k">&lt;h1&gt;</span><span class="fa">سلام دنیا</span><span class="k">&lt;/h1&gt;</span>
+<span class="ln">2</span><span class="k">&lt;p&gt;</span><span class="fa">اولین صفحهٔ من</span><span class="k">&lt;/p&gt;</span>
+<span class="ln">3</span><span class="s">&lt;!-- کد خودت رو اینجا بنویس --&gt;</span></div>
+        <div class="preview"><b>سلام دنیا</b><span>اولین صفحهٔ من</span></div>
+      </div>
+    </div>
+    <div class="cta">
+      <div class="eyebrow">پشتیبانی</div>
+      <h3>سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟</h3>
+      <p>همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.</p>
+      <a class="btn blue" href="#">پیام در تلگرام</a>
+    </div>
+    <p class="foot">ساخته شده با ♥ توسط <a href="#">آکادمی ربانیان</a></p>
+  </div>
+</template>
+
+<script>
+// One entry per palette. Keys map 1:1 to the CSS variables above; optional
+// `hi` is a second highlight used only for the pulsing dot and the flagship pill.
+const PALETTES = [
+  { id: 'P', name: 'Paasta — تم پاستا بدون گرادیان هیرو (سفید، آبی ۱۷۶۹FF، جوهری ۰۵۰۸۱۶)',
+    bg: '#FFFFFF', surface: '#F5F7FA', border: '#DCE3EE', text: '#050816', muted: '#536078', accent: '#1769FF', accentText: '#0D5BE0', accentSoft: '#EAF1FF', onAccent: '#FFFFFF',
+    inkBlock: '#050816', onInk: '#FFFFFF', onInkEyebrow: '#56A6FF', ctaBtn: '#1769FF', ctaBtnText: '#FFFFFF',
+    rBtn: '8px', rSm: '8px', rCard: '12px', rCta: '18px', shadowCard: '0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a, 0 0 0 1px #27272a0f' },
+  { id: 'A', name: 'Ink & Electric — سفید خالص، آبی برقی',
+    bg: '#FFFFFF', surface: '#F6F7F9', border: '#E5E7EB', text: '#0B0F19', muted: '#5B6472', accent: '#2563EB', accentSoft: '#DBEAFE', onAccent: '#FFFFFF' },
+  { id: 'B', name: 'Warm Stone — سفید گرم، سبز',
+    bg: '#FAFAF7', surface: '#F2F0EA', border: '#E6E2DA', text: '#1C1917', muted: '#6B6560', accent: '#15803D', accentSoft: '#DCFCE7', onAccent: '#FFFFFF' },
+  { id: 'C', name: 'Violet — سفید، بنفش',
+    bg: '#FFFFFF', surface: '#F6F5FA', border: '#E6E4EE', text: '#0F0F1A', muted: '#5F6070', accent: '#6D28D9', accentSoft: '#EDE9FE', onAccent: '#FFFFFF' },
+  { id: 'D', name: 'Mono — تک‌رنگ، تأکید با وزن',
+    bg: '#FFFFFF', surface: '#F4F4F5', border: '#E4E4E7', text: '#09090B', muted: '#6B6B74', accent: '#09090B', accentSoft: '#E4E4E7', onAccent: '#FFFFFF', codeTag: '#3F3F46' },
+  { id: 'E', name: 'Teal — سفید، سبزآبی',
+    bg: '#FFFFFF', surface: '#F2F7F6', border: '#DCE6E4', text: '#0B1416', muted: '#58696B', accent: '#0F766E', accentSoft: '#CCFBF1', onAccent: '#FFFFFF' },
+  { id: 'F', name: 'Coral Paper — کاغذ گرم، نارنجی سوخته',
+    bg: '#FFFBF7', surface: '#F7F0E8', border: '#EADFD3', text: '#1F1A17', muted: '#6F6660', accent: '#C2410C', accentSoft: '#FFEDD5', onAccent: '#FFFFFF' },
+  { id: 'G', name: 'Navy & Amber — متن سرمه‌ای، کهربایی',
+    bg: '#FFFFFF', surface: '#F4F6FA', border: '#E0E5EE', text: '#0F1F3D', muted: '#5B6A85', accent: '#B45309', accentSoft: '#FEF3C7', onAccent: '#FFFFFF' },
+  { id: 'H', name: 'Rose — سفید، سرخابی',
+    bg: '#FFFFFF', surface: '#F8F5F6', border: '#ECE3E7', text: '#140F12', muted: '#6B5F65', accent: '#BE185D', accentSoft: '#FCE7F3', onAccent: '#FFFFFF' },
+  { id: 'I', name: 'Navy & Lime — دکمه‌های سرمه‌ای تیره، لیمویی برای تأکید',
+    bg: '#FFFFFF', surface: '#F3F5F8', border: '#E1E6ED', text: '#0F172A', muted: '#5C6778', accent: '#0F172A', accentSoft: '#E1E6ED', onAccent: '#FFFFFF', hi: '#A3E635', onHi: '#0F172A', codeTag: '#4D7C0F' },
+];
+
+const VARS = { accentText: '--accent-text', inkBlock: '--ink-block', onInk: '--on-ink', onInkEyebrow: '--on-ink-eyebrow', ctaBtn: '--cta-btn', ctaBtnText: '--cta-btn-text', rBtn: '--r-btn', rSm: '--r-sm', rCard: '--r-card', rCta: '--r-cta', shadowCard: '--shadow-card', bg: '--bg', surface: '--surface', border: '--border', text: '--text', muted: '--muted', accent: '--accent', accentSoft: '--accent-soft', onAccent: '--on-accent', hi: '--hi', onHi: '--on-hi', codeTag: '--code-tag' };
+const SWATCH_KEYS = ['bg', 'surface', 'border', 'text', 'muted', 'accent', 'accentText', 'hi'];
+
+const wrap = document.getElementById('wrap');
+const tpl = document.getElementById('phone');
+for (const p of PALETTES) {
+  const col = document.createElement('div');
+  col.className = 'col';
+  for (const [k, v] of Object.entries(VARS)) if (p[k]) col.style.setProperty(v, p[k]);
+  const h = document.createElement('h2');
+  h.textContent = `${p.id} — ${p.name}`;
+  const meta = document.createElement('p');
+  meta.className = 'meta';
+  meta.innerHTML = SWATCH_KEYS.filter(k => p[k]).map(k => `<span class="sw"><i style="background:${p[k]}"></i>${k} ${p[k]}</span>`).join('');
+  col.append(h, meta, tpl.content.cloneNode(true));
+  wrap.append(col);
+}
+</script>
+</body>
+</html>

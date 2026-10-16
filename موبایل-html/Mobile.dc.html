@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>امین ربانیان — موبایل</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Estedad:wght@400;500;600;700;800;900&amp;family=Vazirmatn:wght@300;400;500;600;700&amp;display=swap">
+<style>
+  body { margin:0; font-family:'Vazirmatn', system-ui, sans-serif; background:#F0EBD8; color:#0D1321; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3,.est { font-family:'Estedad','Vazirmatn',sans-serif; }
+  a { color:inherit; text-decoration:none; }
+  p { margin:0; }
+  .rail { display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding:2px 20px 14px; scrollbar-width:none; -ms-overflow-style:none; }
+  .rail::-webkit-scrollbar { display:none; }
+  .rail > * { scroll-snap-align:start; flex:0 0 auto; }
+  .lnk:active { color:#3E5C76; }
+  @keyframes floaty { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-10px); } }
+  @keyframes pulsed { 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .f1 { animation:floaty 7s ease-in-out infinite; }
+  .orbit { animation:spin 60s linear infinite; transform-origin:center; }
+  .dotp { animation:pulsed 3s ease-in-out infinite; }
+</style>
+</helmet>
+
+<div style="width:100%; max-width:430px; margin:0 auto; min-height:100%; background:#F0EBD8; overflow-x:hidden;">
+
+  <!-- TOP BAR -->
+  <header style="display:flex; align-items:center; justify-content:space-between; padding:18px 20px;">
+    <a href="#top" style="display:inline-flex; align-items:center; gap:9px;">
+      <span style="width:36px; height:36px; border-radius:11px; background:{{primary}}; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(59,47,127,.28);"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" fill="#fff"></path></svg></span>
+      <span class="est" style="font-weight:800; font-size:18px; letter-spacing:-.3px;">rabanian<span style="color:{{accent}};">.ir</span></span>
+    </a>
+    <a href="https://t.me/codaminsupport" aria-label="پشتیبانی تلگرام" style="width:40px; height:40px; border-radius:11px; background:{{primary}}; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"></path></svg></a>
+  </header>
+
+  <!-- HERO -->
+  <section id="top" style="position:relative; padding:28px 20px 44px;">
+    <div style="display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border-radius:999px; background:#E4EAF1; border:1px solid #CEDBE8; margin-bottom:20px;">
+      <span class="dotp" style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span>
+      <span style="font-size:12px; color:#3E5C76; font-weight:500;">متخصص هوش مصنوعی · مدیریت محصول</span>
+    </div>
+    <h1 style="margin:0; font-weight:800; font-size:40px; line-height:1.25; color:#0D1321;">امین ربانیان</h1>
+    <p class="est" style="margin:12px 0 0; font-size:22px; font-weight:600; line-height:1.5; color:#1D2D44;">با من هوش مصنوعی رو اصولی یاد بگیر!</p>
+    <p style="margin:16px 0 0; font-size:16px; line-height:2; color:#3C4A5C; font-weight:300;">تجربیاتم از دل دنیای کسب‌وکار و هوش مصنوعی رو باهات به اشتراک می‌ذارم تا درآمدت رو افزایش بدی!</p>
+
+    <!-- visual -->
+    <div style="position:relative; margin:30px 0 8px; height:230px;">
+      <svg class="orbit" width="260" height="260" viewBox="0 0 260 260" aria-hidden="true" style="position:absolute; top:-15px; left:50%; transform:translateX(-50%); opacity:.5;">
+        <circle cx="130" cy="130" r="95" fill="none" stroke="#CBD6E3" stroke-width="1"></circle>
+        <circle cx="130" cy="130" r="125" fill="none" stroke="#DCE4EE" stroke-width="1"></circle>
+        <circle cx="35" cy="130" r="4" fill="#3E5C76"></circle><circle cx="130" cy="8" r="3.5" fill="#748CAB"></circle>
+      </svg>
+      <div style="position:relative; width:180px; height:210px; margin:0 auto; border-radius:26px; background:#fff; border:1px solid #E6DFC8; box-shadow:0 24px 46px rgba(40,33,90,.14); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; overflow:hidden;">
+        <div style="position:absolute; inset:0; background:radial-gradient(circle at 50% 30%, #E8EDF4, #fff 70%);"></div>
+        <div style="position:relative; width:94px; height:94px; border-radius:50%; background:#E8EDF4; border:1px dashed #BDCBDC; display:flex; align-items:center; justify-content:center;"><svg width="42" height="42" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" stroke="#6E8299" stroke-width="1.5"></circle><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke="#6E8299" stroke-width="1.5" stroke-linecap="round"></path></svg></div>
+        <div style="position:relative; font-size:11px; color:#8593A6;">عکس پروفایل — قابل آپلود</div>
+      </div>
+      <div class="f1" style="position:absolute; bottom:10px; right:18px; padding:9px 14px; border-radius:12px; background:#fff; border:1px solid #E6DFC8; box-shadow:0 10px 24px rgba(40,33,90,.12); font-size:12px; font-weight:600; color:#1D2D44;">هوش مصنوعی کاربردی ✦</div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:11px; margin-top:26px;">
+      <a href="#courses" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:16px; border-radius:16px; background:{{primary}}; color:#fff; font-size:16px; font-weight:700;">دوره‌ها<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+      <a href="#tools" style="display:flex; align-items:center; justify-content:center; padding:16px; border-radius:16px; background:#fff; border:1px solid #D0C8AE; color:#334253; font-size:16px; font-weight:600;">ابزارها</a>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:26px;">
+      <div style="flex:1; background:#fff; border:1px solid #E6DFC8; border-radius:16px; padding:16px 10px; text-align:center;"><div class="est" style="font-size:24px; font-weight:800; color:#0D1321;">۱۰</div><div style="font-size:11px; color:#5E6C80; margin-top:4px; line-height:1.5;">سال تجربه</div></div>
+      <div style="flex:1; background:#fff; border:1px solid #E6DFC8; border-radius:16px; padding:16px 10px; text-align:center;"><div class="est" style="font-size:24px; font-weight:800; color:#0D1321;">۸</div><div style="font-size:11px; color:#5E6C80; margin-top:4px; line-height:1.5;">دوره تخصصی</div></div>
+      <div style="flex:1; background:#fff; border:1px solid #E6DFC8; border-radius:16px; padding:16px 10px; text-align:center;"><div class="est" style="font-size:24px; font-weight:800; color:#0D1321;">+۲۰۰۰</div><div style="font-size:11px; color:#5E6C80; margin-top:4px; line-height:1.5;">دانش‌پذیر</div></div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" style="padding:40px 20px; border-top:1px solid #E3DCC4;">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:16px;">
+      <span style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span>
+      <span style="font-size:12px; color:#5E6C80; font-weight:500;">من کی هستم؟</span>
+    </div>
+    <h2 class="est" style="margin:0 0 18px; font-weight:700; font-size:27px; color:#0D1321; line-height:1.4;">یک مسیر؛ از مهندسی تا محصول</h2>
+    <p style="margin:0; font-size:16px; line-height:2.1; font-weight:300; color:#243444;">از دنیای مهندسی برق و کامپیوتر به فضای کسب‌وکارهای آنلاین رسیدم و الان ۱۰ ساله که در توسعه و رشد کسب‌وکارهای بزرگ در ایران و انگلیس نقش داشتم. کسب‌وکارهایی مثل <span style="color:#1D2D44; font-weight:600;">اسنپ</span>، <span style="color:#1D2D44; font-weight:600;">گروه صنعتی انتخاب</span>، <span style="color:#1D2D44; font-weight:600;">مستربلیط</span>، <span style="color:#1D2D44; font-weight:600;">سی‌آر‌ام دیدار</span> و … فقط بخشی از کسب‌وکارهایی هستن که افتخار همراهی، مدیریت یا مشاوره‌شون رو داشتم.</p>
+  </section>
+
+  <!-- BRANDS -->
+  <section style="padding:34px 0; background:#fff; border-top:1px solid #E3DCC4; border-bottom:1px solid #E3DCC4;">
+    <div style="text-align:center; margin-bottom:22px; padding:0 20px;"><div style="font-size:12px; color:#5E6C80;">برندهایی که افتخار همکاری با آن‌ها را داشته‌ام</div></div>
+    <div class="rail">
+      <div style="width:150px; height:82px; border-radius:14px; border:1px dashed #D0C8AE; background:#FBF9F4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="font-size:12px; color:#0D1321; font-weight:600;">اسنپ</span></div>
+      <div style="width:150px; height:82px; border-radius:14px; border:1px dashed #D0C8AE; background:#FBF9F4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="font-size:12px; color:#0D1321; font-weight:600;">مستربلیط</span></div>
+      <div style="width:150px; height:82px; border-radius:14px; border:1px dashed #D0C8AE; background:#FBF9F4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="font-size:12px; color:#0D1321; font-weight:600;">گروه صنعتی انتخاب</span></div>
+      <div style="width:150px; height:82px; border-radius:14px; border:1px dashed #D0C8AE; background:#FBF9F4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="font-size:12px; color:#0D1321; font-weight:600;">سی‌آر‌ام دیدار</span></div>
+      <div style="width:150px; height:82px; border-radius:14px; border:1px dashed #D0C8AE; background:#FBF9F4; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="font-size:12px; color:#0D1321; font-weight:600;">ویسِند انگلیس</span></div>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  
+
+  <!-- TOOLS -->
+  <section id="courses" style="padding:44px 0 36px;">
+    <div style="padding:0 20px; margin-bottom:22px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;"><span style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span><span style="font-size:12px; color:#5E6C80; font-weight:500;">آموزش</span></div>
+      <h2 class="est" style="margin:0; font-weight:700; font-size:30px; color:#0D1321;">دوره‌های من</h2>
+    </div>
+
+    <!-- FEATURED -->
+    <div style="padding:0 20px; margin-bottom:28px;">
+      <article style="background:{{primary}}; border-radius:24px; overflow:hidden; box-shadow:0 22px 44px rgba(40,33,90,.22);">
+        <div style="height:120px; background:#16233A; display:flex; align-items:center; justify-content:center; position:relative;">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" aria-hidden="true" style="opacity:.9;"><path d="M8 8l-3.5 4L8 16M16 8l3.5 4L16 16M13.5 5l-3 14" stroke="#748CAB" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+          <span style="position:absolute; bottom:8px; font-size:10px; color:#7E8CA6;">جای بنر — قابل آپلود</span>
+          <span style="position:absolute; top:12px; right:12px; display:inline-flex; align-items:center; gap:5px; font-size:11px; padding:5px 11px; border-radius:999px; background:rgba(255,255,255,.16); color:#DCE5F0; font-weight:600;"><svg width="11" height="11" viewBox="0 0 24 24" fill="#AEBDD4" aria-hidden="true"><path d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z"></path></svg>دوره پرچم‌دار</span>
+        </div>
+        <div style="padding:24px; color:#fff;">
+          <h3 class="est" style="margin:0 0 10px; font-size:21px; font-weight:800; line-height:1.5;">مسترکلاس برنامه‌نویسی و طراحی سایت با هوش مصنوعی</h3>
+          <p style="margin:0 0 20px; font-size:14px; line-height:2; color:#C0CAD9;">آموزش طراحی سایت و برنامه‌نویسی با هوش مصنوعی از صفر، بدون هیچ پیش‌نیاز — به‌همراه دسترسی کامل به تمام دوره‌ها و آموزش‌های امین ربانیان.</p>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+            <a href="#" style="display:inline-flex; align-items:center; gap:8px; padding:13px 22px; border-radius:999px; background:#fff; color:{{primary}}; font-size:14px; font-weight:700;">ثبت‌نام<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 6l-6 6 6 6" stroke="#1D2D44" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path></svg></a>
+            <div style="display:flex; align-items:baseline; gap:5px;"><span class="est" style="font-size:22px; font-weight:800;">۱۵</span><span style="font-size:12px; color:#AEBDD4;">میلیون تومان</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div style="padding:0 20px; font-size:13px; color:#5E6C80; margin-bottom:10px; text-align:left;">← برای دیدن بیشتر بکشید</div>
+    <div class="rail">
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E4EAF1; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13.5 6l-3 12" stroke="#3E5C76" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#3E5C76; font-weight:600;">AI Coding</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">مینی‌دوره برنامه‌نویسی با AI</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">آموزش فشرده طراحی سایت با هوش مصنوعی از صفر.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۵ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E9EEF9; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="7" y="3" width="6" height="6" rx="3" stroke="#5E79C4" stroke-width="1.5"></rect><rect x="7" y="9" width="6" height="6" rx="3" stroke="#5E79C4" stroke-width="1.5"></rect><circle cx="16" cy="6" r="3" stroke="#5E79C4" stroke-width="1.5"></circle><circle cx="10" cy="18" r="3" stroke="#5E79C4" stroke-width="1.5"></circle></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#3F5BA8; font-weight:600;">طراحی</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">آموزش فیگما از صفر</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">طراحی و دیزاین سایت با نرم‌افزار تخصصی فیگما.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۲ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E9EDF3; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z" stroke="#1D2D44" stroke-width="1.5" stroke-linejoin="round"></path><path d="M4 7.5l8 4.5 8-4.5M12 12v9" stroke="#1D2D44" stroke-width="1.5" stroke-linejoin="round"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#1D2D44; font-weight:600;">سه‌بعدی</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">طراحی سایت‌های سه‌بعدی</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">دوره فشرده طراحی سایت‌های انیمیشن‌دار از صفر.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۴ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E9EEF9; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8l6-4 10 4-10 4z" stroke="#3F5BA8" stroke-width="1.5" stroke-linejoin="round"></path><path d="M8 11v5c0 1.1 1.8 2 4 2s4-.9 4-2v-5" stroke="#3F5BA8" stroke-width="1.5"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#3F5BA8; font-weight:600;">بازاریابی</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">تگ منیجر برای مبتدیان</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">دوره تخصصی ابزار حرفه‌ای بازاریابی آنلاین گوگل.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۲ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E4EAF1; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V6M4 19h16M8 19v-6M12 19V9M16 19v-9M20 19V5" stroke="#3E5C76" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#3E5C76; font-weight:600;">آنالیز</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">آموزش پست‌هاگ (PostHog)</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">دوره تخصصی ابزار مدیریت رویدادهای وبسایت.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۱ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E9EEF9; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="#3F5BA8" stroke-width="1.5"></circle><path d="M12 7v5l3.5 2" stroke="#3F5BA8" stroke-width="1.5" stroke-linecap="round"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#3F5BA8; font-weight:600;">آنالیز</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">مایکروسافت کلریتی</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">دوره تخصصی گزارش‌گیری از رخدادهای سایت.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۱ میلیون</span></div></div>
+      </article>
+      <article style="width:250px; background:#fff; border:1px solid #E6DFC8; border-radius:20px; overflow:hidden;">
+        <div style="height:120px; background:#E9EDF3; display:flex; align-items:center; justify-content:center; position:relative;"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" stroke="#1D2D44" stroke-width="1.5"></rect><path d="M9 10l2 2-2 2M13 14h3" stroke="#1D2D44" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span style="position:absolute; top:12px; right:12px; font-size:10px; padding:4px 10px; border-radius:999px; background:#fff; color:#1D2D44; font-weight:600;">ایجنتیک</span></div>
+        <div style="padding:18px;"><h3 class="est" style="margin:0 0 7px; font-size:17px; font-weight:700; color:#0D1321;">آموزش کرسر (Cursor)</h3><p style="margin:0 0 14px; font-size:13px; line-height:1.9; color:#556579;">برنامه‌نویسی ایجنتیک با هوش مصنوعی با کرسر.</p><div style="display:flex; align-items:center; justify-content:space-between;"><a class="lnk" href="#" style="font-size:13px; font-weight:700; color:#3E5C76;">جزئیات ←</a><span style="font-size:12px; font-weight:700; color:#0D1321;">۳ میلیون</span></div></div>
+      </article>
+    </div>
+  </section><section id="tools" style="padding:40px 20px; background:#fff; border-top:1px solid #E3DCC4; border-bottom:1px solid #E3DCC4;">
+    <div style="margin-bottom:12px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;"><span style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span><span style="font-size:12px; color:#5E6C80; font-weight:500;">جعبه‌ابزار</span></div>
+      <h2 class="est" style="margin:0; font-weight:700; font-size:30px; color:#0D1321;">ابزارها</h2>
+    </div>
+    <p style="font-size:13px; color:#5E6C80; line-height:1.9; margin-bottom:22px;">ویرایشگر HTML برای همه آزاد است؛ باقی ابزارها ویژهٔ دانش‌پذیران دورهٔ مسترکلاس فعال می‌شوند.</p>
+    <div style="display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px;">
+      <a href="#" style="background:#EAF0F6; border:1px solid #C6D4E4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px;">
+        <div style="width:42px; height:42px; border-radius:12px; background:{{primary}}; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 9l-3 3 3 3M16 9l3 3-3 3" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#0D1321;">ویرایشگر HTML</div><div style="font-size:11px; color:#3E5C76; margin-top:5px; font-weight:600;">فعال · ورود ←</div></div>
+      </a>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 4h10a3 3 0 013 3v13H8a3 3 0 00-3 3V4z" stroke="#97A2B0" stroke-width="1.7" stroke-linejoin="round"></path><path d="M9 8h6M9 12h6" stroke="#97A2B0" stroke-width="1.7" stroke-linecap="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">دیکشنری اصطلاحات</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3l2.2 5.5L20 10l-4.5 3.8L17 20l-5-3-5 3 1.5-6.2L4 10l5.8-1.5z" stroke="#97A2B0" stroke-width="1.6" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">مگاپرامپت‌ها</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5a2 2 0 012-2h11v16H7a2 2 0 00-2 2V5z" stroke="#97A2B0" stroke-width="1.7" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">کتاب‌های مرجع</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="#97A2B0" stroke-width="1.7"></rect><path d="M10 9l5 3-5 3V9z" fill="#97A2B0"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">ویدئوها</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 3h7l4 4v14H7z" stroke="#97A2B0" stroke-width="1.7" stroke-linejoin="round"></path><path d="M14 3v4h4" stroke="#97A2B0" stroke-width="1.7" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">نمونه قراردادها</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 9l-2 3 2 3M16 9l2 3-2 3M14 6l-4 12" stroke="#97A2B0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">نمونه کد وبسایت‌ها</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+      <div style="background:#FBF9F4; border:1px solid #E3DCC4; border-radius:18px; padding:16px; display:flex; flex-direction:column; gap:14px; min-height:132px; position:relative;">
+        <span style="position:absolute; top:14px; left:14px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2" stroke="#A6AFBD" stroke-width="1.7"></rect><path d="M8 10V7a4 4 0 118 0v3" stroke="#A6AFBD" stroke-width="1.7"></path></svg></span>
+        <div style="width:42px; height:42px; border-radius:12px; background:#E7E0CB; display:flex; align-items:center; justify-content:center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v11M8 10l4 4 4-4M5 20h14" stroke="#97A2B0" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <div style="margin-top:auto;"><div class="est" style="font-size:15px; font-weight:700; color:#45525F;">دانلود نرم‌افزارها</div><div style="font-size:10px; color:#8593A6; margin-top:5px;">ویژه دانش‌پذیران مسترکلاس</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section style="padding:40px 0;">
+    <div style="padding:0 20px; margin-bottom:20px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;"><span style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span><span style="font-size:12px; color:#5E6C80; font-weight:500;">تجربه دانش‌پذیران</span></div>
+      <h2 class="est" style="margin:0; font-weight:700; font-size:30px; color:#0D1321;">نظرات</h2>
+    </div>
+    <div class="rail">
+      <figure style="width:290px; margin:0; background:#fff; border:1px solid #E6DFC8; border-radius:20px; padding:24px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#CFDAE6" aria-hidden="true"><path d="M10 7H6a3 3 0 00-3 3v7h7v-7H6c0-1.1.9-2 2-2h2V7zm11 0h-4a3 3 0 00-3 3v7h7v-7h-4c0-1.1.9-2 2-2h2V7z"></path></svg>
+        <blockquote style="margin:14px 0 18px; font-size:14px; line-height:2.1; color:#243444;">دوره خیلی خوب بود و راضی بودم.</blockquote>
+        <figcaption style="display:flex; align-items:center; gap:12px;"><div style="width:44px; height:44px; border-radius:50%; background:#E4EAF1; display:flex; align-items:center; justify-content:center; color:#3E5C76; font-weight:700;">ز</div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">زهرا قاضی‌زاهدی</div><div style="font-size:11px; color:#5E6C80; margin-top:2px;">دانش‌پذیر مسترکلاس</div></div></figcaption>
+      </figure>
+      <figure style="width:290px; margin:0; background:#fff; border:1px solid #E6DFC8; border-radius:20px; padding:24px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#CFDAE6" aria-hidden="true"><path d="M10 7H6a3 3 0 00-3 3v7h7v-7H6c0-1.1.9-2 2-2h2V7zm11 0h-4a3 3 0 00-3 3v7h7v-7h-4c0-1.1.9-2 2-2h2V7z"></path></svg>
+        <blockquote style="margin:14px 0 18px; font-size:14px; line-height:2.1; color:#243444;">واقعاً استاد خوب توضیح می‌دن که نتیجهٔ تمرین‌هام می‌شه این 😍 برای ثبت‌نام خیلی دودل بودم اما الان خیلی راضی‌ام و می‌دونم قراره کلی کارهای خفن انجام بدم 😍</blockquote>
+        <figcaption style="display:flex; align-items:center; gap:12px;"><div style="width:44px; height:44px; border-radius:50%; background:#E9EEF9; display:flex; align-items:center; justify-content:center; color:#3F5BA8; font-weight:700;">س</div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">سارا اسفندیاری</div><div style="font-size:11px; color:#5E6C80; margin-top:2px;">دانش‌پذیر مسترکلاس</div></div></figcaption>
+      </figure>
+      <figure style="width:290px; margin:0; background:#fff; border:1px solid #E6DFC8; border-radius:20px; padding:24px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#CFDAE6" aria-hidden="true"><path d="M10 7H6a3 3 0 00-3 3v7h7v-7H6c0-1.1.9-2 2-2h2V7zm11 0h-4a3 3 0 00-3 3v7h7v-7h-4c0-1.1.9-2 2-2h2V7z"></path></svg>
+        <blockquote style="margin:14px 0 18px; font-size:14px; line-height:2.1; color:#243444;">دارم دوره رو تماشا می‌کنم که برای دخترم هست (سال دوم شبکه و نرم‌افزار) و تمرین‌ها رو بهش می‌دم؛ خیلی ذوق داره 😊 استاد فرمودند دانشجویان مستعد رو در پروژه‌های آینده به کار می‌گیرند. 🚀</blockquote>
+        <figcaption style="display:flex; align-items:center; gap:12px;"><div style="width:44px; height:44px; border-radius:50%; background:#E9EDF3; display:flex; align-items:center; justify-content:center; color:#1D2D44; font-weight:700;">م</div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">میثم بدرقه</div><div style="font-size:11px; color:#5E6C80; margin-top:2px;">دانش‌پذیر مسترکلاس</div></div></figcaption>
+      </figure>
+      <figure style="width:290px; margin:0; background:#fff; border:1px solid #E6DFC8; border-radius:20px; padding:24px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="#CFDAE6" aria-hidden="true"><path d="M10 7H6a3 3 0 00-3 3v7h7v-7H6c0-1.1.9-2 2-2h2V7zm11 0h-4a3 3 0 00-3 3v7h7v-7h-4c0-1.1.9-2 2-2h2V7z"></path></svg>
+        <blockquote style="margin:14px 0 18px; font-size:14px; line-height:2.1; color:#243444;">خیلی ممنون از آموزش‌های خوبتون و راهنمایی‌هاتون حین دوره. اینجوری کمک می‌کنه پیشرفت بیشتری داشته باشم 😍</blockquote>
+        <figcaption style="display:flex; align-items:center; gap:12px;"><div style="width:44px; height:44px; border-radius:50%; background:#E4EAF1; display:flex; align-items:center; justify-content:center; color:#3E5C76; font-weight:700;">ف</div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">فرناز کاشی</div><div style="font-size:11px; color:#5E6C80; margin-top:2px;">دانش‌پذیر مسترکلاس</div></div></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- RESUME -->
+  <section id="resume" style="padding:40px 20px; background:#fff; border-top:1px solid #E3DCC4; border-bottom:1px solid #E3DCC4;">
+    <div style="margin-bottom:28px;">
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;"><span style="width:6px; height:6px; border-radius:50%; background:{{accent}};"></span><span style="font-size:12px; color:#5E6C80; font-weight:500;">مسیر من</span></div>
+      <h2 class="est" style="margin:0; font-weight:700; font-size:30px; color:#0D1321;">خلاصه‌ای از سوابق</h2>
+    </div>
+    <h3 class="est" style="margin:0 0 16px; font-size:17px; font-weight:700; color:#1D2D44;">تجربهٔ حرفه‌ای</h3>
+    <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:32px;">
+      <div style="display:flex; gap:13px; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;">
+        <div style="flex:0 0 46px; width:46px; height:46px; border-radius:12px; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg></div>
+        <div><div style="font-size:14px; font-weight:700; color:#0D1321;">مدیر محصول نرم‌افزاری</div><div style="font-size:12px; color:#3E5C76; margin:3px 0 6px; font-weight:600;">ویسِند انگلستان · جولای ۲۰۲۵ – اکنون</div><div style="font-size:12px; line-height:1.9; color:#556579;">هوشمندسازی شبکه‌های اجتماعی با هوش مصنوعی.</div></div>
+      </div>
+      <div style="display:flex; gap:13px; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;">
+        <div style="flex:0 0 46px; width:46px; height:46px; border-radius:12px; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg></div>
+        <div><div style="font-size:14px; font-weight:700; color:#0D1321;">مدیر ارشد محصول</div><div style="font-size:12px; color:#3E5C76; margin:3px 0 6px; font-weight:600;">مستربلیط · آگوست ۲۰۲۴ – جولای ۲۰۲۵</div><div style="font-size:12px; line-height:1.9; color:#556579;">توسعه و گسترش پلتفرم مستربلیط و رشد تیم محصول در صنعت سفر آنلاین.</div></div>
+      </div>
+      <div style="display:flex; gap:13px; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;">
+        <div style="flex:0 0 46px; width:46px; height:46px; border-radius:12px; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg></div>
+        <div><div style="font-size:14px; font-weight:700; color:#0D1321;">مدیر محصول</div><div style="font-size:12px; color:#3E5C76; margin:3px 0 6px; font-weight:600;">سی‌آر‌ام دیدار · دسامبر ۲۰۲۳ – جولای ۲۰۲۴</div><div style="font-size:12px; line-height:1.9; color:#556579;">رهبری تیم محصول.</div></div>
+      </div>
+      <div style="display:flex; gap:13px; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;">
+        <div style="flex:0 0 46px; width:46px; height:46px; border-radius:12px; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2.5" stroke="#B9B2A3" stroke-width="1.5"></rect><path d="M4 17l4.5-4 3.5 3 3-2.5L21 18" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path></svg></div>
+        <div><div style="font-size:14px; font-weight:700; color:#0D1321;">مدیر عملکرد</div><div style="font-size:12px; color:#3E5C76; margin:3px 0 6px; font-weight:600;">اسنپ · ژوئن ۲۰۲۳ – دسامبر ۲۰۲۳</div><div style="font-size:12px; line-height:1.9; color:#556579;">همکاری با تیمی حدود ۵۰ نفره، بهبود فرایندها، تحلیل داده با تیم BI، توسعهٔ پروژه‌های جدید (اسنپ‌لاین و اسنپ‌استور) و ساخت داشبورد داخلی سازمانی.</div></div>
+      </div>
+    </div>
+    <h3 class="est" style="margin:0 0 14px; font-size:17px; font-weight:700; color:#1D2D44;">تحصیلات</h3>
+    <div style="display:flex; flex-direction:column; gap:11px;">
+      <div style="display:flex; gap:13px; align-items:center; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;"><div style="flex:0 0 46px; width:46px; height:46px; border-radius:50%; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4L2 9l10 5 8-4v6" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path><path d="M6 12v4c0 1.1 2.7 2 6 2s6-.9 6-2v-4" stroke="#B9B2A3" stroke-width="1.5"></path></svg></div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">کارشناسی ارشد مدیریت</div><div style="font-size:12px; color:#5E6C80; margin-top:3px;">دانشگاه تهران</div></div></div>
+      <div style="display:flex; gap:13px; align-items:center; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;"><div style="flex:0 0 46px; width:46px; height:46px; border-radius:50%; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4L2 9l10 5 8-4v6" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path><path d="M6 12v4c0 1.1 2.7 2 6 2s6-.9 6-2v-4" stroke="#B9B2A3" stroke-width="1.5"></path></svg></div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">کارشناسی ارشد مهندسی برق</div><div style="font-size:12px; color:#5E6C80; margin-top:3px;">دانشگاه صنعتی اصفهان</div></div></div>
+      <div style="display:flex; gap:13px; align-items:center; background:#FBF9F4; border:1px solid #E8E1CB; border-radius:16px; padding:16px;"><div style="flex:0 0 46px; width:46px; height:46px; border-radius:50%; border:1px dashed #D0C8AE; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4L2 9l10 5 8-4v6" stroke="#B9B2A3" stroke-width="1.5" stroke-linejoin="round"></path><path d="M6 12v4c0 1.1 2.7 2 6 2s6-.9 6-2v-4" stroke="#B9B2A3" stroke-width="1.5"></path></svg></div><div><div style="font-size:14px; font-weight:700; color:#0D1321;">کارشناسی مهندسی برق</div><div style="font-size:12px; color:#5E6C80; margin-top:3px;">دانشگاه صنعتی اصفهان</div></div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding:36px 20px;">
+    <div style="position:relative; background:{{primary}}; border-radius:26px; padding:38px 26px; overflow:hidden; text-align:center;">
+      <svg width="200" height="200" viewBox="0 0 200 200" aria-hidden="true" style="position:absolute; top:-40px; right:-30px; opacity:.16;"><g fill="#fff"><circle cx="20" cy="20" r="3"></circle><circle cx="60" cy="20" r="3"></circle><circle cx="100" cy="20" r="3"></circle><circle cx="20" cy="60" r="3"></circle><circle cx="60" cy="60" r="3"></circle><circle cx="100" cy="60" r="3"></circle></g></svg>
+      <div style="position:relative;">
+        <div style="width:56px; height:56px; border-radius:16px; background:rgba(255,255,255,.14); display:flex; align-items:center; justify-content:center; margin:0 auto 18px;"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"></path></svg></div>
+        <h2 class="est" style="margin:0 0 12px; font-size:24px; font-weight:800; color:#fff; line-height:1.5;">سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟</h2>
+        <p style="margin:0 0 24px; font-size:14px; line-height:2; color:#C0CAD9;">همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.</p>
+        <a href="https://t.me/codaminsupport" style="display:flex; align-items:center; justify-content:center; gap:9px; padding:16px; border-radius:16px; background:#fff; color:{{primary}}; font-size:16px; font-weight:700;"><svg width="19" height="19" viewBox="0 0 24 24" fill="#1D2D44" aria-hidden="true"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"></path></svg>پیام در تلگرام</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer" style="background:#0D1321; color:#C7CEDA; padding:40px 20px 30px;">
+    <a href="#top" style="display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;">
+      <span style="width:38px; height:38px; border-radius:11px; background:#fff; display:flex; align-items:center; justify-content:center;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" fill="#1D2D44"></path></svg></span>
+      <span class="est" style="font-weight:800; font-size:19px; color:#fff;">rabanian<span style="color:#748CAB;">.ir</span></span>
+    </a>
+    <p style="margin:0 0 22px; font-size:13px; line-height:2; color:#94A0B2;">با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.</p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:24px;">
+      <a href="https://t.me/codaminsupport" style="display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.14); color:#DCE4F0; font-size:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="#748CAB" aria-hidden="true"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"></path></svg>پشتیبانی و مشاوره</a>
+      <a href="https://t.me/aminrabanian" style="display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.14); color:#DCE4F0; font-size:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="#748CAB" aria-hidden="true"><path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z"></path></svg>کانال تلگرام</a>
+      <a href="https://www.linkedin.com/in/amin-rabanian/" style="display:flex; align-items:center; gap:10px; padding:13px 16px; border-radius:12px; border:1px solid rgba(255,255,255,.14); color:#DCE4F0; font-size:14px;"><svg width="17" height="17" viewBox="0 0 24 24" fill="#748CAB" aria-hidden="true"><path d="M4.98 3.5A2.5 2.5 0 112.5 6 2.5 2.5 0 014.98 3.5zM3 8.5h4V21H3zM9 8.5h3.8v1.7h.05a4.2 4.2 0 013.75-2c4 0 4.75 2.65 4.75 6.1V21h-4v-5.5c0-1.3 0-3-1.85-3s-2.15 1.45-2.15 2.9V21H9z"></path></svg>لینکدین</a>
+    </div>
+    <div style="padding-top:20px; border-top:1px solid rgba(255,255,255,.1); display:flex; align-items:center; gap:6px; font-size:12px; color:#8795A8;">ساخته شده با <svg width="14" height="14" viewBox="0 0 24 24" fill="#748CAB" aria-hidden="true"><path d="M12 21s-7-4.5-9.5-9C.8 8.5 2.3 5 5.8 5c2 0 3.3 1.2 4.2 2.4C10.9 6.2 12.2 5 14.2 5c3.5 0 5 3.5 3.3 7-2.5 4.5-9.5 9-9.5 9z"></path></svg> توسط آکادمی ربانیان</div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"primary":{"editor":"color","default":"#1D2D44","section":"رنگ"},"accent":{"editor":"color","default":"#3E5C76","section":"رنگ"},"$preview":{"width":390,"height":7600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      primary: this.props.primary ?? '#1D2D44',
+      accent: this.props.accent ?? '#3E5C76'
+    };
+  }
+}
+</script>
+</body>
+</html>
