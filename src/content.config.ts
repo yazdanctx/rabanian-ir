@@ -3,9 +3,10 @@ import { file } from 'astro/loaders';
 import { schemas } from './content/schemas';
 
 /*
- * One collection per JSON file in `src/content/`. `getCollection()` returns
- * entries in file order (the `file()` loader inserts them in sequence), and
- * that order is the display order.
+ * One collection per JSON file in `src/content/`. File order is the display
+ * order, but `getCollection()` returns entries sorted by `id` (Astro's data
+ * store), so components read collections through `getOrderedCollection()`
+ * from `src/content/ordered.ts`.
  */
 export const collections = {
   stats: defineCollection({ loader: file('src/content/stats.json'), schema: schemas.stats }),
