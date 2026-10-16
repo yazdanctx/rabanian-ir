@@ -78,7 +78,7 @@ describe('Masterclass banner', () => {
     expect(img?.getAttribute('alt')).toMatch(/[؀-ۿ]/);
     expect(img?.getAttribute('width')).toBe('680');
     expect(img?.getAttribute('height')).toBe('383');
-    expect(img?.getAttribute('sizes')).toBe('(min-width: 768px) 680px, 100vw');
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 680px) 640px, calc(100vw - 40px)');
   });
 
   it('loads lazily and decodes asynchronously, being below the fold', () => {
