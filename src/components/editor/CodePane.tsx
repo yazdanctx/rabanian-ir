@@ -1,7 +1,9 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { EditorState, type Extension } from '@codemirror/state';
-import { EditorView, lineNumbers } from '@codemirror/view';
+import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import { defaultKeymap } from '@codemirror/commands';
 import { syntaxHighlighting } from '@codemirror/language';
+import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { javascript } from '@codemirror/lang-javascript';
@@ -45,6 +47,9 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       EditorView.editorAttributes.of({ dir: 'ltr' }),
       EditorView.contentAttributes.of({ 'aria-label': `${COPY.editor.code} ${label}` }),
       lineNumbers(),
+      // HTML tags auto-close from html() itself.
+      closeBrackets(),
+      keymap.of([...closeBracketsKeymap, ...defaultKeymap]),
       LANGUAGE[file](),
       syntaxHighlighting(highlighter),
       EditorView.updateListener.of((update) => {

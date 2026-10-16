@@ -53,6 +53,8 @@ async function clear(tab: BrowserPage) {
   await tab.evaluate(`(() => { ${lib} content().focus(); })()`);
   await tab.press('a', await modifier(tab));
   await tab.press('Backspace');
+  const left = await tab.evaluate<string>(`(() => { ${lib} return text(); })()`);
+  if (left !== '') throw new Error(`could not empty the Code Pane: ${JSON.stringify(left)} is left`);
 }
 
 /** Types `text` one character at a time, as from a keyboard. */
@@ -190,5 +192,22 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     await tab.press('Enter');
     await tab.type("console.log('s');");
     expect(await tokens(tab)).toMatchObject({ '// c': COMMENT, "'s'": STRING });
+  });
+
+  it('closes HTML tags as they are opened', async () => {
+    await pick(tab, 'HTML');
+    await clear(tab);
+    await typeKeys(tab, '<div>');
+    expect(await paneText(tab)).toBe('<div></div>');
+  });
+
+  it('closes brackets and quotes, and types over the closing one', async () => {
+    await pick(tab, 'JS');
+    await clear(tab);
+    await typeKeys(tab, "f('x');");
+    expect(await paneText(tab)).toBe("f('x');");
+    await clear(tab);
+    await typeKeys(tab, '[{(');
+    expect(await paneText(tab)).toBe('[{()}]');
   });
 });
