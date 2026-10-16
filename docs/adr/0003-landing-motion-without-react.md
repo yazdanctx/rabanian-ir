@@ -6,4 +6,5 @@ The landing page animates with `motion`'s framework-free API (`animate`, `inView
 
 - No `.tsx` and no `client:*` directive on the landing page. Astro components own all markup; motion is attached by `data-*` attributes (e.g. `data-reveal`, `data-stagger`) read by one script.
 - Content must be visible without JS: the script hides elements only after it has run and only when `prefers-reduced-motion` is not `reduce`, so no-JS and reduced-motion visitors see the final state.
+- The per-element fade uses `animate` from `motion/mini`, not from `motion`: mini drives browser-native WAAPI, so it doesn't re-apply final styles as inline styles after cleanup, and the CSS hover lift on revealed cards and links keeps working. `inView` and `stagger` still come from `motion`. The shipped landing JS is about 4 KB gzipped.
 - `@astrojs/react` stays installed for the HTML Editor island (`client:only="react"`), which never loads on the landing page.
