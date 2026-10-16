@@ -92,10 +92,15 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
           type="button"
           aria-expanded={open}
           aria-controls={LOG_ID}
+          // With entries, named with their count, which shows even collapsed.
+          aria-label={entries.length ? COPY.editor.consoleLabel(entries.length) : undefined}
           onClick={toggle}
           className="editor-console-toggle"
         >
-          {COPY.editor.console}
+          <span className="editor-console-title">
+            {COPY.editor.console}
+            {entries.length > 0 && <span className="editor-console-count">{entries.length}</span>}
+          </span>
           <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" className="editor-chevron">
             <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

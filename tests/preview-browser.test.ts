@@ -256,6 +256,71 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     expect(steps).toEqual([['log a', 'log b'], []]);
   });
 
+  it('counts its entries beside «کنسول», in Persian digits, while collapsed too', async () => {
+    /** The toggle as seen and as read out: its label, the count and its font and visibility, its name. */
+    const toggle = async () => {
+      const shown = await tab.evaluate<{
+        expanded: string;
+        label: string;
+        count: string | null;
+        font: string | null;
+        visible: boolean;
+      }>(`(() => {
+        const toggle = document.querySelector('[data-console] button[aria-expanded]');
+        const walker = document.createTreeWalker(toggle, NodeFilter.SHOW_TEXT);
+        let count = null;
+        for (let node; (node = walker.nextNode()); ) if (/\\d/.test(node.data)) count = node.parentElement;
+        return {
+          expanded: toggle.getAttribute('aria-expanded'),
+          label: toggle.textContent.replace(/\\d+/, '').trim(),
+          count: count && count.textContent,
+          font: count && getComputedStyle(count).fontFamily.split(',')[0].replace(/["']/g, ''),
+          visible: !!count?.checkVisibility(),
+        };
+      })()`);
+      const { root } = await tab.send('DOM.getDocument', { depth: -1 });
+      const { nodeId } = await tab.send('DOM.querySelector', {
+        nodeId: root.nodeId,
+        selector: '[data-console] button[aria-expanded]',
+      });
+      const { nodes } = await tab.send('Accessibility.getPartialAXTree', { nodeId, fetchRelatives: false });
+      return { ...shown, name: nodes[0].name.value };
+    };
+    await tab.send('DOM.enable');
+    await tab.send('Accessibility.enable');
+    await tab.evaluate(`(async () => {
+      ${lib}
+      const toggle = document.querySelector('[data-console] button[aria-expanded]');
+      if (toggle.getAttribute('aria-expanded') === 'true') toggle.click();
+      await setFiles({ js: "console.log('a'); console.warn('b'); console.error('c')" });
+      await waitFor(() => entries().join() === 'log a,warn b,error c');
+    })()`);
+    // ASCII in the DOM; IRANYekanXFaNum draws it as «۳» (ADR-0002).
+    expect(await toggle()).toEqual({
+      expanded: 'false',
+      label: 'کنسول',
+      count: '3',
+      font: 'IRANYekanXFaNum',
+      visible: true,
+      name: 'کنسول، 3 پیام',
+    });
+    await tab.evaluate(`(async () => {
+      ${lib}
+      document.querySelector('[data-console] button[aria-expanded]').click();
+      await waitFor(() => !!button('پاک کردن'));
+      button('پاک کردن').click();
+      await sleep(50);
+    })()`);
+    expect(await toggle()).toEqual({
+      expanded: 'true',
+      label: 'کنسول',
+      count: null,
+      font: null,
+      visible: false,
+      name: 'کنسول',
+    });
+  });
+
   it('colors each level, warnings and errors in tones that pass AA on the strip', async () => {
     const colors = await tab.evaluate<
       Record<string, { color: string; onLog: number; onSurface: number }>

@@ -104,7 +104,8 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       { name: 'بازنشانی', ring: RING },
       { name: 'دانلود', ring: RING },
       { name: 'پیش‌نمایش', ring: "the learner's page" },
-      { name: 'کنسول', ring: RING },
+      // Named with how many entries it holds.
+      { name: 'کنسول، 40 پیام', ring: RING },
       { name: 'پاک کردن', ring: RING },
       // The log scrolls, so Chrome lets the keyboard scroll it.
       { name: expect.stringMatching(/^0\s*1\s*2/), ring: RING },
