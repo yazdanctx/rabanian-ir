@@ -107,3 +107,41 @@ describe('landing-page JavaScript (ADR-0003)', () => {
     }
   });
 });
+
+describe('hover lift', () => {
+  const css = builtCss();
+
+  it('lifts 2px on hover, with a 180ms transform and shadow transition', () => {
+    const lift = css.match(/\.lift\s*{([^}]*)}/)?.[1] ?? '';
+    const properties = lift.match(/transition-property:\s*([^;}]+)/)?.[1].split(/\s*,\s*/) ?? [];
+    expect(properties).toEqual(expect.arrayContaining(['transform', 'box-shadow']));
+    expect(lift).toMatch(/transition-duration:\s*(180ms|\.18s)/);
+    expect(css).toMatch(/\.lift:hover\s*{[^}]*transform:\s*translateY\(-2px\)/);
+  });
+
+  it('holds still under reduced motion', () => {
+    expect(css).toMatch(
+      /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*{[^@]*?\.lift:hover\s*{[^}]*transform:\s*none/,
+    );
+  });
+
+  it('moves the Hero buttons, Course cards, the free Tool, the CTA button and footer links', () => {
+    /** Whether each match moves on hover: it, or the card around it, is `.lift`. */
+    const lifted = (selector: string) =>
+      [...doc.querySelectorAll(selector)].map((el) => el.closest('.lift') !== null);
+    for (const selector of [
+      '#top a[href="#courses"]',
+      '#top a[href="#tools"]',
+      '[data-masterclass]',
+      '#courses [data-rail] article',
+      '#tools a',
+      'main > section:last-child a',
+      'footer nav a',
+    ]) {
+      const flags = lifted(selector);
+      expect(flags.length, selector).toBeGreaterThan(0);
+      expect(flags.every(Boolean), selector).toBe(true);
+    }
+    expect(lifted('#tools [aria-disabled="true"]').some(Boolean)).toBe(false);
+  });
+});
