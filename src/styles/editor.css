@@ -178,12 +178,13 @@
   }
 }
 
+/* The site's focus ring (global.css). */
 .editor-tab:focus-visible,
 .editor-button:focus-visible,
 .editor-console-toggle:focus-visible,
 .editor-console-log:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
 }
 
 /* Inset where the card would clip it. The log takes focus once it scrolls (Chrome). */
@@ -268,8 +269,9 @@
   border-left-color: var(--color-ink);
 }
 
+/* The focus ring, inset: the card would clip it. */
 .editor-code .cm-editor.cm-focused {
-  outline: 2px solid var(--color-primary);
+  outline: var(--focus-ring);
   outline-offset: -2px;
 }
 

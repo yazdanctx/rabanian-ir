@@ -57,6 +57,16 @@
 }
 
 @layer base {
+  /*
+   * The focus ring, on every page: 2px of primary, 2px out. Markup takes it
+   * with the `focus-ring` utility; editor.css, which uses no utilities, reads
+   * these two variables.
+   */
+  :root {
+    --focus-ring: 2px solid var(--color-primary);
+    --focus-ring-offset: 2px;
+  }
+
   html {
     font-family: var(--font-sans);
     background-color: var(--color-bg);
@@ -79,6 +89,14 @@
 .motion [data-reveal]:not([data-revealed]) {
   opacity: 0;
   transform: translateY(8px);
+}
+
+/* The focus ring (see :root above), drawn when focus comes from the keyboard. */
+@utility focus-ring {
+  &:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
 }
 
 /*
