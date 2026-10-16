@@ -11,13 +11,13 @@ const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
   <Logo />
   <p class="mt-4 mb-5 text-[13px]/[2] text-muted">{SITE.footerBio}</p>
   <nav>
-    <ul class="flex flex-wrap gap-2">
+    <ul class="flex flex-col gap-2 md:flex-row">
       {
         links.map((link) => (
           <li>
             <a
               href={link.href}
-              class="inline-flex items-center gap-2 rounded-btn border border-line bg-surface px-3.5 py-2.5 text-sm transition-colors hover:border-primary hover:text-primary-text"
+              class="flex items-center gap-2.5 rounded-btn border border-line bg-surface px-4 py-3 text-sm md:py-2.5 transition-colors hover:border-primary hover:text-primary-text"
             >
               <Icon name={link.icon} size={16} class="text-muted" />
               {link.label}

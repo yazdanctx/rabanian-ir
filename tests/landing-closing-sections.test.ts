@@ -10,6 +10,24 @@ const text = (el: Element | null | undefined): string =>
 const sectionTitled = (title: string) =>
   [...doc.querySelectorAll('main > section')].find((s) => text(s.querySelector('h2')) === title);
 
+describe('page assembly', () => {
+  const sections = [...doc.querySelectorAll('main > section')];
+  const spec = ['top', 'about', 'courses', 'tools', 'resume'];
+
+  it('gives sections only the spec ids, in spec order', () => {
+    // Courses and Toolbox (ticket 04) fill in between About and Résumé.
+    const ids = sections.map((s) => s.id).filter(Boolean);
+    expect(ids).toEqual(spec.filter((id) => ids.includes(id)));
+    expect(ids).toEqual(expect.arrayContaining(['top', 'about', 'resume']));
+  });
+
+  it('ends main with Testimonials, Résumé and the CTA, then the footer', () => {
+    const lastTitles = sections.slice(-3).map((s) => text(s.querySelector('h2')));
+    expect(lastTitles).toEqual(['نظرات', 'خلاصه‌ای از سوابق', 'سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟']);
+    expect(doc.querySelector('main')?.nextElementSibling?.tagName).toBe('FOOTER');
+  });
+});
+
 describe('testimonials', () => {
   const section = sectionTitled('نظرات');
   const rail = section?.querySelector('ul[data-rail]');
