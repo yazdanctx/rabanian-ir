@@ -270,6 +270,11 @@
   transform: rotate(180deg);
 }
 
+/* What springs open and shut: clips the log while its height animates. */
+.editor-console-body {
+  overflow: hidden;
+}
+
 .editor-console-log {
   min-height: 96px;
   max-height: 200px;

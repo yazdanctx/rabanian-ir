@@ -263,3 +263,70 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     }
   });
 });
+
+/** Toggles the console strip twice, sampling its body's height as it goes. */
+const toggleTwice = `(async () => {
+  ${lib}
+  await setFiles({ js: "console.log('a'); console.log('b'); console.log('c')" });
+  await waitFor(() => entries().length === 3);
+  const toggle = document.querySelector('[data-console] button[aria-expanded]');
+  const body = document.getElementById(toggle.getAttribute('aria-controls'));
+  const sample = async () => {
+    toggle.click();
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    const [animation] = body.getAnimations();
+    const during = {
+      animated: !!animation,
+      duration: animation ? Math.round(animation.effect.getComputedTiming().duration) : 0,
+      height: body.getBoundingClientRect().height,
+    };
+    await sleep(400);
+    return { during, after: { shown: body.checkVisibility(), height: body.getBoundingClientRect().height, animated: body.getAnimations().length > 0 } };
+  };
+  const opening = await sample();
+  const closing = await sample();
+  return { opening, closing };
+})()`;
+type Toggle = {
+  during: { animated: boolean; duration: number; height: number };
+  after: { shown: boolean; height: number; animated: boolean };
+};
+
+describe.skipIf(!chromePath)('console strip motion', () => {
+  it('springs open and closed in about 200ms', async () => {
+    const tab = await openEditor(site.origin, false);
+    try {
+      const { opening, closing } = await tab.evaluate<{ opening: Toggle; closing: Toggle }>(toggleTwice);
+      const full = opening.after.height;
+      expect(full).toBeGreaterThan(90);
+      expect(opening.during.animated).toBe(true);
+      expect(opening.during.duration).toBe(200);
+      expect(opening.during.height).toBeGreaterThan(0);
+      expect(opening.during.height).toBeLessThan(full);
+      expect(opening.after).toEqual({ shown: true, height: full, animated: false });
+      expect(closing.during.animated).toBe(true);
+      expect(closing.during.duration).toBe(200);
+      expect(closing.during.height).toBeGreaterThan(0);
+      expect(closing.during.height).toBeLessThan(full);
+      expect(closing.after).toEqual({ shown: false, height: 0, animated: false });
+    } finally {
+      await tab.close();
+    }
+  });
+
+  it('opens and closes at once under reduced motion', async () => {
+    const tab = await openEditor(site.origin, true);
+    try {
+      const { opening, closing } = await tab.evaluate<{ opening: Toggle; closing: Toggle }>(toggleTwice);
+      const full = opening.after.height;
+      expect(full).toBeGreaterThan(90);
+      expect(opening.during).toEqual({ animated: false, duration: 0, height: full });
+      expect(opening.after).toEqual({ shown: true, height: full, animated: false });
+      expect(closing.during).toEqual({ animated: false, duration: 0, height: 0 });
+      expect(closing.after).toEqual({ shown: false, height: 0, animated: false });
+    } finally {
+      await tab.close();
+    }
+  });
+});

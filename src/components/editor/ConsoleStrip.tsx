@@ -1,8 +1,15 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { spring } from 'motion';
+import { animate } from 'motion/mini';
+import { useEffect, useLayoutEffect, useRef, useState, type RefObject } from 'react';
 import { COPY } from '../../site';
 import { consoleEntry, type ConsoleEntry } from './consoleBridge';
 
 const LOG_ID = 'editor-console-log';
+
+/** Expand/collapse: a 200ms height spring, no bounce (spec: Motion). */
+const EXPAND = { type: spring, duration: 0.2, bounce: 0 } as const;
+
+const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 interface Props {
   /** The Preview frame: the only window whose messages are listed. */
@@ -18,7 +25,12 @@ interface Props {
  */
 export default function ConsoleStrip({ frameRef, build }: Props) {
   const [open, setOpen] = useState(false);
+  // Still shown while it springs shut, hidden once closed.
+  const [closing, setClosing] = useState(false);
   const [entries, setEntries] = useState<ConsoleEntry[]>([]);
+  const body = useRef<HTMLDivElement>(null);
+  const spinning = useRef<ReturnType<typeof animate> | null>(null);
+  const toggled = useRef(false);
 
   // Cleared during render, so in the same commit that mounts the new frame:
   // nothing the new build posts can arrive before the reset.
@@ -39,6 +51,37 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
     return () => removeEventListener('message', onMessage);
   }, [frameRef]);
 
+  function toggle() {
+    toggled.current = true;
+    setOpen(!open);
+    setClosing(open && !reducedMotion());
+  }
+
+  // Before paint, so an opening body never flashes at full height.
+  useLayoutEffect(() => {
+    const el = body.current;
+    if (!el || !toggled.current) return;
+    // From wherever an interrupted spring left it.
+    const from = spinning.current || !open ? el.getBoundingClientRect().height : 0;
+    spinning.current?.stop();
+    spinning.current = null;
+    if (reducedMotion()) {
+      el.style.height = '';
+      return;
+    }
+    const to = open ? el.scrollHeight : 0;
+    const run = animate(el, { height: [`${from}px`, `${to}px`] }, EXPAND);
+    spinning.current = run;
+    run.finished.then(() => {
+      if (spinning.current !== run) return;
+      spinning.current = null;
+      // Open: back to its natural height, to grow with new entries. Closed:
+      // hidden, keeping height 0 for the next opening.
+      if (open) el.style.height = '';
+      else setClosing(false);
+    });
+  }, [open]);
+
   return (
     <div data-console className="editor-console">
       <div className="editor-console-head">
@@ -46,7 +89,7 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
           type="button"
           aria-expanded={open}
           aria-controls={LOG_ID}
-          onClick={() => setOpen((o) => !o)}
+          onClick={toggle}
           className="editor-console-toggle"
         >
           {COPY.editor.console}
@@ -60,13 +103,15 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
           </button>
         )}
       </div>
-      <ol id={LOG_ID} hidden={!open} className="editor-console-log">
-        {entries.map((entry, index) => (
-          <li key={index} data-level={entry.level} dir="auto" className="editor-console-entry">
-            {entry.text}
-          </li>
-        ))}
-      </ol>
+      <div ref={body} id={LOG_ID} hidden={!open && !closing} className="editor-console-body">
+        <ol className="editor-console-log">
+          {entries.map((entry, index) => (
+            <li key={index} data-level={entry.level} dir="auto" className="editor-console-entry">
+              {entry.text}
+            </li>
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }
