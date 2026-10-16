@@ -5,7 +5,7 @@
     "category": "مسترکلاس",
     "description": "آموزش طراحی سایت و برنامه‌نویسی با هوش مصنوعی از صفر، بدون هیچ پیش‌نیاز — به‌همراه دسترسی کامل به تمام دوره‌ها و آموزش‌های امین ربانیان.",
     "priceMillionToman": 15,
-    "featured": true,
+    "masterclass": true,
     "badge": "دوره پرچم‌دار"
   },
   {
@@ -14,7 +14,7 @@
     "category": "AI Coding",
     "description": "آموزش فشرده طراحی سایت با هوش مصنوعی از صفر.",
     "priceMillionToman": 5,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "figma",
@@ -22,7 +22,7 @@
     "category": "طراحی",
     "description": "طراحی و دیزاین سایت با نرم‌افزار تخصصی فیگما.",
     "priceMillionToman": 2,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "3d-websites",
@@ -30,7 +30,7 @@
     "category": "سه‌بعدی",
     "description": "دوره فشرده طراحی سایت‌های انیمیشن‌دار از صفر.",
     "priceMillionToman": 4,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "tag-manager",
@@ -38,7 +38,7 @@
     "category": "بازاریابی",
     "description": "دوره تخصصی ابزار حرفه‌ای بازاریابی آنلاین گوگل.",
     "priceMillionToman": 2,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "posthog",
@@ -46,7 +46,7 @@
     "category": "آنالیز",
     "description": "دوره تخصصی ابزار مدیریت رویدادهای وبسایت.",
     "priceMillionToman": 1,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "clarity",
@@ -54,7 +54,7 @@
     "category": "آنالیز",
     "description": "دوره تخصصی گزارش‌گیری از رخدادهای سایت.",
     "priceMillionToman": 1,
-    "featured": false
+    "masterclass": false
   },
   {
     "id": "cursor",
@@ -62,6 +62,6 @@
     "category": "ایجنتیک",
     "description": "برنامه‌نویسی ایجنتیک با هوش مصنوعی با کرسر.",
     "priceMillionToman": 3,
-    "featured": false
+    "masterclass": false
   }
 ]

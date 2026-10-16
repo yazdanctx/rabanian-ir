@@ -21,23 +21,23 @@ describe('content data', () => {
 describe('courses collection', () => {
   const courses = collection('courses');
 
-  it('opens with the Masterclass, featured and badged, at 15 million toman', () => {
+  it('opens with the Masterclass, flagged and badged, at 15 million toman', () => {
     const [masterclass] = courses;
     expect(masterclass).toMatchObject({
       title: 'مسترکلاس برنامه‌نویسی و طراحی سایت با هوش مصنوعی',
       description:
         'آموزش طراحی سایت و برنامه‌نویسی با هوش مصنوعی از صفر، بدون هیچ پیش‌نیاز — به‌همراه دسترسی کامل به تمام دوره‌ها و آموزش‌های امین ربانیان.',
-      featured: true,
+      masterclass: true,
       badge: 'دوره پرچم‌دار',
       priceMillionToman: 15,
     });
-    expect(courses.filter((c) => c.featured)).toHaveLength(1);
+    expect(courses.filter((c) => c.masterclass)).toHaveLength(1);
   });
 
   it('lists the seven rail Courses in design order with category, title, description and price', () => {
     expect(
       courses
-        .filter((c) => !c.featured)
+        .filter((c) => !c.masterclass)
         .map((c) => [c.category, c.title, c.description, c.priceMillionToman]),
     ).toEqual([
       ['AI Coding', 'مینی‌دوره برنامه‌نویسی با AI', 'آموزش فشرده طراحی سایت با هوش مصنوعی از صفر.', 5],

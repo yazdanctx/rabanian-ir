@@ -6,11 +6,11 @@ import Section from './Section.astro';
 const experiences = await getOrderedCollection('experiences');
 const education = await getOrderedCollection('education');
 const { eyebrow, title, experienceTitle, educationTitle } = COPY.resume;
-const h3 = 'mb-4 text-[17px] font-bold';
+const subheadingClasses = 'mb-4 text-[17px] font-bold';
 ---
 
 <Section id="resume" eyebrow={eyebrow} title={title}>
-  <h3 data-reveal class={h3}>{experienceTitle}</h3>
+  <h3 data-reveal class={subheadingClasses}>{experienceTitle}</h3>
   <ol
     data-timeline
     data-stagger
@@ -34,7 +34,7 @@ const h3 = 'mb-4 text-[17px] font-bold';
     }
   </ol>
 
-  <h3 data-reveal class={h3}>{educationTitle}</h3>
+  <h3 data-reveal class={subheadingClasses}>{educationTitle}</h3>
   <ul data-stagger class="flex flex-col gap-2.5">
     {
       education.map(({ data }) => (

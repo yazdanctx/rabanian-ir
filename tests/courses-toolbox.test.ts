@@ -90,6 +90,15 @@ describe('courses (#courses)', () => {
       ]);
     });
 
+    it('sets every price amount, Masterclass included, in weight 600 (spec: prices)', () => {
+      const amounts = [...(courses?.querySelectorAll('[data-price] b') ?? [])];
+      expect(amounts).toHaveLength(8);
+      for (const amount of amounts) {
+        expect(amount.classList.contains('font-semibold')).toBe(true);
+        expect(amount.classList.contains('font-bold')).toBe(false);
+      }
+    });
+
     it('links every card\'s «جزئیات ←» to Support while no Course has its own url', () => {
       for (const card of cards) {
         const details = card.querySelector('a');

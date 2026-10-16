@@ -7,8 +7,8 @@ import Rail from './Rail.astro';
 import Section from './Section.astro';
 
 const courses = (await getOrderedCollection('courses')).map(({ data }) => data);
-const masterclass = courses.find((course) => course.featured);
-const others = courses.filter((course) => !course.featured);
+const masterclass = courses.find((course) => course.masterclass);
+const others = courses.filter((course) => !course.masterclass);
 const { eyebrow, title, swipeHint } = COPY.courses;
 ---
 

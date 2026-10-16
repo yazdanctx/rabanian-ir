@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { SITE } from '../src/site';
 import { distFiles, page } from './helpers/dist';
 
 describe('home page (dist/index.html)', () => {
@@ -16,9 +17,10 @@ describe('home page (dist/index.html)', () => {
     expect(doc.title).toBe('امین ربانیان — با من هوش مصنوعی رو اصولی یاد بگیر!');
   });
 
-  it('has one Farsi meta description of search-snippet length', () => {
+  it('has one Farsi meta description of search-snippet length, from site.ts', () => {
     expect(doc.querySelectorAll('meta[name="description"]')).toHaveLength(1);
     const description = meta('meta[name="description"]') ?? '';
+    expect(description).toBe(SITE.description);
     expect(description).toMatch(/^[؀-ۿ]/);
     expect(description.length).toBeGreaterThanOrEqual(50);
     expect(description.length).toBeLessThanOrEqual(160);

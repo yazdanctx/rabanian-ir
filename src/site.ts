@@ -7,19 +7,19 @@
  * the FaNum font draws them Persian (ADR-0002).
  */
 
-/** Support (پشتیبانی): the Telegram account for questions and enrollment. */
-export const SUPPORT_URL = 'https://t.me/codaminsupport';
-
 export const LINKS = {
-  support: SUPPORT_URL,
+  /** Support (پشتیبانی): the Telegram account for questions and enrollment. */
+  support: 'https://t.me/codaminsupport',
   channel: 'https://t.me/aminrabanian',
   linkedin: 'https://www.linkedin.com/in/amin-rabanian/',
 } as const;
 
 /** Where a Course's «ثبت‌نام» / «جزئیات ←» goes: its own `url`, else Support. */
 export function courseLink(course: { url?: string }): string {
-  return course.url ?? SUPPORT_URL;
+  return course.url ?? LINKS.support;
 }
+
+const tagline = 'با من هوش مصنوعی رو اصولی یاد بگیر!';
 
 export const SITE = {
   /** Logo text; the top bar mutes the `.ir`. */
@@ -27,9 +27,13 @@ export const SITE = {
   name: 'امین ربانیان',
   /** Hero status badge, next to the pulsing dot. */
   badge: 'متخصص هوش مصنوعی · مدیریت محصول',
-  tagline: 'با من هوش مصنوعی رو اصولی یاد بگیر!',
+  tagline,
   lead: 'تجربیاتم از دل دنیای کسب‌وکار و هوش مصنوعی رو باهات به اشتراک می‌ذارم تا درآمدت رو افزایش بدی!',
-  footerBio: 'با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.',
+  /** The home page's meta description (also its og/twitter description). */
+  description:
+    'امین ربانیان، متخصص هوش مصنوعی و مدیریت محصول؛ دوره‌های آموزش هوش مصنوعی، برنامه‌نویسی و طراحی سایت.',
+  /** The tagline, then a one-line bio. */
+  footerBio: `${tagline} متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.`,
 } as const;
 
 /** A run of About text: plain, or a Brand name to emphasise. */

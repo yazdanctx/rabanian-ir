@@ -1,22 +1,25 @@
 import { describe, expect, it } from 'vitest';
-import { COPY, LINKS, SITE, SUPPORT_URL, courseLink } from '../src/site';
+import * as site from '../src/site';
+import { COPY, LINKS, SITE, courseLink } from '../src/site';
 import { collection } from './helpers/content';
 
 describe('site singletons', () => {
-  it('identifies Amin with name, badge, tagline and lead', () => {
+  it('identifies Amin with name, badge, tagline, lead and meta description', () => {
     expect(SITE).toMatchObject({
       domain: 'rabanian.ir',
       name: 'امین ربانیان',
       badge: 'متخصص هوش مصنوعی · مدیریت محصول',
       tagline: 'با من هوش مصنوعی رو اصولی یاد بگیر!',
       lead: 'تجربیاتم از دل دنیای کسب‌وکار و هوش مصنوعی رو باهات به اشتراک می‌ذارم تا درآمدت رو افزایش بدی!',
+      description:
+        'امین ربانیان، متخصص هوش مصنوعی و مدیریت محصول؛ دوره‌های آموزش هوش مصنوعی، برنامه‌نویسی و طراحی سایت.',
       footerBio:
         'با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.',
     });
   });
 
-  it('links Support, the Telegram channel and LinkedIn', () => {
-    expect(SUPPORT_URL).toBe('https://t.me/codaminsupport');
+  it('links Support, the Telegram channel and LinkedIn, Support under one name', () => {
+    expect('SUPPORT_URL' in site).toBe(false);
     expect(LINKS).toEqual({
       support: 'https://t.me/codaminsupport',
       channel: 'https://t.me/aminrabanian',

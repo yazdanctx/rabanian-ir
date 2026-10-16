@@ -2,6 +2,8 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import satori from 'satori';
 import sharp from 'sharp';
+import { LOGO_MARK_SVG } from './logo-mark';
+import { PALETTE } from './palette';
 import { SITE } from './site';
 
 /**
@@ -32,11 +34,7 @@ const h = (type: string, style: Record<string, unknown>, ...children: (Node | st
   props: { style, children },
 });
 
-const STAR =
-  'data:image/svg+xml,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="#1769FF"/><path transform="translate(4 5.1)" d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" fill="#FFFFFF"/></svg>',
-  );
+const MARK = `data:image/svg+xml,${encodeURIComponent(LOGO_MARK_SVG)}`;
 
 /*
  * Satori RTL caveat: padding on an ancestor of right-aligned Persian text
@@ -63,14 +61,14 @@ export async function renderOgImage(): Promise<Buffer> {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'stretch',
-      background: '#FFFFFF',
-      color: '#050816',
+      background: PALETTE.bg,
+      color: PALETTE.ink,
       fontFamily: 'Yekan',
     },
     h(
       'div',
       { display: 'flex', justifyContent: 'flex-end', paddingTop: INSET, paddingRight: INSET },
-      { type: 'img', props: { src: STAR, width: 96, height: 96 } },
+      { type: 'img', props: { src: MARK, width: 96, height: 96 } },
     ),
     h(
       'div',
@@ -78,13 +76,13 @@ export async function renderOgImage(): Promise<Buffer> {
       h('div', { fontSize: 104, fontWeight: 700, textAlign: 'right', paddingRight: INSET, lineHeight: 1.3 }, SITE.name),
       h(
         'div',
-        { fontSize: 50, fontWeight: 400, textAlign: 'right', paddingRight: INSET, color: '#0D5BE0', lineHeight: 1.5 },
+        { fontSize: 50, fontWeight: 400, textAlign: 'right', paddingRight: INSET, color: PALETTE.primaryText, lineHeight: 1.5 },
         rtl(SITE.tagline),
       ),
     ),
     h(
       'div',
-      { fontSize: 30, fontWeight: 400, color: '#536078', paddingLeft: INSET, paddingBottom: 64 },
+      { fontSize: 30, fontWeight: 400, color: PALETTE.muted, paddingLeft: INSET, paddingBottom: 64 },
       SITE.domain,
     ),
   );

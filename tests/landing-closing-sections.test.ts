@@ -57,6 +57,14 @@ describe('testimonials', () => {
     ]);
   });
 
+  it('draws each quote on a surface card, like every other card', () => {
+    expect(cards).toHaveLength(4);
+    for (const card of cards) {
+      expect(card.classList.contains('bg-surface')).toBe(true);
+      expect(card.classList.contains('rounded-card')).toBe(true);
+    }
+  });
+
   it('attributes each quote to a Learner: initial-letter avatar, name, role', () => {
     const captions = cards.map((c) => c.querySelector('figcaption'));
     const avatars = captions.map((c) => c?.querySelector('[data-avatar]'));
@@ -127,7 +135,7 @@ describe('CTA', () => {
   it('carries the Support eyebrow in the on-dark blue, and the line', () => {
     const eyebrow = block?.querySelector('h2')?.previousElementSibling;
     expect(text(eyebrow)).toBe('پشتیبانی');
-    expect(eyebrow?.classList.contains('text-[#56A6FF]')).toBe(true);
+    expect(eyebrow?.classList.contains('text-primary-on-ink')).toBe(true);
     expect([...(block?.querySelectorAll('p') ?? [])].map(text)).toContain(
       'همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.',
     );

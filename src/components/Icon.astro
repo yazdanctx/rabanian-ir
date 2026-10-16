@@ -6,9 +6,11 @@
  *
  *   <Icon name="telegram" size={18} />
  */
+import { STAR_PATH } from '../logo-mark';
+
 const paths = {
-  /** Logo mark; sits slightly high in its box, as in the design. */
-  star: '<path d="M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z" fill="currentColor"/>',
+  /** Logo mark; shared with the favicon and OG image (src/logo-mark.ts). */
+  star: `<path d="${STAR_PATH}" fill="currentColor"/>`,
   telegram:
     '<path d="M21.5 4.3L2.8 11.5c-1 .4-1 1 0 1.3l4.8 1.5 1.8 5.8c.3.6.7.5 1.1.1l2.6-2.4 4.9 3.6c.6.3 1.1.1 1.3-.6l3-14c.2-.9-.3-1.4-1.1-1z" fill="currentColor"/>',
   /** Points left: "forward" in RTL. */

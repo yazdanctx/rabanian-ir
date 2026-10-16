@@ -6,7 +6,7 @@ import ProfilePhoto from './ProfilePhoto.astro';
 import Section from './Section.astro';
 
 const stats = await getOrderedCollection('stats');
-const button =
+const buttonClasses =
   'flex flex-1 items-center justify-center gap-1.5 rounded-btn px-4 py-3.25 text-sm font-semibold lift';
 ---
 
@@ -26,10 +26,10 @@ const button =
   <div data-reveal><ProfilePhoto /></div>
 
   <div data-reveal class="mb-5.5 flex gap-2.5">
-    <a href="#courses" class:list={[button, 'bg-primary text-white hover:bg-primary-text']}>
+    <a href="#courses" class:list={[buttonClasses, 'bg-primary text-white hover:bg-primary-text']}>
       {COPY.hero.coursesButton}<Icon name="chevron" size={16} />
     </a>
-    <a href="#tools" class:list={[button, 'border border-line bg-surface hover:border-primary']}>
+    <a href="#tools" class:list={[buttonClasses, 'border border-line bg-surface hover:border-primary']}>
       {COPY.hero.toolsButton}
     </a>
   </div>

@@ -11,24 +11,24 @@
  *   </Rail>
  *
  * Props:
- * - label:     accessible name of the list (required; the list is focusable
- *              so keyboard users can scroll it).
- * - cols:      grid columns at md: and up, 2 or 3 (default 3).
- * - itemWidth: each card's width on mobile, any CSS length (default
- *              "auto": sized by content). Cards fill their cell at md:.
- * - class:     extra classes on the <ul>.
+ * - label:     accessible name of the list (the list is focusable so
+ *              keyboard users can scroll it).
+ * - cols:      grid columns at md: and up, 2 or 3.
+ * - itemWidth: each card's width on mobile, any CSS length. Cards fill
+ *              their cell at md:.
+ * - class:     optional extra classes on the <ul>.
  *
  * The Rail is a motion group (`data-stagger`): mark each <li> `data-reveal`
  * and the cards stagger in 60ms apart when it scrolls into view.
  */
 interface Props {
   label: string;
-  cols?: 2 | 3;
-  itemWidth?: string;
+  cols: 2 | 3;
+  itemWidth: string;
   class?: string;
 }
 
-const { label, cols = 3, itemWidth = 'auto', class: className } = Astro.props;
+const { label, cols, itemWidth, class: className } = Astro.props;
 const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3' }[cols];
 ---
 

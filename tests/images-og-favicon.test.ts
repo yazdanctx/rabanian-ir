@@ -78,7 +78,7 @@ describe('Masterclass banner', () => {
     expect(img?.getAttribute('alt')).toMatch(/[؀-ۿ]/);
     expect(img?.getAttribute('width')).toBe('680');
     expect(img?.getAttribute('height')).toBe('383');
-    expect(img?.getAttribute('sizes')).toBe('(min-width: 768px) 680px, 100vw');
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 680px) 640px, calc(100vw - 40px)');
   });
 
   it('loads lazily and decodes asynchronously, being below the fold', () => {
@@ -104,6 +104,12 @@ describe('favicon', () => {
     const star = svg.querySelector('path');
     expect(star?.getAttribute('d')).toBe('M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z');
     expect(star?.getAttribute('fill')).toBe('#FFFFFF');
+  });
+
+  it('draws the same star as the logo on the page', () => {
+    const favicon = parseHTML(readFileSync(join(distDir, 'favicon.svg'), 'utf8')).document;
+    const logoStar = doc.querySelector('header a[href="#top"] svg path');
+    expect(logoStar?.getAttribute('d')).toBe(favicon.querySelector('path')?.getAttribute('d'));
   });
 });
 

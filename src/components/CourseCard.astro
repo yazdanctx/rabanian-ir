@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { COPY, courseLink } from '../site';
+import Price from './Price.astro';
 
 /*
  * One Course on the Courses Rail: category label, title, one-line
@@ -29,9 +30,6 @@ const titleId = `course-${course.id}`;
     >
       {COPY.courses.details}
     </a>
-    <p data-price>
-      <b class="text-base font-bold">{course.priceMillionToman}</b>{' '}
-      <span class="text-xs text-muted">{COPY.courses.priceUnit}</span>
-    </p>
+    <Price amount={course.priceMillionToman} unit={COPY.courses.priceUnit} />
   </div>
 </article>

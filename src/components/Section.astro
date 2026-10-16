@@ -13,10 +13,9 @@ import Eyebrow from './Eyebrow.astro';
  * - eyebrow: small label above the title (rendered only with it).
  * - title:   the section's h2.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
- * - rule:    false drops the bottom rule (default true).
- * - stagger: make the column a motion group (`data-stagger`): its
- *            `data-reveal` children reveal 60ms apart as it scrolls into
- *            view, or on page load with "load" (src/scripts/motion.ts).
+ * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
+ *            whose `data-reveal` children reveal 60ms apart on page load
+ *            (src/scripts/motion.ts); the Hero uses it.
  *
  * The header is always a `data-reveal`; mark other content blocks
  * with `data-reveal` (and lists with `data-stagger`) where they are written.
@@ -26,18 +25,14 @@ interface Props {
   eyebrow?: string;
   title?: string;
   class?: string;
-  rule?: boolean;
-  stagger?: boolean | 'load';
+  stagger?: 'load';
 }
 
-const { id, eyebrow, title, class: className, rule = true, stagger } = Astro.props;
+const { id, eyebrow, title, class: className, stagger } = Astro.props;
 ---
 
-<section id={id} class:list={[rule && 'border-b border-line']}>
-  <div
-    class:list={['mx-auto max-w-page px-5 py-10', className]}
-    data-stagger={stagger === 'load' ? 'load' : stagger ? '' : undefined}
-  >
+<section id={id} class="border-b border-line">
+  <div class:list={['mx-auto max-w-page px-5 py-10', className]} data-stagger={stagger}>
     {
       title && (
         <header data-reveal class="mb-4.5">
