@@ -1,6 +1,6 @@
 # 03 — Top bar, Hero, About, Brands
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Sections 1–4, Layout, Palette)
 Blocked by: 02
 
@@ -20,3 +20,7 @@ Static Astro components (no React yet — motion is wrapped in ticket 07):
 - Matches the design's content and order; renders correctly RTL at 390px and in the single column at 1280px.
 - Stat digits render Persian via the font with ASCII in markup.
 - No animation besides the dot.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (744aff5).

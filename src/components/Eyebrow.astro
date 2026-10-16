@@ -1,0 +1,23 @@
+---
+/*
+ * Section eyebrow: an 18×2px `primary` bar, then 12px/500 text in
+ * `primary-text`. `onInk` is for the dark CTA: text and bar both in
+ * `primary-on-ink`. `class` adds classes, e.g. alignment.
+ */
+interface Props {
+  class?: string;
+  onInk?: boolean;
+}
+
+const { class: className, onInk = false } = Astro.props;
+---
+
+<p
+  class:list={[
+    'flex items-center gap-2 text-xs font-medium before:h-0.5 before:w-4.5 before:rounded-full',
+    onInk ? 'text-primary-on-ink before:bg-current' : 'text-primary-text before:bg-primary',
+    className,
+  ]}
+>
+  <slot />
+</p>

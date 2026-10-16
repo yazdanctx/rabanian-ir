@@ -1,0 +1,90 @@
+@import 'tailwindcss';
+@import './fonts.css';
+
+/*
+ * Palette P (spec: .scratch/landing-page/spec.md). `static` keeps every token
+ * on :root as a CSS variable even when no utility uses it. `src/palette.ts`
+ * mirrors these colors for the OG image; keep the two in step (a test checks).
+ * Tailwind's default colors are dropped: palette P is the only palette, with
+ * no second accent. No gradients anywhere; no dark mode.
+ */
+@theme static {
+  --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
+
+  --color-*: initial;
+  --color-ink: #050816;
+  --color-muted: #536078;
+  --color-primary: #1769ff;
+  --color-primary-text: #0d5be0;
+  --color-primary-soft: #eaf1ff;
+  --color-surface: #f5f7fa;
+  --color-line: #dce3ee;
+  --color-bg: #ffffff;
+  --color-white: #ffffff;
+  /* Spec "on dark block": the eyebrow on the ink CTA. */
+  --color-primary-on-ink: #56a6ff;
+
+  /* The single centered column (`max-w-page`), on every viewport. */
+  --container-page: 680px;
+
+  --radius-btn: 8px;
+  --radius-card: 12px;
+  --radius-cta: 18px;
+
+  --shadow-card:
+    0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a,
+    0 0 0 1px #27272a0f;
+  /* `shadow-card`, raised: what a `lift` card wears on hover. */
+  --shadow-lift:
+    0 0 12px 1px #27272a0a, 0 8px 12px -6px #27272a1f, 0 2px 6px -2px #27272a1f,
+    0 0 0 1px #27272a14;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+/*
+ * Reveal starting state (src/scripts/motion.ts). Only under `html.motion`,
+ * which Motion.astro's inline script adds when JS runs and reduced motion is
+ * off; no-JS and reduced-motion visitors see everything in its final place.
+ */
+.motion [data-reveal]:not([data-revealed]) {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/*
+ * Hover lift for cards and links (spec: Motion): up 2px with a raised
+ * shadow, colors easing alongside. Replaces `transition-colors` where used.
+ * Under reduced motion only the colors and shadow change.
+ */
+@utility lift {
+  transition-property: color, background-color, border-color, transform, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lift);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &:hover {
+      transform: none;
+    }
+  }
+}

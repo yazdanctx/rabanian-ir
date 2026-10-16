@@ -1,0 +1,67 @@
+[
+  {
+    "id": "masterclass",
+    "title": "مسترکلاس برنامه‌نویسی و طراحی سایت با هوش مصنوعی",
+    "category": "مسترکلاس",
+    "description": "آموزش طراحی سایت و برنامه‌نویسی با هوش مصنوعی از صفر، بدون هیچ پیش‌نیاز — به‌همراه دسترسی کامل به تمام دوره‌ها و آموزش‌های امین ربانیان.",
+    "priceMillionToman": 15,
+    "masterclass": true,
+    "badge": "دوره پرچم‌دار"
+  },
+  {
+    "id": "ai-coding-mini",
+    "title": "مینی‌دوره برنامه‌نویسی با AI",
+    "category": "AI Coding",
+    "description": "آموزش فشرده طراحی سایت با هوش مصنوعی از صفر.",
+    "priceMillionToman": 5,
+    "masterclass": false
+  },
+  {
+    "id": "figma",
+    "title": "آموزش فیگما از صفر",
+    "category": "طراحی",
+    "description": "طراحی و دیزاین سایت با نرم‌افزار تخصصی فیگما.",
+    "priceMillionToman": 2,
+    "masterclass": false
+  },
+  {
+    "id": "3d-websites",
+    "title": "طراحی سایت‌های سه‌بعدی",
+    "category": "سه‌بعدی",
+    "description": "دوره فشرده طراحی سایت‌های انیمیشن‌دار از صفر.",
+    "priceMillionToman": 4,
+    "masterclass": false
+  },
+  {
+    "id": "tag-manager",
+    "title": "تگ منیجر برای مبتدیان",
+    "category": "بازاریابی",
+    "description": "دوره تخصصی ابزار حرفه‌ای بازاریابی آنلاین گوگل.",
+    "priceMillionToman": 2,
+    "masterclass": false
+  },
+  {
+    "id": "posthog",
+    "title": "آموزش پست‌هاگ (PostHog)",
+    "category": "آنالیز",
+    "description": "دوره تخصصی ابزار مدیریت رویدادهای وبسایت.",
+    "priceMillionToman": 1,
+    "masterclass": false
+  },
+  {
+    "id": "clarity",
+    "title": "مایکروسافت کلریتی",
+    "category": "آنالیز",
+    "description": "دوره تخصصی گزارش‌گیری از رخدادهای سایت.",
+    "priceMillionToman": 1,
+    "masterclass": false
+  },
+  {
+    "id": "cursor",
+    "title": "آموزش کرسر (Cursor)",
+    "category": "ایجنتیک",
+    "description": "برنامه‌نویسی ایجنتیک با هوش مصنوعی با کرسر.",
+    "priceMillionToman": 3,
+    "masterclass": false
+  }
+]

@@ -1,0 +1,70 @@
+---
+import { getOrderedCollection } from '../content/ordered';
+import { COPY, SITE } from '../site';
+import Icon from './Icon.astro';
+import ProfilePhoto from './ProfilePhoto.astro';
+import Section from './Section.astro';
+
+const stats = await getOrderedCollection('stats');
+const buttonClasses =
+  'flex flex-1 items-center justify-center gap-1.5 rounded-btn px-4 py-3.25 text-sm font-semibold lift';
+---
+
+<Section id="top" class="pt-7" stagger="load">
+  <div
+    data-reveal
+    data-badge
+    class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted"
+  >
+    <span aria-hidden="true" class="pulse-dot size-1.75 rounded-full bg-primary"></span>
+    {SITE.badge}
+  </div>
+  <h1 data-reveal class="mt-4 mb-1.5 text-[34px]/[1.15] font-bold tracking-[-0.02em]">{SITE.name}</h1>
+  <p data-reveal class="mb-2.5 text-[17px] font-semibold text-primary-text">{SITE.tagline}</p>
+  <p data-reveal class="text-sm/[1.9] text-muted">{SITE.lead}</p>
+
+  <div data-reveal><ProfilePhoto /></div>
+
+  <div data-reveal class="mb-5.5 flex gap-2.5">
+    <a href="#courses" class:list={[buttonClasses, 'bg-primary text-white hover:bg-primary-text']}>
+      {COPY.hero.coursesButton}<Icon name="chevron" size={16} />
+    </a>
+    <a href="#tools" class:list={[buttonClasses, 'border border-line bg-surface hover:border-primary']}>
+      {COPY.hero.toolsButton}
+    </a>
+  </div>
+
+  <ul data-reveal data-stats class="grid grid-cols-3 gap-2.5">
+    {
+      stats.map(({ data }) => (
+        <li class="rounded-btn border border-line bg-surface px-2.5 py-3 text-center">
+          <b class="block text-[22px] font-bold tracking-[-0.02em]">{data.value}</b>{' '}
+          <span class="text-[11.5px] text-muted">{data.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</Section>
+
+<style>
+  /* The one ambient animation on the page; static under reduced motion. */
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 0.45;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .pulse-dot {
+    animation: pulse-dot 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pulse-dot {
+      animation: none;
+    }
+  }
+</style>

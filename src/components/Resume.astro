@@ -1,0 +1,45 @@
+---
+import { getOrderedCollection } from '../content/ordered';
+import { COPY } from '../site';
+import CompanyLogo from './CompanyLogo.astro';
+import Section from './Section.astro';
+
+const experiences = await getOrderedCollection('experiences');
+const education = await getOrderedCollection('education');
+const { eyebrow, title, experienceTitle, educationTitle } = COPY.resume;
+const subheadingClasses = 'mb-4 text-[17px] font-bold';
+---
+
+<Section id="resume" eyebrow={eyebrow} title={title}>
+  <h3 data-reveal class={subheadingClasses}>{experienceTitle}</h3>
+  <ol
+    data-timeline
+    data-stagger
+    class="relative mb-8 flex flex-col gap-6 before:absolute before:start-4.5 before:top-2 before:bottom-2 before:w-px before:bg-line"
+  >
+    {
+      experiences.map(({ id, data }) => (
+        <li data-reveal class="relative ps-13">
+          <CompanyLogo id={id} size={36} class="absolute start-0 top-0 ring-4 ring-bg" />
+          <b class="block text-[15px] font-semibold">{data.role}</b>{' '}
+          <span class="mt-0.5 mb-1.5 block text-xs text-muted">
+            {data.employer} · {data.period}
+          </span>{' '}
+          <p class="text-[13px]/[1.9] text-muted">{data.summary}</p>
+        </li>
+      ))
+    }
+  </ol>
+
+  <h3 data-reveal class={subheadingClasses}>{educationTitle}</h3>
+  <ul data-stagger class="flex flex-col gap-2.5">
+    {
+      education.map(({ data }) => (
+        <li data-reveal class="rounded-card border border-line bg-surface px-4 py-3.5">
+          <b class="block text-sm font-semibold">{data.degree}</b>{' '}
+          <span class="mt-0.5 block text-xs text-muted">{data.school}</span>
+        </li>
+      ))
+    }
+  </ul>
+</Section>

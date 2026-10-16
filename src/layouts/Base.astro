@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import regularFontUrl from '../assets/fonts/fa/IRANYekanXFaNum-Regular.woff2?url';
+import { OG_IMAGE } from '../og';
+
+interface Props {
+  /** Farsi page title. */
+  title: string;
+  /** Farsi meta description. */
+  description: string;
+  /** Absolute canonical URL; defaults to this page's path on `site`. */
+  canonical?: string | URL;
+}
+
+const { title, description, canonical = new URL(Astro.url.pathname, Astro.site) } = Astro.props;
+const canonicalUrl = new URL(canonical, Astro.site).href;
+const ogImageUrl = new URL(OG_IMAGE.path, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={regularFontUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content={OG_IMAGE.type} />
+    <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+    <meta property="og:image:alt" content={OG_IMAGE.alt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,6 +1,6 @@
 # 04 — Courses and Toolbox sections
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Sections 5–6, Palette shape rules)
 Blocked by: 02, 03
 
@@ -17,3 +17,7 @@ All links use `courseLink()` (Support fallback).
 
 - 8 courses and 8 tools render from data; every course link resolves to Telegram today.
 - Locked rows are not focusable and not announced as links; the HTML Editor row is.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (0949edf).

@@ -1,6 +1,6 @@
 # 02 — Content collections with the design's data
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Sections 2, 4, 5, 6, 7, 8; "Content as data")
 Blocked by: 01
 
@@ -21,3 +21,7 @@ Export a helper `courseLink(course)` returning `course.url ?? SUPPORT_URL`.
 
 - `astro check` passes; every string from the spec's section list exists in data, none in components.
 - Digits in data are ASCII (ADR-0002).
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (cf9de57).

@@ -1,6 +1,6 @@
 # rabanian.ir — landing page
 
-Status: ready-for-agent
+Status: resolved
 Decided: 2026-10-16 (grilling session, three rounds)
 Design reference: `موبایل-html/Mobile.dc.html` — **content and section order only**; its colors, fonts and ambient animations are not used.
 Vocabulary: `GLOSSARY.md`. Decisions with lock-in: `docs/adr/`.
@@ -13,7 +13,7 @@ A Farsi, RTL, light-mode-only personal site for Amin Rabanian (AI educator / pro
 
 - Astro 7, `output: 'static'`, TypeScript, npm. No adapter; hosting is a personal VPS, decided later — nothing here may depend on a platform.
 - Tailwind 4 (CSS-first `@theme`), palette tokens below as CSS variables.
-- React 19 islands **only** where motion runs (`@astrojs/react`); animation via `motion` v12 (`motion/react`), hydrated `client:visible`.
+- No React on the landing page: animation via `motion` v12's vanilla API (`animate`, `inView`, `stagger`) in one bundled Astro `<script>` (ADR-0003). `@astrojs/react` is installed only for the HTML Editor island.
 - Content in Astro content collections (`src/content/*.json`, Zod schemas). Components never hard-code copy, prices or links.
 - `<html lang="fa" dir="rtl">`. Light mode only: no dark theme, no `prefers-color-scheme` handling, no toggle.
 
@@ -50,15 +50,15 @@ Reference mock: `.scratch/palettes/index.html`, column P.
 
 ## Sections (order fixed, content from the design)
 
-1. **Top bar** — logo (star mark in a `--primary` 30px tile + `rabanian.ir`, the `.ir` muted) linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
+1. **Top bar** — logo (Amin's profile photo in a 30px circle — same source file as the Hero photo — + «آکادمی ربانیان») linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
 2. **Hero** `#top` — status badge (pulsing dot + «متخصص هوش مصنوعی · مدیریت محصول»); `h1` «امین ربانیان»; tagline «با من هوش مصنوعی رو اصولی یاد بگیر!» in `--primary-text`; lead paragraph; profile photo (round, 150–180px, two **static** concentric dashed rings, pill «هوش مصنوعی کاربردی ✦» as a static label); two buttons «دوره‌ها» (`#courses`, filled) and «ابزارها» (`#tools`, outlined); three stat tiles: 10 سال تجربه · 8 دوره تخصصی · +2000 دانش‌پذیر.
 3. **About** `#about` — eyebrow «من کی هستم؟», `h2` «یک مسیر؛ از مهندسی تا محصول», paragraph with the four highlighted Brand names.
-4. **Brands** — caption «برندهایی که افتخار همکاری با آن‌ها را داشته‌ام», Rail of text chips: اسنپ · مستربلیط · گروه صنعتی انتخاب · سی‌آر‌ام دیدار · ویسِند انگلیس. Text only, no logos.
+4. **Brands** — caption «برندهایی که افتخار همکاری با آن‌ها را داشته‌ام», Rail of text chips: اسنپ · مستربلیط · گروه صنعتی انتخاب · سی‌آر‌ام دیدار · ویسِند انگلیس. Each chip: the company's logo (40px tile, `src/assets/logos/<brand id>.*`, shared with the résumé) above its name.
 5. **Courses** `#courses` — eyebrow «آموزش», `h2` «دوره‌های من». Masterclass card first (banner image slot, badge «دوره پرچم‌دار», title, description, «ثبت‌نام» button, price `15` میلیون تومان). Then the Rail of 7 Course cards (category label, title, one-line description, «جزئیات ←» link, price): AI Coding/مینی‌دوره برنامه‌نویسی با AI/5 · طراحی/آموزش فیگما از صفر/2 · سه‌بعدی/طراحی سایت‌های سه‌بعدی/4 · بازاریابی/تگ منیجر برای مبتدیان/2 · آنالیز/آموزش پست‌هاگ (PostHog)/1 · آنالیز/مایکروسافت کلریتی/1 · ایجنتیک/آموزش کرسر (Cursor)/3.
    - Each Course has an optional `url`. «ثبت‌نام» and «جزئیات» use it; when absent they fall back to Support `https://t.me/codaminsupport`. All ship without `url`.
 6. **Toolbox** `#tools` — eyebrow «جعبه‌ابزار», `h2` «ابزارها», note «ویرایشگر HTML برای همه آزاد است؛ باقی ابزارها ویژهٔ دانش‌پذیران دورهٔ مسترکلاس فعال می‌شوند.» List: **Free Tool** «ویرایشگر HTML» — «فعال · ورود ←» → `/editor`, highlighted border. **Locked Tools** (presentational only: lock icon, «ویژه دانش‌پذیران مسترکلاس», not clickable, no auth, no "coming soon"): دیکشنری اصطلاحات · مگاپرامپت‌ها · کتاب‌های مرجع · ویدئوها · نمونه قراردادها · نمونه کد وبسایت‌ها · دانلود نرم‌افزارها.
 7. **Testimonials** — eyebrow «تجربه دانش‌پذیران», `h2` «نظرات», Rail of 4 quote cards with initial-letter avatar, name, role «دانش‌پذیر مسترکلاس» (زهرا قاضی‌زاهدی · سارا اسفندیاری · میثم بدرقه · فرناز کاشی — texts verbatim from the design, emoji included).
-8. **Résumé** `#resume` — eyebrow «مسیر من», `h2` «خلاصه‌ای از سوابق». `h3` «تجربهٔ حرفه‌ای»: 4 Experiences (ویسِند انگلستان 2025–اکنون · مستربلیط 2024–2025 · سی‌آر‌ام دیدار 2023–2024 · اسنپ 2023) as a vertical timeline. `h3` «تحصیلات»: 3 entries.
+8. **Résumé** `#resume` — eyebrow «مسیر من», `h2` «خلاصه‌ای از سوابق». `h3` «تجربهٔ حرفه‌ای»: 4 Experiences (ویسِند انگلستان تیر 1404–اکنون · مستربلیط مرداد 1403–تیر 1404 · سی‌آر‌ام دیدار آذر 1402–تیر 1403 · اسنپ خرداد 1402–آذر 1402), dated in the Persian (Solar Hijri) calendar, as a vertical timeline, each entry marked by the employer's logo in a 36px tile (`src/assets/logos/<experience id>.*`: Mr Bilit from [Persian Labs icons](https://icons.persian-labs.ir/), Snapp's «!» mark from its app CDN, Didar from didar.me, Wesend supplied). `h3` «تحصیلات»: 3 entries.
 9. **CTA** — dark `--ink` block, 18px radius: eyebrow, `h2` «سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟», line «همین حالا در تلگرام به پشتیبانی پیام بده؛ سریع راهنمایی می‌شی.», button «پیام در تلگرام» → Support. (Replaces the design's light CTA card.)
 10. **Footer** — logo, one-line bio, links «پشتیبانی و مشاوره» (t.me/codaminsupport) · «کانال تلگرام» (t.me/aminrabanian) · «لینکدین» (linkedin.com/in/amin-rabanian/), line «ساخته شده با ♥ توسط آکادمی ربانیان» with a small inline heart SVG.
 
@@ -66,15 +66,15 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 
 ## Images
 
-- Slots: profile photo (hero), Masterclass banner, OG image. Nothing else is raster. Brands are text; course cards use category labels.
+- Slots: profile photo (hero and logo), Masterclass banner, OG image, résumé employer logos. Nothing else is raster. Brands are text; course cards use category labels.
 - Source files live in `src/assets/` (never `public/`) and render through Astro `<Picture>`: AVIF + WebP + fallback, `srcset`/`sizes` per breakpoint, explicit `width`/`height`, `loading="lazy"` + `decoding="async"` below the fold, `fetchpriority="high"` on the profile photo. No LQIP/blur placeholders.
 - Until Amin supplies the photo and banner, neutral placeholders sit in the exact slots with the pipeline already wired; dropping the files in is the only step.
 - Budget: Lighthouse mobile Performance ≥ 95.
 
-## Motion (`motion` v12, React islands)
+## Motion (`motion` v12, vanilla script — ADR-0003)
 
 - Hero: soft load stagger (badge → h1 → tagline → lead → photo → buttons → stats), 60ms apart, fade + 8px rise, ~400ms ease-out.
-- Sections: fade + 8px rise once on entering the viewport (`whileInView`, `once: true`); list/rail items staggered 60ms.
+- Sections: fade + 8px rise once on entering the viewport (`inView`, once); list/rail items staggered 60ms.
 - Cards and links: subtle hover lift (2px) / color transition.
 - Pulsing status dot: CSS keyframe (3s opacity), the one ambient animation kept.
 - **Removed from the design**: spinning orbit (rings are static), floating pill (static label).

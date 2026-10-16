@@ -1,6 +1,6 @@
 # 06 — Image pipeline, placeholders, OG image, favicon
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Images, SEO & meta)
 Blocked by: 03, 04
 
@@ -15,3 +15,7 @@ Blocked by: 03, 04
 
 - `dist/` contains AVIF and WebP variants with srcsets; no CLS in Lighthouse; image bytes above the fold < 80 KB on a 390px viewport.
 - Favicon and OG tags validate.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (a7816d0).

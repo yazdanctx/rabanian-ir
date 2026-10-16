@@ -1,0 +1,73 @@
+---
+/*
+ * Rail (ردیف): a horizontally scrolling, snap-aligned row of cards on
+ * mobile, a grid of `cols` columns from `md:` up. Renders a <ul>; pass one
+ * <li> per card. Place it directly inside a <Section>: on mobile it bleeds
+ * through the section's 20px inline padding to the column edge and keeps
+ * that padding as scroll padding, so the first card lines up with the text.
+ *
+ *   <Rail label="دوره‌ها" cols={3} itemWidth="260px">
+ *     {courses.map((c) => <li>…</li>)}
+ *   </Rail>
+ *
+ * Props:
+ * - label:     accessible name of the list (the list is focusable so
+ *              keyboard users can scroll it).
+ * - cols:      grid columns at md: and up, 2 or 3.
+ * - itemWidth: each card's width on mobile, any CSS length. Cards fill
+ *              their cell at md:.
+ * - class:     optional extra classes on the <ul>.
+ *
+ * The Rail is a motion group (`data-stagger`): mark each <li> `data-reveal`
+ * and the cards stagger in 60ms apart when it scrolls into view.
+ */
+interface Props {
+  label: string;
+  cols: 2 | 3;
+  itemWidth: string;
+  class?: string;
+}
+
+const { label, cols, itemWidth, class: className } = Astro.props;
+const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3' }[cols];
+---
+
+<ul
+  data-rail
+  data-stagger
+  aria-label={label}
+  tabindex="0"
+  style={{ '--rail-item': itemWidth }}
+  class:list={[
+    'rail -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1',
+    'focus-visible:outline-2 focus-visible:outline-primary',
+    'md:mx-0 md:grid md:overflow-visible md:px-0',
+    gridCols,
+    className,
+  ]}
+>
+  <slot />
+</ul>
+
+<style>
+  .rail {
+    scrollbar-width: none;
+    overscroll-behavior-inline: contain;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rail > :global(*) {
+    flex: none;
+    width: var(--rail-item);
+    scroll-snap-align: start;
+  }
+
+  @media (min-width: 48rem) {
+    .rail > :global(*) {
+      width: auto;
+    }
+  }
+</style>

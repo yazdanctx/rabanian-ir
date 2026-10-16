@@ -1,0 +1,16 @@
+---
+import { COPY } from '../site';
+import Section from './Section.astro';
+
+const { eyebrow, title, paragraph } = COPY.about;
+---
+
+<Section id="about" eyebrow={eyebrow} title={title}>
+  <p data-reveal class="text-[15px]/[2.1] text-muted md:text-base/[2.1]">
+    {
+      paragraph.map((part) =>
+        typeof part === 'string' ? part : <strong class="font-semibold text-ink">{part.brand}</strong>,
+      )
+    }
+  </p>
+</Section>

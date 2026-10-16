@@ -1,0 +1,31 @@
+---
+import Base from '../layouts/Base.astro';
+import TopBar from '../components/TopBar.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Brands from '../components/Brands.astro';
+import Courses from '../components/Courses.astro';
+import Toolbox from '../components/Toolbox.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Resume from '../components/Resume.astro';
+import Cta from '../components/Cta.astro';
+import Footer from '../components/Footer.astro';
+import Motion from '../components/Motion.astro';
+import { SITE } from '../site';
+---
+
+<Base title={`${SITE.name} — ${SITE.tagline}`} description={SITE.description}>
+  <Motion />
+  <TopBar />
+  <main>
+    <Hero />
+    <About />
+    <Brands />
+    <Courses />
+    <Toolbox />
+    <Testimonials />
+    <Resume />
+    <Cta />
+  </main>
+  <Footer />
+</Base>

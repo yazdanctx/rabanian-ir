@@ -1,6 +1,6 @@
 # 01 — Scaffold the Astro project, theme tokens, base layout
 
-Status: ready-for-agent
+Status: resolved
 Spec: ../spec.md (Stack, Palette, Typography)
 Blocked by: —
 
@@ -19,3 +19,7 @@ Create the Astro 7 project at the repo root (npm, TypeScript strict, `output: 's
 - `npm run dev` serves an RTL page in IRANYekanXFaNum; `npm run build` succeeds with no adapter.
 - Theme tokens resolve as Tailwind utilities (`bg-surface`, `text-primary-text`, `rounded-card`…).
 - No gradient, no dark-mode CSS, no English font loaded.
+
+## Comments
+
+- 2026-10-16: resolved — merged into integration branch `landing-page` (fdde774).

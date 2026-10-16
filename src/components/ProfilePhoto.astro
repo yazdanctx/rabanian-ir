@@ -1,0 +1,38 @@
+---
+import { Picture } from 'astro:assets';
+import { COPY, SITE } from '../site';
+// To change the photo, replace this file (square, at least 800px). Keep the
+// path and name: nothing else needs editing. Until Amin's photo arrives it is
+// a neutral placeholder.
+import profile from '../assets/images/profile.jpg';
+
+/*
+ * Hero photo: a 150px circle inside two static dashed rings, with the static
+ * pill label. It is above the fold, so it loads eagerly at high priority.
+ */
+---
+
+<div data-profile-photo class="relative mx-auto my-13 size-37.5">
+  <span aria-hidden="true" class="absolute -inset-4 rounded-full border border-dashed border-line"
+  ></span>
+  <span
+    aria-hidden="true"
+    class="absolute -inset-8.5 rounded-full border border-dashed border-line opacity-60"></span>
+  <Picture
+    src={profile}
+    alt={SITE.name}
+    formats={['avif', 'webp']}
+    widths={[150, 300, 450]}
+    sizes="150px"
+    width={150}
+    height={150}
+    priority
+    decoding="async"
+    class="relative size-full rounded-full border border-line bg-surface object-cover"
+  />
+  <span
+    class="absolute -start-12 bottom-0 rounded-full border border-line bg-bg px-3 py-1.5 text-xs font-semibold whitespace-nowrap shadow-card"
+  >
+    {COPY.hero.photoPill}
+  </span>
+</div>

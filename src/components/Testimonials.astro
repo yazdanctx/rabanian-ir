@@ -1,0 +1,38 @@
+---
+import { getOrderedCollection } from '../content/ordered';
+import { COPY } from '../site';
+import Icon from './Icon.astro';
+import Rail from './Rail.astro';
+import Section from './Section.astro';
+
+const testimonials = await getOrderedCollection('testimonials');
+const { eyebrow, title } = COPY.testimonials;
+---
+
+<Section eyebrow={eyebrow} title={title}>
+  <Rail label={title} cols={2} itemWidth="290px">
+    {
+      testimonials.map(({ data }) => (
+        <li data-reveal class="flex">
+          <figure class="flex flex-1 flex-col rounded-card border border-line bg-surface p-5 shadow-card">
+            <Icon name="quote" size={26} class="text-line" />
+            <blockquote class="mt-3 mb-4.5 flex-1 text-sm/[2.1]">{data.quote}</blockquote>
+            <figcaption class="flex items-center gap-3">
+              <span
+                data-avatar
+                aria-hidden="true"
+                class="grid size-11 flex-none place-items-center rounded-full border border-line bg-surface font-semibold"
+              >
+                {[...data.name][0]}
+              </span>{' '}
+              <span>
+                <b class="block text-sm font-semibold">{data.name}</b>{' '}
+                <span class="mt-0.5 block text-[11.5px] text-muted">{data.role}</span>
+              </span>
+            </figcaption>
+          </figure>
+        </li>
+      ))
+    }
+  </Rail>
+</Section>
