@@ -3,6 +3,7 @@ import { COPY } from '../../site';
 import ActionBar from './ActionBar';
 import CodePane from './CodePane';
 import ConsoleStrip from './ConsoleStrip';
+import { downloadPage } from './downloadPage';
 import Preview from './Preview';
 import TabBar, { tabId } from './TabBar';
 import { clearWorkspace, loadWorkspace, type Workspace } from './persistence';
@@ -13,9 +14,6 @@ import { usePreviewBuild } from './usePreviewBuild';
 const PANEL_ID = 'editor-panel';
 const PREVIEW_TITLE_ID = 'editor-preview-title';
 
-/** Placeholder for the actions ticket 04 wires up. */
-const notYet = () => {};
-
 /**
  * The HTML Editor: tabs over one Code Pane, and beside it (below it on
  * narrow screens) the Preview with the action bar and the console strip.
@@ -23,6 +21,7 @@ const notYet = () => {};
 export default function EditorApp() {
   // The last visit's workspace, else the Starter Template.
   const [state, setState] = useState<Workspace>(loadWorkspace);
+  // The workspace as opened or last reset: nothing new to save until it changes.
   const [opened, setOpened] = useState(state);
   useAutosave(state, opened);
   // Bumped to remount the Code Pane on files replaced from outside it.
@@ -66,7 +65,7 @@ export default function EditorApp() {
             <h2 id={PREVIEW_TITLE_ID} className="editor-card-title">
               {COPY.editor.preview}
             </h2>
-            <ActionBar onRun={preview.runNow} onReset={reset} onDownload={notYet} />
+            <ActionBar onRun={preview.runNow} onReset={reset} onDownload={() => downloadPage(files)} />
           </div>
           <Preview srcDoc={preview.srcDoc} build={preview.id} frameRef={frame} />
         </section>

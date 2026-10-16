@@ -1,4 +1,9 @@
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { CONSOLE_BRIDGE } from '../src/components/editor/consoleBridge';
 import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
 import { COPY } from '../src/site';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
@@ -220,6 +225,68 @@ describe.skipIf(!chromePath)('«بازنشانی»', () => {
       expect(await shown(tab)).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
     } finally {
       await tab.close();
+    }
+  });
+});
+
+describe.skipIf(!chromePath)('«دانلود»', () => {
+  let tab: BrowserPage;
+  let downloads: string;
+  beforeAll(async () => {
+    tab = await openEditor(site.origin);
+    downloads = mkdtempSync(join(tmpdir(), 'rabanian-download-'));
+    await tab.send('Browser.setDownloadBehavior', { behavior: 'allow', downloadPath: downloads });
+  });
+  afterAll(async () => {
+    await tab?.close();
+    rmSync(downloads, { recursive: true, force: true });
+  });
+
+  const mine = '<p id="mine">نوشتهٔ من</p>';
+  let saved: string;
+
+  it('saves the Preview page as one index.html, without the console bridge', async () => {
+    const previewed = await tab.evaluate<string>(`(async () => {
+      ${lib}
+      await write('HTML', ${JSON.stringify(STARTER_TEMPLATE.html + mine)});
+      await waitFor(() => frame().srcdoc.includes(${JSON.stringify(mine)}));
+      button('دانلود').click();
+      return frame().srcdoc;
+    })()`);
+    const file = join(downloads, 'index.html');
+    for (let i = 0; i < 100 && !existsSync(file); i++) await new Promise((r) => setTimeout(r, 50));
+    saved = readFileSync(file, 'utf8');
+    expect(previewed).toContain(`<script>${CONSOLE_BRIDGE}</script>`);
+    expect(saved).toBe(previewed.replace(`<script>${CONSOLE_BRIDGE}</script>`, ''));
+    expect(saved).not.toMatch(/postMessage|rabanian-editor/);
+  });
+
+  it('opens on its own as a working right-to-left Farsi page', async () => {
+    const page = await openPage(pathToFileURL(join(downloads, 'index.html')).href, { width: 1280, height: 900 });
+    try {
+      const opened = await page.evaluate<Record<string, unknown>>(`(async () => {
+        const h1 = document.querySelector('h1');
+        const faces = await document.fonts.load('700 32px IRANYekanXFaNum', h1.textContent);
+        const before = {
+          lang: document.documentElement.lang,
+          direction: getComputedStyle(h1).direction,
+          font: faces.map((face) => face.status).join(),
+          mine: document.getElementById('mine')?.textContent,
+          heading: h1.textContent,
+        };
+        document.getElementById('greet').click();
+        return { ...before, clicked: h1.textContent };
+      })()`);
+      expect(opened).toEqual({
+        lang: 'fa',
+        direction: 'rtl',
+        font: 'loaded',
+        mine: 'نوشتهٔ من',
+        heading: 'سلام دنیا',
+        clicked: 'به دنیای وب خوش آمدی',
+      });
+    } finally {
+      await page.close();
     }
   });
 });
