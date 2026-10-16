@@ -57,6 +57,14 @@ describe('testimonials', () => {
     ]);
   });
 
+  it('draws each quote on a surface card, like every other card', () => {
+    expect(cards).toHaveLength(4);
+    for (const card of cards) {
+      expect(card.classList.contains('bg-surface')).toBe(true);
+      expect(card.classList.contains('rounded-card')).toBe(true);
+    }
+  });
+
   it('attributes each quote to a Learner: initial-letter avatar, name, role', () => {
     const captions = cards.map((c) => c.querySelector('figcaption'));
     const avatars = captions.map((c) => c?.querySelector('[data-avatar]'));
