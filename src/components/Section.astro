@@ -1,0 +1,43 @@
+---
+import Eyebrow from './Eyebrow.astro';
+
+/*
+ * One landing-page section: a full-width <section> with the 1px `line`
+ * bottom rule, holding the centered ~680px column with section padding
+ * (20px inline, 40px block). Children go in the default slot.
+ *
+ *   <Section id="courses" eyebrow="آموزش" title="دوره‌های من">…</Section>
+ *
+ * Props (all optional):
+ * - id:      anchor id on the <section> (e.g. "courses", "tools").
+ * - eyebrow: small label above the title (rendered only with it).
+ * - title:   the section's h2.
+ * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
+ * - rule:    false drops the bottom rule (default true).
+ */
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  class?: string;
+  rule?: boolean;
+}
+
+const { id, eyebrow, title, class: className, rule = true } = Astro.props;
+---
+
+<section id={id} class:list={[rule && 'border-b border-line']}>
+  <div class:list={['mx-auto max-w-page px-5 py-10', className]}>
+    {
+      title && (
+        <header class="mb-4.5">
+          {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+          <h2 class="mt-1.5 text-xl/normal font-bold tracking-[-0.01em] md:text-2xl/normal">
+            {title}
+          </h2>
+        </header>
+      )
+    }
+    <slot />
+  </div>
+</section>

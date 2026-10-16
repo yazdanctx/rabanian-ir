@@ -1,0 +1,22 @@
+---
+import { getOrderedCollection } from '../content/ordered';
+import { COPY } from '../site';
+import Rail from './Rail.astro';
+import Section from './Section.astro';
+
+const brands = await getOrderedCollection('brands');
+const { caption } = COPY.brands;
+---
+
+<Section>
+  <p class="mb-5 text-center text-xs text-muted">{caption}</p>
+  <Rail label={caption} cols={3} itemWidth="150px">
+    {
+      brands.map(({ data }) => (
+        <li class="grid min-h-18 place-items-center rounded-card border border-line bg-surface px-3 text-center text-[13px] font-semibold">
+          {data.name}
+        </li>
+      ))
+    }
+  </Rail>
+</Section>

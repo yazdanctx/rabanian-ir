@@ -39,6 +39,22 @@ describe('built stylesheet', () => {
     );
   });
 
+  it('pulses the hero status dot over 3s, and holds it still under reduced motion', () => {
+    const keyframes = css.match(/@keyframes\s+([\w-]+)\s*{[^@]*?opacity:\s*\.45[^@]*?opacity:\s*1/);
+    expect(keyframes).not.toBeNull();
+    const name = keyframes![1];
+    const animation = css.match(/\.pulse-dot[^{]*{[^}]*animation:\s*([^;}]+)/)?.[1] ?? '';
+    expect(animation.split(/\s+/).sort()).toEqual(['3s', 'ease-in-out', 'infinite', name].sort());
+    expect(css).toMatch(
+      /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*{[^{}]*\.pulse-dot[^{]*{[^}]*animation:\s*none/,
+    );
+  });
+
+  it('hides the Rail scrollbar in every engine', () => {
+    expect(css).toMatch(/\.rail[^{]*{[^}]*scrollbar-width:\s*none/);
+    expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
+  });
+
   it('has no gradients and no dark-mode styles', () => {
     expect(css).not.toMatch(/gradient\(/);
     expect(css).not.toMatch(/prefers-color-scheme/);

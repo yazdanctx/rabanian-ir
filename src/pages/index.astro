@@ -1,10 +1,19 @@
 ---
 import Base from '../layouts/Base.astro';
+import TopBar from '../components/TopBar.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Brands from '../components/Brands.astro';
 ---
 
 <Base
   title="امین ربانیان | آموزش هوش مصنوعی"
   description="امین ربانیان، متخصص هوش مصنوعی و مدیریت محصول؛ دوره‌های آموزش هوش مصنوعی، برنامه‌نویسی و طراحی سایت."
 >
-  <main></main>
+  <TopBar />
+  <main>
+    <Hero />
+    <About />
+    <Brands />
+  </main>
 </Base>
