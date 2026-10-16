@@ -29,6 +29,12 @@ const icons = {
     </>
   ),
   download: <path d="M12 4v11m-5-5 5 5 5-5M5 20h14" {...stroke} />,
+  home: (
+    <>
+      <path d="M4 11 12 4l8 7" {...stroke} />
+      <path d="M6 9.5V20h12V9.5M10 20v-5h4v5" {...stroke} />
+    </>
+  ),
 } satisfies Record<string, ReactNode>;
 
 function Glyph({ name }: { name: keyof typeof icons }) {
@@ -41,12 +47,16 @@ function Glyph({ name }: { name: keyof typeof icons }) {
 
 /**
  * The editor's only actions (spec: Layout). «اجرا» comes last, so it sits at
- * the far left of the RTL bar, the end the eye reaches last.
+ * the far left of the RTL bar, the end the eye reaches last. Before them, a
+ * house: the way back to the home page, since this page has no top bar.
  */
 export default function ActionBar({ onRun, onReset, onDownload }: Props) {
-  const { run, reset, download } = COPY.editor;
+  const { home, run, reset, download } = COPY.editor;
   return (
     <div data-actions className="editor-actions">
+      <a href="/" aria-label={home} title={home} className="editor-button editor-home">
+        <Glyph name="home" />
+      </a>
       <button type="button" onClick={onReset} className="editor-button">
         <Glyph name="reset" />
         {reset}

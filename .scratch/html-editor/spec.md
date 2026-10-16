@@ -11,7 +11,7 @@ A very minimal page at `/editor` where a Farsi-speaking beginner writes HTML, CS
 ## Page
 
 - Route `/editor` inside the same Astro site; linked from the Toolbox row «ویرایشگر HTML · فعال · ورود ←».
-- Farsi `<title>`: «ویرایشگر HTML — rabanian.ir». No top bar: the editor is the whole page (decided 2026-10-17).
+- Farsi `<title>`: «ویرایشگر HTML — rabanian.ir». No top bar: the editor is the whole page (decided 2026-10-17). The way back is a house icon link «صفحهٔ اصلی» (`/`) at the start of the Preview bar's action group, just right of «بازنشانی».
 - The editor app is one React island, `client:only="react"` (CodeMirror has no SSR value). Nothing from it loads on the landing page.
 
 ## Layout

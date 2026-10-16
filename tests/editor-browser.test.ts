@@ -192,6 +192,21 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       expect(actions).toEqual(['button:بازنشانی:true', 'button:دانلود:true', 'button:اجرا:true']);
     });
 
+    it('links home from the bar: a house icon named «صفحهٔ اصلی», just right of the actions', async () => {
+      const home = await tab.evaluate<{ label: string; title: string; icon: string; rightOfReset: boolean } | null>(`(() => {
+        const link = document.querySelector('[data-actions] a[href="/"]');
+        if (!link) return null;
+        const reset = [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === 'بازنشانی');
+        return {
+          label: link.getAttribute('aria-label'),
+          title: link.getAttribute('title'),
+          icon: link.querySelector('svg')?.getAttribute('aria-hidden'),
+          rightOfReset: link.getBoundingClientRect().left >= reset.getBoundingClientRect().right,
+        };
+      })()`);
+      expect(home).toEqual({ label: 'صفحهٔ اصلی', title: 'صفحهٔ اصلی', icon: 'true', rightOfReset: true });
+    });
+
     it('puts «اجرا» at the far left of the bar', async () => {
       const lefts = await tab.evaluate<Record<string, number>>(`(() => Object.fromEntries(
         [...document.querySelectorAll('[data-actions] button')].map((b) => [b.textContent.trim(), b.getBoundingClientRect().left]),
@@ -433,6 +448,28 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       for (let i = 0; i < 3; i++) await tab.press(horizontal ? 'ArrowLeft' : 'ArrowUp');
       expect(await codeSize()).toBeGreaterThan(before);
     });
+  });
+
+  it('goes back to the home page from the home link', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      const { x, y } = await tab.evaluate<{ x: number; y: number }>(`(() => {
+        const box = document.querySelector('[data-actions] a[href="/"]').getBoundingClientRect();
+        return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+      })()`);
+      for (const type of ['mousePressed', 'mouseReleased']) {
+        await tab.send('Input.dispatchMouseEvent', { type, x, y, button: 'left', clickCount: 1 });
+      }
+      // Asked from here, not the page: the page goes away when it navigates.
+      let path = '';
+      for (let i = 0; i < 50 && path !== '/'; i++) {
+        await new Promise((r) => setTimeout(r, 100));
+        path = await tab.evaluate<string>('location.pathname').catch(() => '');
+      }
+      expect(path).toBe('/');
+    } finally {
+      await tab.close();
+    }
   });
 
   it('turns side by side into stacked when the window narrows, keeping the files', async () => {
