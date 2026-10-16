@@ -64,8 +64,11 @@ export interface PageOptions {
 export interface BrowserPage {
   /** Evaluates an expression in the page (promises are awaited). */
   evaluate<T>(expression: string): Promise<T>;
-  /** Sends a raw DevTools protocol command to the page. */
-  send(method: string, params?: object): Promise<any>;
+  /**
+   * Sends a raw DevTools protocol command to the page, or to the target
+   * attached as `sessionId` (e.g. an out-of-process frame).
+   */
+  send(method: string, params?: object, sessionId?: string): Promise<any>;
   /** Types text into the focused element as the keyboard would (Farsi included). */
   type(text: string): Promise<void>;
   /**
@@ -73,6 +76,13 @@ export interface BrowserPage {
    * `modifiers` (a bitmask: Alt 1, Ctrl 2, Meta 4, Shift 8).
    */
   press(key: string, modifiers?: number): Promise<void>;
+  /** Reloads the page, resolving on its load event. */
+  reload(): Promise<void>;
+  /**
+   * Answers the page's dialogs (`alert`, `confirm`, `prompt`) from now on:
+   * `accept` gets each one's message and says whether to accept it.
+   */
+  answerDialogs(accept: (message: string) => boolean): void;
   close(): Promise<void>;
 }
 
@@ -139,13 +149,13 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
 
   let nextId = 0;
   const pending = new Map<number, (message: any) => void>();
-  const listeners = new Map<string, () => void>();
+  const listeners = new Map<string, (params: any) => void>();
   socket.onmessage = (event) => {
     const message = JSON.parse(String(event.data));
     if (message.id !== undefined) pending.get(message.id)?.(message);
-    else listeners.get(message.method)?.();
+    else listeners.get(message.method)?.(message.params);
   };
-  const send = (method: string, params: object = {}) =>
+  const send = (method: string, params: object = {}, sessionId?: string) =>
     new Promise<any>((resolve, reject) => {
       const id = ++nextId;
       pending.set(id, (message) => {
@@ -153,7 +163,7 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
         if (message.error) reject(new Error(`${method}: ${message.error.message}`));
         else resolve(message.result);
       });
-      socket.send(JSON.stringify({ id, method, params }));
+      socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
     });
 
   await send('Emulation.setDeviceMetricsOverride', {
@@ -169,12 +179,22 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   }
   if (noScript) await send('Emulation.setScriptExecutionDisabled', { value: true });
   await send('Page.enable');
-  const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', resolve));
-  await send('Page.navigate', { url });
-  await loaded;
+  /** Runs `command` and resolves once the page it loads has fired `load`. */
+  const load = async (command: () => Promise<unknown>) => {
+    const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', () => resolve()));
+    await command();
+    await loaded;
+  };
+  await load(() => send('Page.navigate', { url }));
 
   return {
     send,
+    reload: () => load(() => send('Page.reload')),
+    answerDialogs(accept) {
+      listeners.set('Page.javascriptDialogOpening', ({ message }) =>
+        send('Page.handleJavaScriptDialog', { accept: accept(message) }),
+      );
+    },
     async type(text: string) {
       await send('Input.insertText', { text });
     },
