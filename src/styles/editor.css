@@ -36,6 +36,12 @@
 :root {
   --editor-width: 1280px;
   --code-font: 'JetBrains Mono', 'IRANYekanXFaNum', ui-monospace, monospace;
+  /*
+   * Console levels. Not palette tokens: they only color console text. Both
+   * pass AA as text on surface (6.1:1 and 5.1:1) and on white.
+   */
+  --editor-error: #b42318;
+  --editor-warn: #b54708;
 }
 
 /* The top bar spans the editor's width here, not the 680px landing column. */
@@ -213,9 +219,13 @@
   outline-offset: -2px;
 }
 
+/* The Preview frame: the learner's page on white, filling the card. */
 .editor-preview {
+  display: block;
   flex: 1;
+  width: 100%;
   min-height: 320px;
+  border: 0;
   background-color: var(--color-bg);
 }
 
@@ -230,15 +240,26 @@
   }
 }
 
-.editor-console-toggle {
+/* The console strip's head: the toggle across it, «پاک کردن» at its end when open. */
+.editor-console-head {
   display: flex;
   align-items: center;
+}
+
+.editor-console-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
   justify-content: space-between;
-  width: 100%;
   min-height: 44px;
   padding-inline: 14px;
   color: var(--color-ink);
   cursor: pointer;
+}
+
+.editor-console-clear {
+  height: 30px;
+  margin-inline-end: 7px;
 }
 
 .editor-chevron {
@@ -249,12 +270,37 @@
   transform: rotate(180deg);
 }
 
+/* What springs open and shut: clips the log while its height animates. */
+.editor-console-body {
+  overflow: hidden;
+}
+
 .editor-console-log {
   min-height: 96px;
   max-height: 200px;
   overflow: auto;
   border-top: 1px solid var(--color-line);
   background-color: var(--color-bg);
+}
+
+/* One message, verbatim: its own direction, wrapped, in the code font. */
+.editor-console-entry {
+  padding: 6px 14px;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink);
+  font-family: var(--code-font);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.editor-console-entry[data-level='warn'] {
+  color: var(--editor-warn);
+}
+
+.editor-console-entry[data-level='error'] {
+  color: var(--editor-error);
 }
 
 @media (prefers-reduced-motion: reduce) {
