@@ -21,6 +21,9 @@
   --color-bg: #ffffff;
   --color-white: #ffffff;
 
+  /* The single centered column (`max-w-page`), on every viewport. */
+  --container-page: 680px;
+
   --radius-btn: 8px;
   --radius-card: 12px;
   --radius-cta: 18px;
