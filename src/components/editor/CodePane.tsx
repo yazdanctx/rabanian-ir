@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { EditorState, type Extension } from '@codemirror/state';
 import {
   EditorView,
@@ -28,6 +29,10 @@ interface Props {
    * outside (reset, restore), remount the pane with a new `key`.
    */
   initialFiles: Files;
+  /**
+   * Every edit, applied synchronously (as a controlled input's would be), so
+   * an action straight after typing («اجرا») sees the new text.
+   */
   onChange: (file: FileId, text: string) => void;
 }
 
@@ -118,7 +123,9 @@ export default function CodePane({ file, initialFiles, onChange }: Props) {
 
   useEffect(() => {
     for (const { id } of FILES) {
-      states.current[id] ??= createState(id, initialFiles[id], (text) => onChangeRef.current(id, text));
+      states.current[id] ??= createState(id, initialFiles[id], (text) =>
+        flushSync(() => onChangeRef.current(id, text)),
+      );
     }
     const editor = new EditorView({ parent: host.current!, state: states.current[shown.current] });
     view.current = editor;
