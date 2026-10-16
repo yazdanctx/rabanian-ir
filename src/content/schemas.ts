@@ -68,7 +68,22 @@ export const education = z.object({
   school: z.string(),
 });
 
+/** A Brand, shown by name only (no logo). */
+export const brand = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+/** A hero stat tile. `value` is display text with ASCII digits, e.g. "+2000". */
+export const stat = z.object({
+  id: z.string(),
+  value: z.string().regex(/^\+?[0-9]+$/),
+  label: z.string(),
+});
+
 export const schemas = {
+  brands: brand,
+  stats: stat,
   courses: course,
   tools: tool,
   testimonials: testimonial,

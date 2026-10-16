@@ -8,6 +8,8 @@ import { schemas } from './content/schemas';
  * that order is the display order.
  */
 export const collections = {
+  stats: defineCollection({ loader: file('src/content/stats.json'), schema: schemas.stats }),
+  brands: defineCollection({ loader: file('src/content/brands.json'), schema: schemas.brands }),
   courses: defineCollection({ loader: file('src/content/courses.json'), schema: schemas.courses }),
   tools: defineCollection({ loader: file('src/content/tools.json'), schema: schemas.tools }),
   testimonials: defineCollection({

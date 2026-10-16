@@ -73,6 +73,28 @@ describe('tools collection', () => {
   });
 });
 
+describe('brands collection', () => {
+  it('names the five Brands in chip order', () => {
+    expect(collection('brands').map((b) => b.name)).toEqual([
+      'اسنپ',
+      'مستربلیط',
+      'گروه صنعتی انتخاب',
+      'سی‌آر‌ام دیدار',
+      'ویسِند انگلیس',
+    ]);
+  });
+});
+
+describe('stats collection', () => {
+  it('holds the three hero stats with ASCII values', () => {
+    expect(collection('stats').map(({ value, label }) => [value, label])).toEqual([
+      ['10', 'سال تجربه'],
+      ['8', 'دوره تخصصی'],
+      ['+2000', 'دانش‌پذیر'],
+    ]);
+  });
+});
+
 describe('experiences collection', () => {
   it('lists the four Experiences newest first, with the design’s month-and-year periods', () => {
     expect(
