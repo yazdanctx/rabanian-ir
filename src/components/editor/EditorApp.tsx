@@ -36,9 +36,9 @@ export default function EditorApp() {
         />
         <div role="tabpanel" id={PANEL_ID} aria-labelledby={tabId(activeTab)} className="editor-panel">
           <CodePane
-            value={state[activeTab]}
-            onChange={(text) => setState((s) => ({ ...s, [s.activeTab]: text }))}
-            labelledBy={tabId(activeTab)}
+            file={activeTab}
+            initialFiles={state}
+            onChange={(file, text) => setState((s) => ({ ...s, [file]: text }))}
           />
         </div>
       </section>

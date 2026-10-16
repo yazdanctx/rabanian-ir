@@ -19,7 +19,8 @@ const lib = `
   const tabs = () => [...document.querySelectorAll('[role="tablist"] [role="tab"]')];
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const panel = () => document.querySelector('[role="tabpanel"]');
-  const code = () => panel().querySelector('textarea');
+  const code = () => panel().querySelector('.cm-content');
+  const codeText = () => [...code().querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n');
 `;
 
 /** Opens /editor and waits for the client-only island to render. */
@@ -27,7 +28,7 @@ async function openEditor(origin: string, width = 1280): Promise<BrowserPage> {
   const tab = await openPage(`${origin}/editor/`, { width, height: 900, reducedMotion: true });
   const ready = await tab.evaluate<boolean>(`(async () => {
     ${lib}
-    return waitFor(() => tabs().length > 0);
+    return waitFor(() => tabs().length > 0 && code());
   })()`);
   if (!ready) throw new Error('the editor island never rendered');
   return tab;
@@ -74,23 +75,21 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     });
 
     it('switches the Code Pane to the clicked file, keeping what was typed in each', async () => {
-      const seen = await tab.evaluate<string[]>(`(async () => {
-        ${lib}
-        const type = (text) => {
-          code().focus();
-          document.execCommand('insertText', false, text);
-        };
-        const pick = async (label) => {
-          tabs().find((t) => t.textContent.trim() === label).click();
-          await waitFor(() => selected().textContent.trim() === label);
-          return selected().textContent.trim() + ':' + code().value;
-        };
-        type('<h1>سلام دنیا</h1>');
-        const seen = [await pick('CSS')];
-        type('h1 { color: red }');
-        seen.push(await pick('JS'), await pick('HTML'), await pick('CSS'));
-        return seen;
-      })()`);
+      const pick = (label: string) =>
+        tab.evaluate<string>(`(async () => {
+          ${lib}
+          tabs().find((t) => t.textContent.trim() === ${JSON.stringify(label)}).click();
+          await waitFor(() => selected().textContent.trim() === ${JSON.stringify(label)});
+          return selected().textContent.trim() + ':' + codeText();
+        })()`);
+      const type = async (text: string) => {
+        await tab.evaluate(`(() => { ${lib} code().focus(); })()`);
+        await tab.type(text);
+      };
+      await type('<h1>سلام دنیا</h1>');
+      const seen = [await pick('CSS')];
+      await type('h1 { color: red }');
+      seen.push(await pick('JS'), await pick('HTML'), await pick('CSS'));
       expect(seen).toEqual(['CSS:', 'JS:', 'HTML:<h1>سلام دنیا</h1>', 'CSS:h1 { color: red }']);
     });
 
@@ -175,7 +174,7 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
 
     it('sets code left-to-right in the code font stack', async () => {
       const style = await tab.evaluate<{ direction: string; fontFamily: string }>(`(() => {
-        const s = getComputedStyle(document.querySelector('[role="tabpanel"] textarea'));
+        const s = getComputedStyle(document.querySelector('[role="tabpanel"] .cm-content'));
         return { direction: s.direction, fontFamily: s.fontFamily };
       })()`);
       expect(style.direction).toBe('ltr');

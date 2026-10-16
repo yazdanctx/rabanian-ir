@@ -124,6 +124,8 @@ export const COPY = {
       'ویرایشگر HTML رایگان آکادمی ربانیان؛ HTML، CSS و جاوااسکریپت بنویس و نتیجه را همان لحظه در پیش‌نمایش ببین.',
     /** Screen-reader name of the HTML · CSS · JS tab list. */
     filesLabel: 'فایل‌ها',
+    /** Screen-reader name of the Code Pane, before the file's name: «کد HTML». */
+    code: 'کد',
     /** The action bar's three buttons. */
     run: 'اجرا',
     reset: 'بازنشانی',
