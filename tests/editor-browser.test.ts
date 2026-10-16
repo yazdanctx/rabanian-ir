@@ -130,6 +130,54 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     });
   });
 
+  describe('Farsi chrome', () => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openEditor(site.origin);
+      // Open the console strip, so «پاک کردن» is on the page too.
+      await tab.evaluate(`document.querySelector('[data-console] button[aria-expanded]').click()`);
+    });
+    afterAll(() => tab?.close());
+
+    /**
+     * Every piece of the page's own text, shown (with the font it is set in)
+     * or spoken (accessible names, no font). Code, the Preview and console
+     * messages are the learner's, not chrome.
+     */
+    const chrome = () =>
+      tab.evaluate<{ text: string; font: string | null }[]>(`(() => {
+        const learners = '.cm-editor, iframe, [data-console] li';
+        const font = (el) => getComputedStyle(el).fontFamily.split(',')[0].replace(/["']/g, '');
+        const out = [];
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        for (let node; (node = walker.nextNode()); ) {
+          const el = node.parentElement;
+          if (!node.data.trim() || el.closest(learners) || el.closest('script, style, [hidden]')) continue;
+          out.push({ text: node.data.trim(), font: font(el) });
+        }
+        for (const el of document.querySelectorAll('[aria-label], [title], [alt]')) {
+          for (const name of ['aria-label', 'title', 'alt']) {
+            const text = el.getAttribute(name)?.trim();
+            if (text) out.push({ text, font: null });
+          }
+        }
+        return out;
+      })()`);
+
+    it("is a right-to-left Farsi page whose every string is Farsi, the languages' names aside", async () => {
+      expect(await tab.evaluate(`document.documentElement.lang + ' ' + document.documentElement.dir`)).toBe('fa rtl');
+      const strings = (await chrome()).map(({ text }) => text);
+      expect(strings).toContain('پاک کردن');
+      // Tab labels stay Latin: they are the languages' names (spec: Layout).
+      expect(strings.filter((text) => !/[؀-ۿ]/.test(text))).toEqual(['HTML', 'CSS', 'JS']);
+    });
+
+    it('sets all of it in IRANYekanXFaNum, so any number in it reads in Persian digits', async () => {
+      const shown = (await chrome()).filter(({ font }) => font);
+      expect([...new Set(shown.map(({ font }) => font))]).toEqual(['IRANYekanXFaNum']);
+    });
+  });
+
   describe('action bar, Preview and console strip', () => {
     let tab: BrowserPage;
     beforeAll(async () => {
