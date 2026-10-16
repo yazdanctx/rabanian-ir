@@ -67,6 +67,8 @@ export const COPY = {
     title: 'دوره‌های من',
     /** Masterclass button. */
     enroll: 'ثبت‌نام',
+    /** Alt text of the Masterclass banner image. */
+    bannerAlt: 'بنر دوره مسترکلاس',
     /** Rail card link. */
     details: 'جزئیات ←',
     /** Under the Courses rail, mobile only. */
