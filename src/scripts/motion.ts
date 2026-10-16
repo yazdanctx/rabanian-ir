@@ -16,24 +16,29 @@
  * nothing moves. Once revealed, an element gets `data-revealed` and its
  * inline styles are cleared, so CSS (e.g. the hover lift) owns it again.
  */
-import { animate, inView, stagger } from 'motion';
+import { inView, stagger } from 'motion';
+// The WAAPI `animate`: it commits the final keyframe inline synchronously on
+// finish, so `finished` is the moment to hand the element back to CSS.
+import { animate } from 'motion/mini';
 
 const STEP = 0.06;
 const IN_VIEW = { amount: 0.1 } as const;
 
-function reveal(items: Element[]) {
-  const delay = stagger(STEP);
-  items.forEach((el, i) => {
-    const extra = Number((el as HTMLElement).dataset.delay ?? 0) / 1000;
-    animate(
-      el,
-      { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
-      { duration: 0.4, ease: 'easeOut', delay: delay(i, items.length) + extra },
-    ).finished.then(() => {
+const extraDelay = (el: HTMLElement) => Number(el.dataset.delay ?? 0) / 1000;
+
+/** Fades and lifts `items` in, 60ms apart in the given order. */
+function reveal(items: HTMLElement[]) {
+  const step = stagger(STEP);
+  animate(
+    items,
+    { opacity: [0, 1], transform: ['translateY(8px)', 'none'] },
+    { duration: 0.4, ease: 'easeOut', delay: (i, n) => step(i, n) + extraDelay(items[i]) },
+  ).finished.then(() => {
+    for (const el of items) {
       el.setAttribute('data-revealed', '');
-      (el as HTMLElement).style.removeProperty('opacity');
-      (el as HTMLElement).style.removeProperty('transform');
-    });
+      el.style.removeProperty('opacity');
+      el.style.removeProperty('transform');
+    }
   });
 }
 
@@ -44,9 +49,9 @@ export function startMotion(doc: Document = document) {
   root.dataset.motionReady = '';
 
   const groupOf = (el: Element) => el.parentElement?.closest('[data-stagger]') ?? null;
-  const members = new Map<Element, Element[]>();
-  const loners: Element[] = [];
-  for (const el of doc.querySelectorAll('[data-reveal]')) {
+  const members = new Map<Element, HTMLElement[]>();
+  const loners: HTMLElement[] = [];
+  for (const el of doc.querySelectorAll<HTMLElement>('[data-reveal]')) {
     const group = groupOf(el);
     if (group) members.set(group, [...(members.get(group) ?? []), el]);
     else loners.push(el);
@@ -56,5 +61,5 @@ export function startMotion(doc: Document = document) {
     if (group.getAttribute('data-stagger') === 'load') reveal(items);
     else inView(group, () => reveal(items), IN_VIEW);
   }
-  inView(loners, (el) => reveal([el]), IN_VIEW);
+  inView(loners, (el) => reveal([el as HTMLElement]), IN_VIEW);
 }
