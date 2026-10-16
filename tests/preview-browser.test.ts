@@ -112,6 +112,36 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
     })()`);
     expect(report).toEqual(['log ltr IRANYekanXFaNum, system-ui loaded']);
   });
+
+  it('starts each build with an empty console', async () => {
+    const report = await tab.evaluate<string[]>(`(async () => {
+      ${lib}
+      await setFiles({ js: "console.log('one')" });
+      await waitFor(() => entries().includes('log one'));
+      await write('JS', "console.log('two')");
+      await waitFor(() => entries().includes('log two'));
+      await sleep(100);
+      return entries();
+    })()`);
+    expect(report).toEqual(['log two']);
+  });
+
+  it('«اجرا» reruns the page at once, edits included, without waiting for the pause', async () => {
+    const runs = await tab.evaluate<{ rerun: boolean; log: string[]; edited: boolean }>(`(async () => {
+      ${lib}
+      await setFiles({ js: "console.log('ran')" });
+      await waitFor(() => entries().includes('log ran'));
+      const before = frame();
+      button('اجرا').click();
+      const rerun = await waitFor(() => frame() !== before && entries().includes('log ran'), 1000);
+      const log = entries();
+      await write('JS', "console.log('edited')");
+      button('اجرا').click();
+      await sleep(50);
+      return { rerun, log, edited: frame().srcdoc.includes("console.log('edited')") };
+    })()`);
+    expect(runs).toEqual({ rerun: true, log: ['log ran'], edited: true });
+  });
 });
 
 describe.skipIf(!chromePath)('console strip in the browser', () => {
