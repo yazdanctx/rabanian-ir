@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { COPY, LINKS, SITE, SUPPORT_URL, courseLink } from '../src/site';
+import * as site from '../src/site';
+import { COPY, LINKS, SITE, courseLink } from '../src/site';
 import { collection } from './helpers/content';
 
 describe('site singletons', () => {
@@ -17,8 +18,8 @@ describe('site singletons', () => {
     });
   });
 
-  it('links Support, the Telegram channel and LinkedIn', () => {
-    expect(SUPPORT_URL).toBe('https://t.me/codaminsupport');
+  it('links Support, the Telegram channel and LinkedIn, Support under one name', () => {
+    expect('SUPPORT_URL' in site).toBe(false);
     expect(LINKS).toEqual({
       support: 'https://t.me/codaminsupport',
       channel: 'https://t.me/aminrabanian',
