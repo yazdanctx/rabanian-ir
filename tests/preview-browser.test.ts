@@ -199,4 +199,67 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     })()`);
     expect(listed).toEqual(['log from the Preview']);
   });
+
+  it('empties with «پاک کردن» once opened', async () => {
+    const steps = await tab.evaluate<string[][]>(`(async () => {
+      ${lib}
+      await setFiles({ js: "console.log('a'); console.log('b')" });
+      await waitFor(() => entries().length === 2);
+      const steps = [entries()];
+      document.querySelector('[data-console] button[aria-expanded]').click();
+      await waitFor(() => !!button('پاک کردن'));
+      button('پاک کردن').click();
+      await sleep(50);
+      steps.push(entries());
+      return steps;
+    })()`);
+    expect(steps).toEqual([['log a', 'log b'], []]);
+  });
+
+  it('colors each level, warnings and errors in tones that pass AA on the strip', async () => {
+    const colors = await tab.evaluate<
+      Record<string, { color: string; onLog: number; onSurface: number }>
+    >(`(async () => {
+      ${lib}
+      await setFiles({ js: "console.log('l'); console.info('i'); console.warn('w'); console.error('e')" });
+      await waitFor(() => entries().length === 4);
+      const toggle = document.querySelector('[data-console] button[aria-expanded]');
+      if (toggle.getAttribute('aria-expanded') === 'false') toggle.click();
+      await sleep(50);
+      const rgb = (css) => css.match(/\\d+(\\.\\d+)?/g).slice(0, 3).map(Number);
+      const luminance = (css) => {
+        const [r, g, b] = rgb(css).map((v) => v / 255).map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const contrast = (a, b) => {
+        const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+        return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+      };
+      const background = (el) => {
+        for (; el; el = el.parentElement) {
+          const bg = getComputedStyle(el).backgroundColor;
+          if (bg !== 'rgba(0, 0, 0, 0)') return bg;
+        }
+        return 'rgb(255, 255, 255)';
+      };
+      const surface = 'rgb(245, 247, 250)';
+      return Object.fromEntries(
+        [...document.querySelectorAll('[data-console] li')].map((li) => {
+          const color = getComputedStyle(li).color;
+          return [li.dataset.level, { color, onLog: contrast(color, background(li)), onSurface: contrast(color, surface) }];
+        }),
+      );
+    })()`);
+    const ink = 'rgb(5, 8, 22)';
+    expect(colors.log.color).toBe(ink);
+    expect(colors.info.color).toBe(ink);
+    const [r, g, b] = colors.error.color.match(/\d+/g)!.map(Number);
+    expect(r).toBeGreaterThan(2 * Math.max(g, b)); // a red
+    expect(colors.warn.color).not.toBe(ink);
+    expect(colors.warn.color).not.toBe(colors.error.color);
+    for (const level of ['warn', 'error']) {
+      expect(colors[level].onLog).toBeGreaterThanOrEqual(4.5);
+      expect(colors[level].onSurface).toBeGreaterThanOrEqual(4.5);
+    }
+  });
 });
