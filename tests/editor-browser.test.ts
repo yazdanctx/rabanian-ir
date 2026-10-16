@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
 /*
@@ -82,15 +83,24 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
           await waitFor(() => selected().textContent.trim() === ${JSON.stringify(label)});
           return selected().textContent.trim() + ':' + codeText();
         })()`);
-      const type = async (text: string) => {
-        await tab.evaluate(`(() => { ${lib} code().focus(); })()`);
-        await tab.type(text);
-      };
+      /** Replaces the shown file's text by typing over all of it. */
+      const type = (text: string) =>
+        tab.evaluate(`(() => {
+          ${lib}
+          code().focus();
+          document.execCommand('selectAll');
+          document.execCommand('insertText', false, ${JSON.stringify(text)});
+        })()`);
       await type('<h1>سلام دنیا</h1>');
       const seen = [await pick('CSS')];
       await type('h1 { color: red }');
       seen.push(await pick('JS'), await pick('HTML'), await pick('CSS'));
-      expect(seen).toEqual(['CSS:', 'JS:', 'HTML:<h1>سلام دنیا</h1>', 'CSS:h1 { color: red }']);
+      expect(seen).toEqual([
+        `CSS:${STARTER_TEMPLATE.css}`,
+        `JS:${STARTER_TEMPLATE.js}`,
+        'HTML:<h1>سلام دنیا</h1>',
+        'CSS:h1 { color: red }',
+      ]);
     });
 
     it('moves selection and focus with the arrow keys in RTL reading order, wrapping, plus Home/End', async () => {

@@ -64,8 +64,11 @@ export interface PageOptions {
 export interface BrowserPage {
   /** Evaluates an expression in the page (promises are awaited). */
   evaluate<T>(expression: string): Promise<T>;
-  /** Sends a raw DevTools protocol command to the page. */
-  send(method: string, params?: object): Promise<any>;
+  /**
+   * Sends a raw DevTools protocol command to the page, or to the target
+   * attached as `sessionId` (e.g. an out-of-process frame).
+   */
+  send(method: string, params?: object, sessionId?: string): Promise<any>;
   /** Types text into the focused element as the keyboard would (Farsi included). */
   type(text: string): Promise<void>;
   /**
@@ -145,7 +148,7 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
     if (message.id !== undefined) pending.get(message.id)?.(message);
     else listeners.get(message.method)?.();
   };
-  const send = (method: string, params: object = {}) =>
+  const send = (method: string, params: object = {}, sessionId?: string) =>
     new Promise<any>((resolve, reject) => {
       const id = ++nextId;
       pending.set(id, (message) => {
@@ -153,7 +156,7 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
         if (message.error) reject(new Error(`${method}: ${message.error.message}`));
         else resolve(message.result);
       });
-      socket.send(JSON.stringify({ id, method, params }));
+      socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }));
     });
 
   await send('Emulation.setDeviceMetricsOverride', {

@@ -1,5 +1,6 @@
 import sharp from 'sharp';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
 /*
@@ -291,8 +292,8 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     await clear(tab);
     await tab.type('x');
     const js = await undoAll();
-    // JS walks back to its own empty start and never shows CSS text…
-    expect(js.at(-1)).toBe('');
+    // JS walks back to its own start (the Starter Template) and never shows CSS text…
+    expect(js.at(-1)).toBe(STARTER_TEMPLATE.js);
     expect(js.some((text) => text.includes('p {}'))).toBe(false);
     // …while CSS keeps its text, and its own history.
     await pick(tab, 'CSS');

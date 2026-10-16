@@ -5,12 +5,8 @@ import CodePane from './CodePane';
 import ConsoleStrip from './ConsoleStrip';
 import Preview from './Preview';
 import TabBar, { tabId } from './TabBar';
-import type { FileId, Files } from './files';
+import { loadWorkspace, type Workspace } from './persistence';
 import { usePreviewBuild } from './usePreviewBuild';
-
-interface EditorState extends Files {
-  activeTab: FileId;
-}
 
 const PANEL_ID = 'editor-panel';
 const PREVIEW_TITLE_ID = 'editor-preview-title';
@@ -23,7 +19,8 @@ const notYet = () => {};
  * narrow screens) the Preview with the action bar and the console strip.
  */
 export default function EditorApp() {
-  const [state, setState] = useState<EditorState>({ html: '', css: '', js: '', activeTab: 'html' });
+  // The last visit's workspace, else the Starter Template.
+  const [state, setState] = useState<Workspace>(loadWorkspace);
   const { activeTab, html, css, js } = state;
   const files = useMemo(() => ({ html, css, js }), [html, css, js]);
   const preview = usePreviewBuild(files);
