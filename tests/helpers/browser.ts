@@ -76,6 +76,8 @@ export interface BrowserPage {
    * `modifiers` (a bitmask: Alt 1, Ctrl 2, Meta 4, Shift 8).
    */
   press(key: string, modifiers?: number): Promise<void>;
+  /** Reloads the page, resolving on its load event. */
+  reload(): Promise<void>;
   close(): Promise<void>;
 }
 
@@ -172,12 +174,17 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   }
   if (noScript) await send('Emulation.setScriptExecutionDisabled', { value: true });
   await send('Page.enable');
-  const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', resolve));
-  await send('Page.navigate', { url });
-  await loaded;
+  /** Runs `command` and resolves once the page it loads has fired `load`. */
+  const load = async (command: () => Promise<unknown>) => {
+    const loaded = new Promise<void>((resolve) => listeners.set('Page.loadEventFired', resolve));
+    await command();
+    await loaded;
+  };
+  await load(() => send('Page.navigate', { url }));
 
   return {
     send,
+    reload: () => load(() => send('Page.reload')),
     async type(text: string) {
       await send('Input.insertText', { text });
     },

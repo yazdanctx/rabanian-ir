@@ -6,6 +6,7 @@ import ConsoleStrip from './ConsoleStrip';
 import Preview from './Preview';
 import TabBar, { tabId } from './TabBar';
 import { loadWorkspace, type Workspace } from './persistence';
+import { useAutosave } from './useAutosave';
 import { usePreviewBuild } from './usePreviewBuild';
 
 const PANEL_ID = 'editor-panel';
@@ -21,6 +22,8 @@ const notYet = () => {};
 export default function EditorApp() {
   // The last visit's workspace, else the Starter Template.
   const [state, setState] = useState<Workspace>(loadWorkspace);
+  const [opened] = useState(state);
+  useAutosave(state, opened);
   const { activeTab, html, css, js } = state;
   const files = useMemo(() => ({ html, css, js }), [html, css, js]);
   const preview = usePreviewBuild(files);

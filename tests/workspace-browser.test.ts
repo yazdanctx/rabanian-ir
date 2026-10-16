@@ -39,6 +39,13 @@ const lib = `
     await pick(open);
     return files;
   };
+  /** Replaces one file's text, as if typed into its Code Pane. */
+  const write = async (label, text) => {
+    await pick(label);
+    content().focus();
+    document.execCommand('selectAll');
+    document.execCommand('insertText', false, text);
+  };
   const frame = () => document.querySelector('iframe[data-preview]');
   const entries = () =>
     [...document.querySelectorAll('[data-console] li')].map((li) => li.dataset.level + ' ' + li.textContent);
@@ -81,6 +88,24 @@ async function inPreview<T>(tab: BrowserPage, expression: string): Promise<T> {
   }
 }
 
+/** The open tab and each tab's file, as the editor shows them. */
+const shown = (tab: BrowserPage) =>
+  tab.evaluate<{ tab: string; files: object }>(`(async () => {
+    ${lib}
+    return { tab: selected().textContent.trim(), files: await shownFiles() };
+  })()`);
+
+/** Edits all three files, ending on the CSS tab. */
+const edited = { html: '<h1>سلام دوباره</h1>', css: 'h1 { color: #1769FF }', js: "console.log('دوباره')" };
+const edit = (tab: BrowserPage) =>
+  tab.evaluate(`(async () => {
+    ${lib}
+    await write('HTML', ${JSON.stringify(edited.html)});
+    await write('CSS', ${JSON.stringify(edited.css)});
+    await write('JS', ${JSON.stringify(edited.js)});
+    await pick('CSS');
+  })()`);
+
 let site: Awaited<ReturnType<typeof serveDist>>;
 beforeAll(async () => {
   site = await serveDist();
@@ -95,11 +120,7 @@ describe.skipIf(!chromePath)('first visit', () => {
   afterAll(() => tab?.close());
 
   it('opens the Starter Template on the HTML tab, each file in its tab', async () => {
-    const shown = await tab.evaluate<{ tab: string; files: object }>(`(async () => {
-      ${lib}
-      return { tab: selected().textContent.trim(), files: await shownFiles() };
-    })()`);
-    expect(shown).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
+    expect(await shown(tab)).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
   });
 
   it('renders the template in the Preview, with an empty console until the button is clicked', async () => {
@@ -122,5 +143,32 @@ describe.skipIf(!chromePath)('first visit', () => {
       return entries();
     })()`);
     expect(logged).toEqual(['log سلام از جاوااسکریپت']);
+  });
+});
+
+describe.skipIf(!chromePath)('autosave', () => {
+  it('keeps the three files and the open tab across a reload', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      await edit(tab);
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // past the save delay
+      await tab.reload();
+      await waitForEditor(tab);
+      expect(await shown(tab)).toEqual({ tab: 'CSS', files: edited });
+    } finally {
+      await tab.close();
+    }
+  });
+
+  it('keeps an edit made just before leaving, without waiting for the save delay', async () => {
+    const tab = await openEditor(site.origin);
+    try {
+      await edit(tab);
+      await tab.reload();
+      await waitForEditor(tab);
+      expect(await shown(tab)).toEqual({ tab: 'CSS', files: edited });
+    } finally {
+      await tab.close();
+    }
   });
 });
