@@ -53,10 +53,35 @@ describe('profile photo', () => {
   });
 
   it('keeps the above-the-fold image under 80 KB at any served width', () => {
+    expect(picture).toBeTruthy();
     for (const source of picture?.querySelectorAll('source') ?? []) {
       for (const [url] of candidates(source.getAttribute('srcset'))) {
         expect(bytes(url)).toBeLessThan(80 * 1024);
       }
     }
+  });
+});
+
+describe('Masterclass banner', () => {
+  const banner = doc.querySelector('#courses [data-masterclass] [data-banner]');
+  const picture = banner?.querySelector('picture');
+  const img = picture?.querySelector('img');
+
+  it('is a <picture> serving AVIF and WebP srcsets with a fallback <img>', () => {
+    expectAvifWebp(picture);
+    expect(bytes(img?.getAttribute('src') ?? '')).toBeGreaterThan(0);
+  });
+
+  it('has a Farsi alt, 16:9 dimensions and sizes matching the column', () => {
+    expect(img?.getAttribute('alt')).toMatch(/[؀-ۿ]/);
+    expect(img?.getAttribute('width')).toBe('680');
+    expect(img?.getAttribute('height')).toBe('383');
+    expect(img?.getAttribute('sizes')).toBe('(min-width: 768px) 680px, 100vw');
+  });
+
+  it('loads lazily and decodes asynchronously, being below the fold', () => {
+    expect(img?.getAttribute('loading')).toBe('lazy');
+    expect(img?.getAttribute('decoding')).toBe('async');
+    expect(img?.hasAttribute('fetchpriority')).toBe(false);
   });
 });

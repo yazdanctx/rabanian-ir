@@ -1,11 +1,15 @@
 ---
+import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { COPY, courseLink } from '../site';
+// To change the banner, replace this file (16:9, at least 1600px wide). Keep
+// the path and name: nothing else needs editing. Until Amin's banner arrives
+// it is a neutral placeholder.
+import banner from '../assets/images/masterclass-banner.jpg';
 
 /*
- * The Masterclass: the one Course shown with a banner. The banner is a
- * neutral `primary-soft` slot until ticket 06 puts its <Picture> in
- * `[data-banner]`, under the badge.
+ * The Masterclass: the one Course shown with a banner. The 16:9 banner fills
+ * `[data-banner]` under the badge; it is below the fold, so it loads lazily.
  */
 interface Props {
   course: CollectionEntry<'courses'>['data'];
@@ -18,7 +22,19 @@ const { course } = Astro.props;
   data-masterclass
   class="overflow-hidden rounded-card border border-line bg-surface shadow-card"
 >
-  <div data-banner class="relative flex h-27.5 items-end justify-end bg-primary-soft p-3">
+  <div data-banner class="relative flex aspect-video items-end justify-end bg-primary-soft p-3">
+    <Picture
+      src={banner}
+      alt={COPY.courses.bannerAlt}
+      formats={['avif', 'webp']}
+      widths={[390, 680, 1024, 1360]}
+      sizes="(min-width: 768px) 680px, 100vw"
+      width={680}
+      height={383}
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 size-full object-cover"
+    />
     {
       course.badge && (
         <span class="relative rounded-full bg-primary px-2.5 py-1.25 text-[11px] font-semibold text-white">
