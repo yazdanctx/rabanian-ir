@@ -240,4 +240,52 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       },
     );
   });
+
+  describe('on a phone, typing with the on-screen keyboard', () => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openPage(`${site.origin}/editor/`, { width: 390, height: 844, mobile: true, reducedMotion: true });
+      await tab.evaluate(`(async () => { ${lib} await waitFor(() => tabs().length > 0 && code()); })()`);
+    });
+    afterAll(() => tab?.close());
+
+    /** Where things are on screen, top and bottom. */
+    const boxes = () =>
+      tab.evaluate<Record<'viewport' | 'tabs' | 'pane' | 'caret', { top: number; bottom: number }>>(`(async () => {
+        ${lib}
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const box = (el) => { const { top, bottom } = el.getBoundingClientRect(); return { top, bottom }; };
+        return {
+          viewport: { top: 0, bottom: visualViewport.height },
+          tabs: box(document.querySelector('[role="tablist"]')),
+          pane: box(panel().querySelector('.cm-scroller')),
+          caret: box(panel().querySelector('.cm-cursor-primary')),
+        };
+      })()`);
+    const within = (inner: { top: number; bottom: number }, outer: { top: number; bottom: number }) =>
+      inner.top >= outer.top && inner.bottom <= outer.bottom;
+
+    it('keeps the tab bar and the caret in view when the keyboard shrinks the page', async () => {
+      // A tap on the lowest line the pane shows.
+      const line = await tab.evaluate<{ x: number; y: number }>(`(() => {
+        ${lib}
+        const pane = panel().querySelector('.cm-scroller').getBoundingClientRect();
+        const shown = [...code().querySelectorAll('.cm-line')].filter((l) => l.getBoundingClientRect().bottom <= pane.bottom);
+        const box = shown.at(-1).getBoundingClientRect();
+        return { x: box.left + 8, y: box.top + box.height / 2 };
+      })()`);
+      await tab.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [line] });
+      await tab.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+      expect(await tab.evaluate(`(async () => { ${lib} return waitFor(() => code().contains(document.activeElement)); })()`)).toBe(true);
+
+      // The keyboard, as browsers that resize the page for it do (Chrome with
+      // interactive-widget=resizes-content, and Firefox): 336px less page.
+      await tab.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844 - 336, deviceScaleFactor: 1, mobile: true });
+      await tab.evaluate(`new Promise((r) => setTimeout(r, 200))`);
+      const { viewport, tabs, pane, caret } = await boxes();
+      expect(within(tabs, viewport)).toBe(true);
+      expect(within(caret, pane)).toBe(true);
+      expect(within(caret, viewport)).toBe(true);
+    });
+  });
 });

@@ -136,7 +136,18 @@ export default function CodePane({ file, initialFiles, onChange }: Props) {
     }
     const editor = new EditorView({ parent: host.current!, state: states.current[shown.current] });
     view.current = editor;
+    // The pane's height follows the viewport, which an on-screen keyboard can
+    // shrink: then keep the line being typed on in view.
+    let height = host.current!.clientHeight;
+    const keyboard = new ResizeObserver(([{ target }]) => {
+      if (editor.hasFocus && target.clientHeight < height) {
+        editor.dispatch({ effects: EditorView.scrollIntoView(editor.state.selection.main.head) });
+      }
+      height = target.clientHeight;
+    });
+    keyboard.observe(host.current!);
     return () => {
+      keyboard.disconnect();
       states.current[shown.current] = editor.state;
       editor.destroy();
       view.current = null;
