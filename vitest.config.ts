@@ -8,6 +8,8 @@ const TIMED = [
   'tests/**/*-latency-browser.test.ts',
   'tests/motion-browser.test.ts',
   'tests/editor-a11y-browser.test.ts',
+  // The console strip's 200ms spring.
+  'tests/preview-browser.test.ts',
 ];
 
 export default defineConfig({
