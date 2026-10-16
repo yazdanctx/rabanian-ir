@@ -52,7 +52,7 @@ export const testimonial = z.object({
   quote: z.string(),
 });
 
-/** An Experience: one résumé entry. `period` is display text, e.g. «جولای 2025 – اکنون». */
+/** An Experience: one résumé entry. `period` is display text in the Persian (Solar Hijri) calendar, e.g. «تیر 1404 – اکنون». */
 export const experience = z.object({
   id: z.string(),
   role: z.string(),
