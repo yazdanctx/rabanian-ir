@@ -1,5 +1,6 @@
-import { statSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
 import { distDir, page } from './helpers/dist';
 
@@ -83,5 +84,24 @@ describe('Masterclass banner', () => {
     expect(img?.getAttribute('loading')).toBe('lazy');
     expect(img?.getAttribute('decoding')).toBe('async');
     expect(img?.hasAttribute('fetchpriority')).toBe(false);
+  });
+});
+
+describe('favicon', () => {
+  it('is linked from the head as an SVG icon', () => {
+    const link = doc.querySelector('head link[rel="icon"]');
+    expect(link?.getAttribute('type')).toBe('image/svg+xml');
+    expect(link?.getAttribute('href')).toBe('/favicon.svg');
+  });
+
+  it('draws the white star mark on a primary tile', () => {
+    const svg = parseHTML(readFileSync(join(distDir, 'favicon.svg'), 'utf8')).document;
+    const root = svg.querySelector('svg');
+    expect(root?.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
+    expect(root?.getAttribute('viewBox')).toBe('0 0 32 32');
+    expect(svg.querySelector('rect')?.getAttribute('fill')).toBe('#1769FF');
+    const star = svg.querySelector('path');
+    expect(star?.getAttribute('d')).toBe('M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z');
+    expect(star?.getAttribute('fill')).toBe('#FFFFFF');
   });
 });
