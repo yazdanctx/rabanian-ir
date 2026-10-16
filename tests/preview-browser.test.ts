@@ -200,6 +200,17 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
     expect(listed).toEqual(['log from the Preview']);
   });
 
+  it('keeps the newest 500 entries when the Preview logs more', async () => {
+    const kept = await tab.evaluate<{ count: number; first: string; last: string }>(`(async () => {
+      ${lib}
+      await setFiles({ js: 'for (let i = 1; i <= 600; i++) console.log(i)' });
+      await waitFor(() => entries().at(-1) === 'log 600');
+      const list = entries();
+      return { count: list.length, first: list[0], last: list.at(-1) };
+    })()`);
+    expect(kept).toEqual({ count: 500, first: 'log 101', last: 'log 600' });
+  });
+
   it('empties with «پاک کردن» once opened', async () => {
     const steps = await tab.evaluate<string[][]>(`(async () => {
       ${lib}

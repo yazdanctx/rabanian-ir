@@ -9,6 +9,9 @@ const LOG_ID = 'editor-console-log';
 /** Expand/collapse: a 200ms height spring, no bounce (spec: Motion). */
 const EXPAND = { type: spring, duration: 0.2, bounce: 0 } as const;
 
+/** Entries kept: the newest. Bounds a learner's runaway `setInterval` log. */
+const MAX_ENTRIES = 500;
+
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 interface Props {
@@ -45,7 +48,7 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
       const frame = frameRef.current?.contentWindow;
       if (!frame || event.source !== frame) return;
       const entry = consoleEntry(event.data);
-      if (entry) setEntries((list) => [...list, entry]);
+      if (entry) setEntries((list) => [...list.slice(1 - MAX_ENTRIES), entry]);
     }
     addEventListener('message', onMessage);
     return () => removeEventListener('message', onMessage);
