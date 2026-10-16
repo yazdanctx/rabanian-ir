@@ -2,9 +2,18 @@
 import { COPY, LINKS } from '../site';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
+
+interface Props {
+  /** Extra classes, e.g. the HTML Editor's wider column. */
+  class?: string;
+}
+
+const { class: className } = Astro.props;
 ---
 
-<header class="mx-auto flex max-w-page items-center justify-between px-5 pt-4.5">
+<header
+  class:list={['mx-auto flex max-w-page items-center justify-between px-5 pt-4.5', className]}
+>
   <Logo />
   <a
     href={LINKS.support}

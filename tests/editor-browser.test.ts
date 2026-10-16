@@ -162,5 +162,73 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       })()`);
       expect(states).toEqual(['کنسول:false:hidden', 'کنسول:true:shown', 'کنسول:false:hidden']);
     });
+
+    it('dresses the Code Pane and Preview cards in palette P: surface, 12px radius, line border', async () => {
+      const cards = await tab.evaluate<string[]>(`(() =>
+        ['[data-code]', '[data-preview]'].map((hook) => {
+          const s = getComputedStyle(document.querySelector(hook).closest('section'));
+          return [s.backgroundColor, s.borderRadius, s.borderTopWidth, s.borderTopColor].join(' ');
+        }))()`);
+      const card = 'rgb(245, 247, 250) 12px 1px rgb(220, 227, 238)';
+      expect(cards).toEqual([card, card]);
+    });
+
+    it('sets code left-to-right in the code font stack', async () => {
+      const style = await tab.evaluate<{ direction: string; fontFamily: string }>(`(() => {
+        const s = getComputedStyle(document.querySelector('[role="tabpanel"] textarea'));
+        return { direction: s.direction, fontFamily: s.fontFamily };
+      })()`);
+      expect(style.direction).toBe('ltr');
+      expect(style.fontFamily.replace(/["']/g, '')).toBe(
+        'JetBrains Mono, IRANYekanXFaNum, ui-monospace, monospace',
+      );
+    });
+  });
+
+  describe.each([
+    { width: 1280, columns: true },
+    { width: 1024, columns: true },
+    { width: 1023, columns: false },
+    { width: 390, columns: false },
+  ])('layout at $width px', ({ width, columns }) => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openEditor(site.origin, width);
+    });
+    afterAll(() => tab?.close());
+
+    const boxes = `(() => {
+      const box = (hook) => document.querySelector(hook).closest('section').getBoundingClientRect();
+      const code = box('[data-code]');
+      const preview = box('[data-preview]');
+      return {
+        code: { left: code.left, right: code.right, top: code.top, bottom: code.bottom },
+        preview: { left: preview.left, right: preview.right, top: preview.top, bottom: preview.bottom },
+        overflow: document.documentElement.scrollWidth - innerWidth,
+      };
+    })()`;
+    type Box = { left: number; right: number; top: number; bottom: number };
+
+    it(
+      columns
+        ? 'puts the Code Pane and the Preview side by side, Code Pane on the right'
+        : 'stacks the Preview below the Code Pane',
+      async () => {
+        const { code, preview, overflow } = await tab.evaluate<{
+          code: Box;
+          preview: Box;
+          overflow: number;
+        }>(boxes);
+        expect(overflow).toBeLessThanOrEqual(0);
+        if (columns) {
+          expect(code.left).toBeGreaterThan(preview.right);
+          expect(code.top).toBe(preview.top);
+        } else {
+          expect(preview.top).toBeGreaterThan(code.bottom);
+          expect(preview.left).toBe(code.left);
+          expect(preview.right).toBe(code.right);
+        }
+      },
+    );
   });
 });

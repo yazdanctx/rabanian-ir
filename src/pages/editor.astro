@@ -7,9 +7,9 @@ import '../styles/editor.css';
 ---
 
 <Base title={`${COPY.editor.name} — ${SITE.domain}`} description={COPY.editor.description}>
-  <TopBar />
-  <main>
-    <h1>{COPY.editor.name}</h1>
+  <TopBar class="editor-wide" />
+  <main class="editor-page">
+    <h1 class="editor-title">{COPY.editor.name}</h1>
     <EditorApp client:only="react" />
   </main>
 </Base>

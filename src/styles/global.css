@@ -2,6 +2,15 @@
 @import './fonts.css';
 
 /*
+ * This stylesheet is shared by every page, the landing page included, so the
+ * HTML Editor's files are not scanned for classes: they are styled by
+ * src/styles/editor.css (on /editor only) and use no utilities.
+ */
+@source not '../components/editor';
+@source not '../pages/editor.astro';
+@source not './editor.css';
+
+/*
  * Palette P (spec: .scratch/landing-page/spec.md). `static` keeps every token
  * on :root as a CSS variable even when no utility uses it. `src/palette.ts`
  * mirrors these colors for the OG image; keep the two in step (a test checks).
