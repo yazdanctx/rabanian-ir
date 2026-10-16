@@ -124,8 +124,10 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
   );
 
   const portFile = join(profile, 'DevToolsActivePort');
-  for (let i = 0; i < 200 && !existsSync(portFile); i++) await sleep(50);
-  const port = readFileSync(portFile, 'utf8').split('\n')[0];
+  // Chrome may create the file before writing the port into it.
+  const readPort = () => (existsSync(portFile) ? readFileSync(portFile, 'utf8').split('\n')[0] : '');
+  for (let i = 0; i < 200 && !/^\d+$/.test(readPort()); i++) await sleep(50);
+  const port = readPort();
   const targets: { type: string; webSocketDebuggerUrl: string }[] = await (
     await fetch(`http://127.0.0.1:${port}/json/list`)
   ).json();
