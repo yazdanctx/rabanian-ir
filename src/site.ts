@@ -22,8 +22,10 @@ export function courseLink(course: { url?: string }): string {
 const tagline = 'با من هوش مصنوعی رو اصولی یاد بگیر!';
 
 export const SITE = {
-  /** Logo text; the top bar mutes the `.ir`. */
+  /** The site's domain, shown on the OG image. */
   domain: 'rabanian.ir',
+  /** Logo text, next to Amin's photo. */
+  brand: 'آکادمی ربانیان',
   name: 'امین ربانیان',
   /** Hero status badge, next to the pulsing dot. */
   badge: 'متخصص هوش مصنوعی · مدیریت محصول',

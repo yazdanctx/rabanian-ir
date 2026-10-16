@@ -31,12 +31,15 @@ describe('page structure', () => {
 describe('top bar', () => {
   const header = doc.querySelector('body > header');
 
-  it('links the logo, rabanian.ir with a muted .ir, to the top of the page', () => {
+  it('links the logo, Amin’s photo + «آکادمی ربانیان», to the top of the page', () => {
     const logo = header?.querySelector('a[href="#top"]');
-    expect(text(logo)).toBe('rabanian.ir');
-    expect(logo?.querySelector('svg')).not.toBeNull();
-    expect(logo?.getAttribute('dir')).toBe('ltr');
-    expect(text(logo?.querySelector('.text-muted'))).toBe('.ir');
+    expect(text(logo)).toBe('آکادمی ربانیان');
+    expect(logo?.getAttribute('dir')).toBeNull();
+    const img = logo?.querySelector('picture img');
+    expect(img?.getAttribute('alt')).toBe('');
+    expect(img?.getAttribute('width')).toBe('30');
+    expect(img?.getAttribute('height')).toBe('30');
+    expect(logo?.querySelectorAll('picture source').length).toBe(2);
   });
 
   it('has a Telegram button to Support, named for screen readers', () => {

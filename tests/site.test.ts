@@ -7,6 +7,7 @@ describe('site singletons', () => {
   it('identifies Amin with name, badge, tagline, lead and meta description', () => {
     expect(SITE).toMatchObject({
       domain: 'rabanian.ir',
+      brand: 'آکادمی ربانیان',
       name: 'امین ربانیان',
       badge: 'متخصص هوش مصنوعی · مدیریت محصول',
       tagline: 'با من هوش مصنوعی رو اصولی یاد بگیر!',

@@ -164,8 +164,8 @@ describe('footer', () => {
 
   it('repeats the logo, linking to the top, and the one-line bio', () => {
     const logo = footer?.querySelector('a[href="#top"]');
-    expect(text(logo)).toBe('rabanian.ir');
-    expect(logo?.querySelector('svg')).not.toBeNull();
+    expect(text(logo)).toBe('آکادمی ربانیان');
+    expect(logo?.querySelector('picture img')).not.toBeNull();
     expect([...(footer?.querySelectorAll('p') ?? [])].map(text)).toContain(
       'با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.',
     );

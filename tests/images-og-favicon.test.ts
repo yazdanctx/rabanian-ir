@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
+import { STAR_PATH } from '../src/logo-mark';
 import { distDir, page } from './helpers/dist';
 
 const doc = page('index.html');
@@ -106,10 +107,9 @@ describe('favicon', () => {
     expect(star?.getAttribute('fill')).toBe('#FFFFFF');
   });
 
-  it('draws the same star as the logo on the page', () => {
+  it('draws the shared star mark (src/logo-mark.ts)', () => {
     const favicon = parseHTML(readFileSync(join(distDir, 'favicon.svg'), 'utf8')).document;
-    const logoStar = doc.querySelector('header a[href="#top"] svg path');
-    expect(logoStar?.getAttribute('d')).toBe(favicon.querySelector('path')?.getAttribute('d'));
+    expect(favicon.querySelector('path')?.getAttribute('d')).toBe(STAR_PATH);
   });
 });
 
