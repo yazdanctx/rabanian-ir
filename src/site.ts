@@ -134,5 +134,7 @@ export const COPY = {
     preview: 'پیش‌نمایش',
     /** The console strip's toggle. */
     console: 'کنسول',
+    /** Empties the console strip. */
+    clearConsole: 'پاک کردن',
   },
 } as const;
