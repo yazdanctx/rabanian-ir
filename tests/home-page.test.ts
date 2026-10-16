@@ -11,9 +11,17 @@ describe('home page (dist/index.html)', () => {
 
   const meta = (selector: string) => doc.querySelector(selector)?.getAttribute('content');
 
-  it('has a Farsi title and description', () => {
-    expect(doc.title).toMatch(/امین ربانیان/);
-    expect(meta('meta[name="description"]')).toMatch(/[؀-ۿ]/);
+  it('is titled with Amin\'s name and tagline', () => {
+    expect(doc.querySelectorAll('title')).toHaveLength(1);
+    expect(doc.title).toBe('امین ربانیان — با من هوش مصنوعی رو اصولی یاد بگیر!');
+  });
+
+  it('has one Farsi meta description of search-snippet length', () => {
+    expect(doc.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+    const description = meta('meta[name="description"]') ?? '';
+    expect(description).toMatch(/^[؀-ۿ]/);
+    expect(description.length).toBeGreaterThanOrEqual(50);
+    expect(description.length).toBeLessThanOrEqual(160);
   });
 
   it('declares its canonical URL on rabanian.ir', () => {
