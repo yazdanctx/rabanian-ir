@@ -129,6 +129,9 @@ export async function openPage(url: string, options: PageOptions = {}): Promise<
       '--no-first-run',
       '--no-default-browser-check',
       '--disable-extensions',
+      // Overlay scrollbars, as on phones: with a mouse attached macOS gives
+      // headless Chrome classic 17px scrollbars, narrowing every layout.
+      '--hide-scrollbars',
       `--window-size=${width},${height}`,
       'about:blank',
     ],

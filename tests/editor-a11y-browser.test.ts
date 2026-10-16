@@ -110,7 +110,8 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
       // The log scrolls, so Chrome lets the keyboard scroll it.
       { name: expect.stringMatching(/^0\s*1\s*2/), ring: RING },
     ]);
-  });
+    // Twenty-odd sequential key presses: slow when the whole suite shares the machine.
+  }, 60_000);
 
   it('tells screen readers how to leave the Code Pane, where Tab indents', async () => {
     await tab.send('DOM.enable');
