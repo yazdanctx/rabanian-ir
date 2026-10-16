@@ -12,7 +12,10 @@ import profile from '../assets/images/profile.jpg';
 const href = Astro.url.pathname === '/' ? '#top' : '/';
 ---
 
-<a href={href} class="inline-flex items-center gap-2.25 text-[15px] font-bold">
+<a
+  href={href}
+  class="inline-flex items-center gap-2.25 rounded-btn text-[15px] font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+>
   <Picture
     src={profile}
     alt=""

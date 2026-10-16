@@ -185,12 +185,15 @@
 
 .editor-tab:focus-visible,
 .editor-button:focus-visible,
-.editor-console-toggle:focus-visible {
+.editor-console-toggle:focus-visible,
+.editor-console-log:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-.editor-console-toggle:focus-visible {
+/* Inset where the card would clip it. The log takes focus once it scrolls (Chrome). */
+.editor-console-toggle:focus-visible,
+.editor-console-log:focus-visible {
   outline-offset: -2px;
 }
 
