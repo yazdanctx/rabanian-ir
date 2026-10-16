@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import regularFontUrl from '../assets/fonts/fa/IRANYekanXFaNum-Regular.woff2?url';
+import { OG_IMAGE } from '../og';
 
 interface Props {
   /** Farsi page title. */
@@ -13,7 +14,7 @@ interface Props {
 
 const { title, description, canonical = new URL(Astro.url.pathname, Astro.site) } = Astro.props;
 const canonicalUrl = new URL(canonical, Astro.site).href;
-// OG image (og:image, twitter:image) is wired in ticket 06.
+const ogImageUrl = new URL(OG_IMAGE.path, Astro.site).href;
 ---
 
 <!doctype html>
@@ -32,10 +33,17 @@ const canonicalUrl = new URL(canonical, Astro.site).href;
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:type" content={OG_IMAGE.type} />
+    <meta property="og:image:width" content={String(OG_IMAGE.width)} />
+    <meta property="og:image:height" content={String(OG_IMAGE.height)} />
+    <meta property="og:image:alt" content={OG_IMAGE.alt} />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={OG_IMAGE.alt} />
   </head>
   <body>
     <slot />

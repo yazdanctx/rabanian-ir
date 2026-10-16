@@ -1,6 +1,7 @@
 import { readFileSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
+import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
 import { distDir, page } from './helpers/dist';
 
@@ -103,5 +104,30 @@ describe('favicon', () => {
     const star = svg.querySelector('path');
     expect(star?.getAttribute('d')).toBe('M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z');
     expect(star?.getAttribute('fill')).toBe('#FFFFFF');
+  });
+});
+
+describe('OG image', () => {
+  const meta = (selector: string) => doc.querySelector(selector)?.getAttribute('content');
+
+  it('is built as a 1200×630 PNG at /og.png', async () => {
+    const info = await sharp(join(distDir, 'og.png')).metadata();
+    expect(info).toMatchObject({ format: 'png', width: 1200, height: 630 });
+  });
+
+  it('is announced to Open Graph with its absolute URL, size, type and Farsi alt', () => {
+    expect(meta('meta[property="og:image"]')).toBe('https://rabanian.ir/og.png');
+    expect(meta('meta[property="og:image:type"]')).toBe('image/png');
+    expect(meta('meta[property="og:image:width"]')).toBe('1200');
+    expect(meta('meta[property="og:image:height"]')).toBe('630');
+    expect(meta('meta[property="og:image:alt"]')).toBe(
+      'امین ربانیان — با من هوش مصنوعی رو اصولی یاد بگیر!',
+    );
+  });
+
+  it('is shown by Twitter as a large summary card', () => {
+    expect(meta('meta[name="twitter:card"]')).toBe('summary_large_image');
+    expect(meta('meta[name="twitter:image"]')).toBe('https://rabanian.ir/og.png');
+    expect(meta('meta[name="twitter:image:alt"]')).toBe(meta('meta[property="og:image:alt"]'));
   });
 });
