@@ -338,9 +338,12 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
     const matched = await tab.evaluate<string[]>(`(async () => {
       ${lib}
       await frames();
-      return [...content().querySelectorAll('.cm-matchingBracket')].map((b) => b.textContent);
+      return [...content().querySelectorAll('.cm-matchingBracket')].map(
+        (b) => b.textContent + ' on ' + getComputedStyle(b).backgroundColor,
+      );
     })()`);
-    expect(matched).toEqual(['(', ')']);
+    // Marked in primary-soft.
+    expect(matched).toEqual(['( on rgb(234, 241, 255)', ') on rgb(234, 241, 255)']);
   });
 
   it('has only the line-number gutter, and leaves Ctrl/Cmd-F to the browser', async () => {
@@ -408,6 +411,17 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       await tab.type('<p title="سلام">دنیا</p>');
       // Each Farsi run reads right to left, so on screen its letters are reversed.
       expect(await onScreen(tab)).toBe('<p title="مالس">ایند</p>');
+    });
+
+    it.each([
+      { file: 'HTML', comment: '<!-- سلام دنیا -->', shown: '<!-- ایند مالس -->' },
+      { file: 'CSS', comment: '/* سلام دنیا */', shown: '/* ایند مالس */' },
+      { file: 'JS', comment: '// سلام دنیا', shown: '// ایند مالس' },
+    ])('keeps a Farsi comment between its $file delimiters, left to right', async ({ file, comment, shown }) => {
+      await pick(tab, file);
+      await clear(tab);
+      await tab.type(comment);
+      expect(await onScreen(tab)).toBe(shown);
     });
 
     const LINE = '<h1>سلام دنیا</h1>';

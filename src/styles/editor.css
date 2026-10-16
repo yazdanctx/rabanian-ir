@@ -266,6 +266,10 @@
   outline-offset: -2px;
 }
 
+.editor-code .cm-editor .cm-matchingBracket {
+  background-color: var(--color-primary-soft);
+}
+
 /* Syntax colours (spec: Code Pane). Everything else is ink. */
 .editor-code .code-tag {
   color: var(--color-primary-text);
