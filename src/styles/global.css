@@ -1,11 +1,33 @@
 @import 'tailwindcss';
 @import './fonts.css';
 
+/*
+ * Palette P (spec: .scratch/landing-page/spec.md). `static` keeps every token
+ * on :root as a CSS variable even when no utility uses it.
+ * Tailwind's default colors are dropped: palette P is the only palette, with
+ * no second accent. No gradients anywhere; no dark mode.
+ */
 @theme static {
   --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
 
+  --color-*: initial;
   --color-ink: #050816;
+  --color-muted: #536078;
+  --color-primary: #1769ff;
+  --color-primary-text: #0d5be0;
+  --color-primary-soft: #eaf1ff;
+  --color-surface: #f5f7fa;
+  --color-line: #dce3ee;
   --color-bg: #ffffff;
+  --color-white: #ffffff;
+
+  --radius-btn: 8px;
+  --radius-card: 12px;
+  --radius-cta: 18px;
+
+  --shadow-card:
+    0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a,
+    0 0 0 1px #27272a0f;
 }
 
 @layer base {
