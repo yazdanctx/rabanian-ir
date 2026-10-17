@@ -162,7 +162,7 @@ describe('about (#about)', () => {
     }
   });
 
-  it('ends with the Brands as a still wall: the caption cell, then the five logos with names', () => {
+  it('ends with the Brands as a still list card: the caption header, then a row per Brand, logo and name', () => {
     const wall = about?.querySelector('[data-gallery-frame] + p + [data-brand-wall]');
     const label = wall?.querySelector(':scope > p');
     expect(text(label)).toBe(caption);
@@ -181,7 +181,7 @@ describe('about (#about)', () => {
     expect(wall?.querySelector('[data-rail], [data-autoscroll]')).toBeNull();
   });
 
-  it('reveals the wall as one block (cells fading alone would flash the hairline backing)', () => {
+  it('reveals the Brands card as one block', () => {
     const wall = about?.querySelector('[data-brand-wall]');
     expect(wall?.hasAttribute('data-reveal')).toBe(true);
     expect(wall?.querySelector('[data-reveal]')).toBeNull();

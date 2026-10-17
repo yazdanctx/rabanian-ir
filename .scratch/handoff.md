@@ -24,7 +24,7 @@ Browser tests (`tests/*-browser.test.ts`) drive the system Chrome at `/Applicati
 
 - **No React on the landing page** — ADR-0003. Motion is one bundled script (`src/scripts/motion.ts`, `motion` + `motion/mini`) driven by `data-reveal` / `data-stagger` attributes. `@astrojs/react` stays for the editor island only. Content is visible with JS off or under reduced motion (hiding only happens under `html.motion`, set by `Motion.astro`).
 - **Logo** = Amin's photo (30px circle, same file as the Hero photo) + «آکادمی ربانیان».
-- **Company logos** on the About section's Brands wall and the résumé timeline: `src/assets/logos/<id>.*`, rendered by `CompanyLogo.astro`; ids are shared by `brands.json` and `experiences.json`. Sources and caveats in `src/assets/logos/README.md`. One file per id — the build fails on zero or two.
+- **Company logos** on the About section's Brands card and the résumé timeline: `src/assets/logos/<id>.*`, rendered by `CompanyLogo.astro`; ids are shared by `brands.json` and `experiences.json`. Sources and caveats in `src/assets/logos/README.md`. One file per id — the build fails on zero or two.
 - **Résumé dates** are in the Persian calendar (each Gregorian month → the Persian month covering most of it). Digits stay ASCII (ADR-0002).
 - Masterclass banner is 16:9; locked tools aren't faded (contrast); swipe hint sits above the course rail.
 - Tailwind's default colours are removed — only palette P tokens exist (`src/styles/global.css`, mirrored in `src/palette.ts`, a test keeps them equal).

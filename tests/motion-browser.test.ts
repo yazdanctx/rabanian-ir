@@ -156,16 +156,19 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
       expect(frame.right).toBe(await tab.evaluate<number>('document.documentElement.clientWidth'));
     });
 
-    it('keeps the Brands still, as a wall of six cells in three columns', async () => {
-      const wall = await tab.evaluate<{ animations: number; columns: number; cells: number }>(`(() => {
-        const wall = document.querySelector('[data-brand-wall]');
+    it('keeps the Brands still: one card, the caption on top, then one Brand per row', async () => {
+      const card = await tab.evaluate<{ animations: number; rows: number; stacked: boolean; captionFirst: boolean }>(`(() => {
+        const card = document.querySelector('[data-brand-wall]');
+        const rows = [...card.querySelectorAll(':scope > ul > li')].map((li) => li.getBoundingClientRect());
+        const caption = card.querySelector(':scope > p').getBoundingClientRect();
         return {
-          animations: wall.getAnimations({ subtree: true }).filter((a) => a.playState === 'running' && a.effect.getComputedTiming().iterations === Infinity).length,
-          columns: getComputedStyle(wall).gridTemplateColumns.split(' ').length,
-          cells: wall.querySelectorAll(':scope > p, :scope > ul > li').length,
+          animations: card.getAnimations({ subtree: true }).filter((a) => a.playState === 'running' && a.effect.getComputedTiming().iterations === Infinity).length,
+          rows: rows.length,
+          stacked: rows.every((r, i) => i === 0 || (r.top >= rows[i - 1].bottom - 1 && r.left === rows[0].left && r.width === rows[0].width)),
+          captionFirst: caption.bottom <= rows[0].top + 1,
         };
       })()`);
-      expect(wall).toEqual({ animations: 0, columns: 3, cells: 6 });
+      expect(card).toEqual({ animations: 0, rows: 5, stacked: true, captionFirst: true });
     });
   });
 

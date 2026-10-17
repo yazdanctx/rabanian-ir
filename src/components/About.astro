@@ -7,10 +7,9 @@ import Section from './Section.astro';
 
 /*
  * About, with the Brands in it: the heading, the self-scrolling photo strip,
- * the story, then the Brands as a still wall: hairline-divided cells, three
- * to a row, the caption in the first and a logo with its name in each of the
- * other five. The wall reveals as one block: its hairlines are the 1px gaps
- * over a `line` backing, which cells fading in one by one would flash.
+ * the story, then the Brands as one still list card: the caption as its
+ * header row, then a row per Brand (logo and name), divided by hairlines. The
+ * card reveals as one block.
  */
 const brands = await getOrderedCollection('brands');
 const { eyebrow, title, paragraph } = COPY.about;
@@ -26,26 +25,18 @@ const { caption } = COPY.brands;
       )
     }
   </p>
-  <div
-    data-brand-wall
-    data-reveal
-    class="grid grid-cols-3 gap-px overflow-hidden rounded-card border border-line bg-line shadow-card"
-  >
+  <div data-brand-wall data-reveal class="overflow-hidden rounded-card border border-line bg-(--card) shadow-card">
     <p
       id="brands-caption"
-      class="flex items-center bg-(--card) p-4 text-[12.5px]/[1.9] font-medium text-muted md:p-6 md:text-sm/[1.9]"
+      class="flex items-center gap-2 border-b border-line bg-surface px-4.5 py-3.5 text-[12.5px] font-medium text-muted before:h-0.5 before:w-4.5 before:flex-none before:rounded-full before:bg-primary md:text-[13px]"
     >
       {caption}
     </p>
-    <ul aria-labelledby="brands-caption" class="contents">
+    <ul aria-labelledby="brands-caption" class="divide-y divide-line">
       {
         brands.map(({ id, data }) => (
-          <li class="group flex flex-col items-center justify-center gap-3 bg-(--card) px-2 py-6 text-center text-[13px] font-semibold md:py-8 md:text-sm">
-            <CompanyLogo
-              id={id}
-              size={44}
-              class="shadow-card transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none"
-            />
+          <li class="flex items-center gap-3.5 px-4.5 py-3 text-[14.5px] font-semibold">
+            <CompanyLogo id={id} size={38} />
             {data.name}
           </li>
         ))
