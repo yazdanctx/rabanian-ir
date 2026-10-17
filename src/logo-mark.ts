@@ -1,13 +1,14 @@
 import { PALETTE } from './palette';
 
 /**
- * The logo's star as an SVG path in a 24×24 box; it sits slightly high, as in
- * the design. Drawn by `Icon name="star"` and by `LOGO_MARK_SVG`.
+ * The academy's mark: a terminal prompt «>_» as one stroked path in a 48×48
+ * box. Code reads left to right, so it is never mirrored for RTL.
  */
-export const STAR_PATH = 'M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z';
+export const LOGO_MARK_PATH = 'M14 17l7 7-7 7M25.5 31H35';
 
 /**
- * The logo mark on its own: the white star on a 32px `primary` tile with a
- * 9px radius. Served as `/favicon.svg` and drawn on the OG image.
+ * The mark on its tile: the white prompt on an `ink` square with an 11px
+ * radius. Drawn inline by `Logo.astro` (top bar and footer), served as
+ * `/favicon.svg` and drawn on the OG image.
  */
-export const LOGO_MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="9" fill="${PALETTE.primary}"/><path transform="translate(4 5.1)" d="${STAR_PATH}" fill="${PALETTE.white}"/></svg>`;
+export const LOGO_MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="11" fill="${PALETTE.ink}"/><path d="${LOGO_MARK_PATH}" fill="none" stroke="${PALETTE.white}" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;

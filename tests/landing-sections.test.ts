@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { LOGO_MARK_PATH } from '../src/logo-mark';
 import { page } from './helpers/dist';
 
 const doc = page('index.html');
@@ -31,15 +32,15 @@ describe('page structure', () => {
 describe('top bar', () => {
   const header = doc.querySelector('body > header');
 
-  it('links the logo, Amin’s photo + «آکادمی ربانیان», to the top of the page', () => {
+  it('links the logo, the academy’s «>_» mark + «آکادمی ربانیان», to the top of the page', () => {
     const logo = header?.querySelector('a[href="#top"]');
     expect(text(logo)).toBe('آکادمی ربانیان');
     expect(logo?.getAttribute('dir')).toBeNull();
-    const img = logo?.querySelector('picture img');
-    expect(img?.getAttribute('alt')).toBe('');
-    expect(img?.getAttribute('width')).toBe('30');
-    expect(img?.getAttribute('height')).toBe('30');
-    expect(logo?.querySelectorAll('picture source').length).toBe(2);
+    // The mark is drawn inline (no image request) and decorative: the text names the link.
+    const mark = logo?.querySelector('[data-logo-mark]');
+    expect(mark?.getAttribute('aria-hidden')).toBe('true');
+    expect(mark?.querySelector('path')?.getAttribute('d')).toBe(LOGO_MARK_PATH);
+    expect(logo?.querySelector('picture, img')).toBeNull();
   });
 
   it('has a Telegram button to Support, named for screen readers', () => {

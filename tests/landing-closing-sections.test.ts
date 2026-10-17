@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { LOGO_MARK_PATH } from '../src/logo-mark';
 import { page } from './helpers/dist';
 
 // Sections 7–10 of the spec: Testimonials, Résumé, CTA, Footer.
@@ -202,7 +203,7 @@ describe('footer', () => {
   it('repeats the logo, linking to the top, and the one-line bio', () => {
     const logo = footer?.querySelector('a[href="#top"]');
     expect(text(logo)).toBe('آکادمی ربانیان');
-    expect(logo?.querySelector('picture img')).not.toBeNull();
+    expect(logo?.querySelector('[data-logo-mark] path')?.getAttribute('d')).toBe(LOGO_MARK_PATH);
     expect([...(footer?.querySelectorAll('p') ?? [])].map(text)).toContain(
       'با من هوش مصنوعی رو اصولی یاد بگیر! متخصص هوش مصنوعی و مدیریت محصولات نرم‌افزاری.',
     );

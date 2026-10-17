@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import { parseHTML } from 'linkedom';
 import sharp from 'sharp';
 import { describe, expect, it } from 'vitest';
-import { STAR_PATH } from '../src/logo-mark';
+import { LOGO_MARK_PATH } from '../src/logo-mark';
 import { distDir, page } from './helpers/dist';
 
 const doc = page('index.html');
@@ -96,20 +96,20 @@ describe('favicon', () => {
     expect(link?.getAttribute('href')).toBe('/favicon.svg');
   });
 
-  it('draws the white star mark on a primary tile', () => {
+  it('draws the academy’s mark: a white «>_» prompt on an ink tile', () => {
     const svg = parseHTML(readFileSync(join(distDir, 'favicon.svg'), 'utf8')).document;
     const root = svg.querySelector('svg');
     expect(root?.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
-    expect(root?.getAttribute('viewBox')).toBe('0 0 32 32');
-    expect(svg.querySelector('rect')?.getAttribute('fill')).toBe('#1769FF');
-    const star = svg.querySelector('path');
-    expect(star?.getAttribute('d')).toBe('M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z');
-    expect(star?.getAttribute('fill')).toBe('#FFFFFF');
+    expect(root?.getAttribute('viewBox')).toBe('0 0 48 48');
+    expect(svg.querySelector('rect')?.getAttribute('fill')).toBe('#050816');
+    const prompt = svg.querySelector('path');
+    expect(prompt?.getAttribute('d')).toBe('M14 17l7 7-7 7M25.5 31H35');
+    expect(prompt?.getAttribute('stroke')).toBe('#FFFFFF');
   });
 
-  it('draws the shared star mark (src/logo-mark.ts)', () => {
+  it('is the same mark as the logo (src/logo-mark.ts)', () => {
     const favicon = parseHTML(readFileSync(join(distDir, 'favicon.svg'), 'utf8')).document;
-    expect(favicon.querySelector('path')?.getAttribute('d')).toBe(STAR_PATH);
+    expect(favicon.querySelector('path')?.getAttribute('d')).toBe(LOGO_MARK_PATH);
   });
 });
 
