@@ -2,55 +2,30 @@
 import { COPY, LINKS } from '../site';
 import Eyebrow from './Eyebrow.astro';
 import Icon from './Icon.astro';
-import Section from './Section.astro';
 
 /*
- * The page's only dark surface: a full-width `ink` band (spec palette, "on
- * dark block") over a faint grid of 56px squares, a few of them shaded, with
- * the Telegram glyph in a tile above the copy. The grid is one SVG pattern
- * tile repeated: drawn lines, no gradients.
+ * The call to action that opens the dark footer (Footer.astro): the Telegram
+ * glyph in a tile, the Support eyebrow, the question, the line and the
+ * «پیام در تلگرام» button. Colors are for the footer's `ink` (spec palette,
+ * "on dark block").
  */
 const { eyebrow, title, line, button } = COPY.cta;
-const CELL = 56;
-/** Shaded squares in one 6×4-cell tile of the grid: [column, row, fill]. */
-const shaded: [number, number, string][] = [
-  [1, 0, 'rgb(255 255 255 / 0.035)'],
-  [4, 1, 'rgb(0 0 0 / 0.35)'],
-  [2, 3, 'rgb(255 255 255 / 0.05)'],
-  [5, 3, 'rgb(0 0 0 / 0.35)'],
-];
 ---
 
-<Section tone="ink">
-  <svg slot="backdrop" aria-hidden="true" class="absolute inset-0 -z-10 size-full">
-    <defs>
-      <pattern id="cta-grid" width={CELL * 6} height={CELL * 4} patternUnits="userSpaceOnUse">
-        {shaded.map(([x, y, fill]) => <rect x={x * CELL} y={y * CELL} width={CELL} height={CELL} fill={fill} />)}
-        <path
-          d={Array.from({ length: 6 }, (_, i) => `M${i * CELL + 0.5} 0V${CELL * 4}`).join('') +
-            Array.from({ length: 4 }, (_, i) => `M0 ${i * CELL + 0.5}H${CELL * 6}`).join('')}
-          stroke="rgb(255 255 255 / 0.07)"
-          fill="none"
-        />
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#cta-grid)" />
-  </svg>
-  <div data-reveal class="py-4 text-center md:py-6">
-    <span
-      aria-hidden="true"
-      class="mx-auto mb-5 grid size-14 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white"
-    >
-      <Icon name="telegram" size={26} />
-    </span>
-    <Eyebrow onInk class="justify-center">{eyebrow}</Eyebrow>
-    <h2 class="mt-2 mb-2.5 text-2xl/snug font-bold tracking-[-0.02em] md:text-[32px]/snug">{title}</h2>
-    <p class="mx-auto mb-6 max-w-[28rem] text-sm/[1.9] text-white/75">{line}</p>
-    <a
-      href={LINKS.support}
-      class="inline-flex items-center gap-2 rounded-btn bg-primary px-6 py-3.25 text-sm font-semibold text-white lift hover:bg-primary-text"
-    >
-      <Icon name="telegram" size={17} />{button}
-    </a>
-  </div>
-</Section>
+<div data-cta data-reveal class="py-14 text-center md:py-20">
+  <span
+    aria-hidden="true"
+    class="mx-auto mb-5 grid size-14 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white"
+  >
+    <Icon name="telegram" size={26} />
+  </span>
+  <Eyebrow onInk class="justify-center">{eyebrow}</Eyebrow>
+  <h2 class="mt-2 mb-2.5 text-2xl/snug font-bold tracking-[-0.02em] md:text-[32px]/snug">{title}</h2>
+  <p class="mx-auto mb-6 max-w-[28rem] text-sm/[1.9] text-white/75">{line}</p>
+  <a
+    href={LINKS.support}
+    class="inline-flex items-center gap-2 rounded-btn bg-primary px-6 py-3.25 text-sm font-semibold text-white lift hover:bg-primary-text"
+  >
+    <Icon name="telegram" size={17} />{button}
+  </a>
+</div>

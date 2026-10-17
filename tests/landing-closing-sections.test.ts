@@ -30,10 +30,12 @@ describe('page assembly', () => {
     }
   });
 
-  it('ends main with Testimonials, Résumé and the CTA, then the footer', () => {
-    const lastTitles = sections.slice(-3).map((s) => text(s.querySelector('h2')));
-    expect(lastTitles).toEqual(['نظرات', 'خلاصه‌ای از سوابق', 'سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟']);
-    expect(doc.querySelector('main')?.nextElementSibling?.tagName).toBe('FOOTER');
+  it('ends main with Testimonials and Résumé, then the dark footer, which opens with the CTA', () => {
+    const lastTitles = sections.slice(-2).map((s) => text(s.querySelector('h2')));
+    expect(lastTitles).toEqual(['نظرات', 'خلاصه‌ای از سوابق']);
+    const footer = doc.querySelector('main')?.nextElementSibling;
+    expect(footer?.tagName).toBe('FOOTER');
+    expect(text(footer?.querySelector('h2'))).toBe('سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟');
   });
 });
 
@@ -160,16 +162,17 @@ describe('résumé (#resume)', () => {
 });
 
 describe('CTA', () => {
-  const section = sectionTitled('سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟');
-  const block = section?.querySelector('h2')?.closest('.bg-ink');
+  const footer = doc.querySelector('body > footer');
+  const block = footer?.querySelector('[data-cta]');
 
-  it('is a full-width ink band with white text', () => {
-    expect(block).toBe(section);
-    expect(block?.classList.contains('text-white')).toBe(true);
+  it('opens the footer, on its ink, with white text', () => {
+    expect(footer?.firstElementChild?.nextElementSibling?.firstElementChild).toBe(block);
+    expect(block?.closest('.bg-ink')).toBe(footer);
+    expect(footer?.classList.contains('text-white')).toBe(true);
   });
 
-  it('draws a faint grid of squares behind it as a decorative SVG pattern, no gradient', () => {
-    const grid = section?.querySelector(':scope > svg');
+  it('draws a faint grid of squares behind the whole footer as a decorative SVG pattern, no gradient', () => {
+    const grid = footer?.querySelector(':scope > svg');
     expect(grid?.getAttribute('aria-hidden')).toBe('true');
     expect(grid?.querySelector('pattern')).not.toBeNull();
     expect(grid?.innerHTML).not.toMatch(/gradient/i);
@@ -191,18 +194,21 @@ describe('CTA', () => {
     expect(button?.classList.contains('text-white')).toBe(true);
   });
 
-  it('is the only dark surface on the page', () => {
+  it('is on the only dark surface on the page, the footer', () => {
     // Palette P has no dark token besides ink (and no default palette to reach for).
-    expect([...doc.querySelectorAll('.bg-ink')]).toEqual([block]);
+    expect([...doc.querySelectorAll('.bg-ink')]).toEqual([footer]);
   });
 });
 
 describe('footer', () => {
   const footer = doc.querySelector('body > footer');
 
-  it('closes the page, after main, on the light page background', () => {
+  it('closes the page, after main, as one dark ink block: the CTA, then the logo, bio and links', () => {
     expect(footer?.previousElementSibling?.tagName).toBe('MAIN');
-    expect(footer?.closest('.bg-ink')).toBeNull();
+    expect(footer?.classList.contains('bg-ink')).toBe(true);
+    const cta = footer?.querySelector('[data-cta]');
+    const nav = footer?.querySelector('nav');
+    expect(cta && nav && cta.compareDocumentPosition(nav) & 4).toBeTruthy(); // CTA first
   });
 
   it('repeats the logo, linking to the top, and the one-line bio', () => {

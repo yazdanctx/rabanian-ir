@@ -39,7 +39,7 @@ describe('reveal markup', () => {
 
   it('reveals every section after the Hero, heading and content', () => {
     const sections = [...doc.querySelectorAll('main > section')].slice(1);
-    expect(sections.length).toBeGreaterThanOrEqual(7);
+    expect(sections.length).toBeGreaterThanOrEqual(6);
     for (const section of sections) {
       expect(section.querySelector('[data-reveal]')).not.toBeNull();
       const header = section.querySelector('header');
@@ -135,7 +135,7 @@ describe('hover lift', () => {
       '[data-masterclass]',
       '#courses [data-rail] article',
       '#tools a',
-      'main > section:last-child a',
+      'footer [data-cta] a',
       'footer nav a',
     ]) {
       const flags = lifted(selector);

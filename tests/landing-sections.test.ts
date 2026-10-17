@@ -27,7 +27,7 @@ describe('page structure', () => {
     }
   });
 
-  it('alternates white and gray bands from a white Hero, ending on the dark CTA band', () => {
+  it('alternates white and gray bands from a white Hero, before the dark footer', () => {
     expect(sections.map((s) => s.getAttribute('data-tone'))).toEqual([
       'white', // Hero
       'white', // About
@@ -36,7 +36,6 @@ describe('page structure', () => {
       'gray', // Toolbox
       'white', // Testimonials
       'gray', // Résumé
-      'ink', // CTA
     ]);
   });
 
@@ -44,7 +43,7 @@ describe('page structure', () => {
     const columns = [
       doc.querySelector('body > header > div'),
       ...sections.map((s) => s.querySelector(':scope > .max-w-page')),
-      doc.querySelector('body > footer > div'),
+      doc.querySelector('body > footer > .max-w-page'),
     ];
     for (const column of columns) {
       expect(column).not.toBeNull();

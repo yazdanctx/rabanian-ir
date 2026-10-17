@@ -1,37 +1,68 @@
 ---
 import { COPY, SITE } from '../site';
+import Cta from './Cta.astro';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
-/* Light, like the rest of the page: the CTA above is the only dark surface. */
+/*
+ * The end of every page, and its one dark surface: a single `ink` block over a
+ * faint grid of 56px squares (a few shaded) holding the call to action, then
+ * the logo, the one-line bio, the links and the credit. Place it right after
+ * <main>. The grid is one SVG pattern tile repeated: drawn lines, no gradients.
+ */
 const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
+const CELL = 56;
+/** Shaded squares in one 6×4-cell tile of the grid: [column, row, fill]. */
+const shaded: [number, number, string][] = [
+  [1, 0, 'rgb(255 255 255 / 0.035)'],
+  [4, 1, 'rgb(0 0 0 / 0.35)'],
+  [2, 3, 'rgb(255 255 255 / 0.05)'],
+  [5, 3, 'rgb(0 0 0 / 0.35)'],
+];
 ---
 
-<footer>
-  <div class="mx-auto max-w-page px-5 pt-10 pb-8">
-    <Logo />
-    <p class="mt-4 mb-5 text-[13px]/[2] text-muted">{SITE.footerBio}</p>
-    <nav>
-      <ul class="flex flex-col gap-2 md:flex-row">
-        {
-          links.map((link) => (
-            <li>
-              <a
-                href={link.href}
-                class="flex items-center gap-2.5 rounded-btn border border-line bg-(--card) px-4 py-3 text-sm md:py-2.5 lift hover:border-primary hover:text-primary-text"
-              >
-                <Icon name={link.icon} size={16} class="text-muted" />
-                {link.label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-    <p class="mt-7 flex items-center justify-center gap-1.5 border-t border-line pt-5 text-xs text-muted">
-      {creditBefore}{' '}
-      <Icon name="heart" size={14} class="text-primary" /><span class="sr-only">{creditHeart}</span>{' '}
-      {creditAfter}
-    </p>
+<footer class="relative isolate overflow-hidden bg-ink text-white">
+  <svg aria-hidden="true" class="absolute inset-0 -z-10 size-full">
+    <defs>
+      <pattern id="footer-grid" width={CELL * 6} height={CELL * 4} patternUnits="userSpaceOnUse">
+        {shaded.map(([x, y, fill]) => <rect x={x * CELL} y={y * CELL} width={CELL} height={CELL} fill={fill} />)}
+        <path
+          d={Array.from({ length: 6 }, (_, i) => `M${i * CELL + 0.5} 0V${CELL * 4}`).join('') +
+            Array.from({ length: 4 }, (_, i) => `M0 ${i * CELL + 0.5}H${CELL * 6}`).join('')}
+          stroke="rgb(255 255 255 / 0.07)"
+          fill="none"
+        />
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#footer-grid)" />
+  </svg>
+  <div class="mx-auto max-w-page px-5">
+    <Cta />
+    <div class="border-t border-white/10 pt-10 pb-8">
+      <Logo />
+      <p class="mt-4 mb-5 text-[13px]/[2] text-white/70">{SITE.footerBio}</p>
+      <nav>
+        <ul class="flex flex-col gap-2 md:flex-row">
+          {
+            links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="flex items-center gap-2.5 rounded-btn border border-white/10 bg-white/5 px-4 py-3 text-sm md:py-2.5 lift hover:border-primary-on-ink hover:text-primary-on-ink"
+                >
+                  <Icon name={link.icon} size={16} class="text-white/60" />
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <p class="mt-7 flex items-center justify-center gap-1.5 border-t border-white/10 pt-5 text-xs text-white/60">
+        {creditBefore}{' '}
+        <Icon name="heart" size={14} class="text-primary" /><span class="sr-only">{creditHeart}</span>{' '}
+        {creditAfter}
+      </p>
+    </div>
   </div>
 </footer>

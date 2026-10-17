@@ -16,14 +16,11 @@ import Eyebrow from './Eyebrow.astro';
  *            down the page; cards inside follow the tone through two
  *            variables: `bg-(--card)` is gray on white and white on gray, and
  *            `--tone` is the band's own color (e.g. for rings that cut a line).
- *            "ink" is the dark band (the CTA): white text.
+ *            The page's one dark block is the footer (Footer.astro), not a band.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
  *            whose `data-reveal` children reveal 60ms apart on page load
  *            (src/scripts/motion.ts); the Hero uses it.
- *
- * Slot "backdrop": decoration behind the column, filling the whole band
- * (the CTA's grid).
  *
  * The header is always a `data-reveal`; mark other content blocks
  * with `data-reveal` (and lists with `data-stagger`) where they are written.
@@ -32,7 +29,7 @@ interface Props {
   id?: string;
   eyebrow?: string;
   title?: string;
-  tone?: 'white' | 'gray' | 'ink';
+  tone?: 'white' | 'gray';
   class?: string;
   stagger?: 'load';
 }
@@ -41,12 +38,10 @@ const { id, eyebrow, title, tone = 'white', class: className, stagger } = Astro.
 const tones = {
   white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
   gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
-  ink: 'relative isolate overflow-hidden bg-ink text-white',
 };
 ---
 
 <section id={id} data-tone={tone} class:list={['border-b border-line', tones[tone]]}>
-  <slot name="backdrop" />
   <div class:list={['relative mx-auto max-w-page px-5 py-12 md:py-16', className]} data-stagger={stagger}>
     {
       title && (
