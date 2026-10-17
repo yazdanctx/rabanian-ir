@@ -106,3 +106,17 @@ describe.skipIf(!chromePath)('education cards', () => {
     }
   });
 });
+
+describe.skipIf(!chromePath)('the dark footer', () => {
+  it('meets the last band with no line along its top edge', async () => {
+    const tab = await openPage(`${site.origin}/`, { reducedMotion: true });
+    try {
+      const lastBandRule = await tab.evaluate<string>(
+        `getComputedStyle(document.querySelector('main > section:last-child')).borderBottomWidth`,
+      );
+      expect(lastBandRule).toBe('0px');
+    } finally {
+      await tab.close();
+    }
+  });
+});
