@@ -3,11 +3,13 @@ import Eyebrow from './Eyebrow.astro';
 
 /*
  * One landing-page section: a full-width band holding the centered ~680px
- * column. Bands meet without rules: a white band may bulge down into the gray
- * one below (`sag` + `top="under"`), a band may fade to white into the next
- * (`fade`), or two simply meet edge to edge. Curves are drawn by the band's
- * corner radii plus a negative margin that slides the next band under it by
- * the curve's height: 32px, 64px from md:. The column pads 20px inline and 48px on top (64px
+ * column. Bands meet in a few ways: a band may rise into the one above along
+ * a diagonal (`top="slash"`), a white band may bulge down into the gray one
+ * below (`sag` + `top="under"`), a band may fade to white into the next
+ * (`fade`), or two meet edge to edge, with or without a hairline (`top="rule"`).
+ * Slashes and curves overlap the neighbour by their height, 32px (64px from
+ * md:): a slash is a clip-path on the rising band, a curve the sagging band's
+ * corner radii. The column pads 20px inline and 48px on top (64px
  * from md:); at the bottom it adds a curve's height, so no curve ever covers
  * content. Children go in the default slot.
  *
@@ -23,8 +25,11 @@ import Eyebrow from './Eyebrow.astro';
  *            `--tone` is the band's own color (e.g. for rings that cut a line).
  *            The page's one dark block is the footer (Footer.astro), not a band.
  * - top:     how the band meets the one above. "flat" (default): edge to
- *            edge. "under": it slides under the band above, which must `sag`
- *            into it, and pads its top by the curve.
+ *            edge. "rule": edge to edge under a 1px `line` hairline (for two
+ *            bands of one tone). "slash": it rises into the band above along a
+ *            straight diagonal, «/» — low at the left, full height at the right.
+ *            "under": it slides under the band above, which must `sag` into
+ *            it, and pads its top by the curve.
  * - sag:     the band's bottom bulges down into the next one (a half-ellipse),
  *            painting over it; the next band takes `top="under"`.
  * - fade:    the band's color fades to white over its last 10rem, so a white
@@ -42,7 +47,7 @@ interface Props {
   eyebrow?: string;
   title?: string;
   tone?: 'white' | 'gray';
-  top?: 'flat' | 'under';
+  top?: 'flat' | 'rule' | 'slash' | 'under';
   sag?: boolean;
   fade?: boolean;
   class?: string;
@@ -64,10 +69,20 @@ const tones = {
   white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
   gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
 };
-/** Each top edge: the overlap under a sagging band above, at the curve's height (2rem, 4rem from md:). */
+/** Each top edge; slashes and curves overlap by their height (2rem, 4rem from md:). */
 const tops = {
   flat: '',
+  rule: 'border-t border-line',
+  slash:
+    '-mt-8 [clip-path:polygon(0_2rem,100%_0,100%_100%,0_100%)] md:-mt-16 md:[clip-path:polygon(0_4rem,100%_0,100%_100%,0_100%)]',
   under: '-mt-8 md:-mt-16',
+};
+/** Top padding: 48px (64px from md:), plus room for the edge where it overlaps. */
+const topPadding = {
+  flat: 'pt-12 md:pt-16',
+  rule: 'pt-12 md:pt-16',
+  slash: 'pt-16 md:pt-24',
+  under: 'pt-20 md:pt-32',
 };
 ---
 
@@ -85,7 +100,7 @@ const tops = {
   <div
     class:list={[
       'relative mx-auto max-w-page px-5 pb-20 md:pb-32',
-      top === 'under' ? 'pt-20 md:pt-32' : 'pt-12 md:pt-16',
+      topPadding[top],
       className,
     ]}
     data-stagger={stagger}

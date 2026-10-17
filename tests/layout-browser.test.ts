@@ -131,9 +131,11 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       marginTop: s.marginTop,
       fade: s.backgroundImage.startsWith('linear-gradient'),
       z: s.zIndex,
+      clip: s.clipPath,
+      rule: s.borderTopWidth,
     };
   })`;
-  type Edge = { top: string[]; bottom: string[]; marginTop: string; fade: boolean; z: string };
+  type Edge = { top: string[]; bottom: string[]; marginTop: string; fade: boolean; z: string; clip: string; rule: string };
 
   it.each([
     [390, '32px'],
@@ -144,18 +146,21 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       const [hero, about, courses, tools, testimonials, resume, footer] = await tab.evaluate<Edge[]>(edges);
       const flat = ['0px', '0px'];
       const dome = [`50% ${h}`, `50% ${h}`];
-      // The Hero's white bulges down into About, which tucks under it.
-      expect(hero).toMatchObject({ top: flat, bottom: dome, marginTop: '0px', z: '10' });
+      // About rises into the Hero along a straight diagonal, «/»: low at the left, at full height at the right.
+      expect(hero).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', z: 'auto', clip: 'none' });
       expect(about).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: true });
+      expect(about.clip).toBe(`polygon(0px ${h}, 100% 0px, 100% 100%, 0px 100%)`);
       // About fades from gray to white, so Courses meets it with no curve…
       expect(courses).toMatchObject({ top: flat, marginTop: '0px', fade: false });
       // …and Courses' white bulges down into the Toolbox the same way.
       expect(courses).toMatchObject({ bottom: dome, z: '10' });
       expect(tools).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}` });
-      // Then straight edges: gray Toolbox to white Testimonials, white to white Résumé.
+      // Then straight edges: gray Toolbox to white Testimonials; a 1px rule above the (white) Résumé.
       for (const band of [testimonials, resume]) {
-        expect(band).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false });
+        expect(band).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none' });
       }
+      expect(testimonials.rule).toBe('0px');
+      expect(resume.rule).toBe('1px');
       expect(footer).toMatchObject({ top: dome, marginTop: `-${h}` });
     } finally {
       await tab.close();

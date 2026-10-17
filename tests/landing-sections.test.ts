@@ -16,9 +16,10 @@ describe('page structure', () => {
     expect(sections.slice(0, 3).map((s) => s.id)).toEqual(['top', 'about', 'courses']);
   });
 
-  it('separates sections with curves, not rules, and centers them in the page column', () => {
+  it('separates sections by shape, with one hairline only (above the Résumé), and centers them in the page column', () => {
     for (const section of sections) {
-      expect([...section.classList].filter((c) => /^border/.test(c))).toEqual([]);
+      const rules = [...section.classList].filter((c) => /^border/.test(c));
+      expect(rules).toEqual(section.id === 'resume' ? ['border-t', 'border-line'] : []);
       expect(section.querySelector(':scope > .max-w-page')).not.toBeNull();
     }
   });
