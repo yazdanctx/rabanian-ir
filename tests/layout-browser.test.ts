@@ -147,12 +147,15 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       // The Hero's white bulges down into About, which tucks under it.
       expect(hero).toMatchObject({ top: flat, bottom: dome, marginTop: '0px', z: '10' });
       expect(about).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: true });
-      // About fades from gray to white, so Courses meets it with no curve.
+      // About fades from gray to white, so Courses meets it with no curve…
       expect(courses).toMatchObject({ top: flat, marginTop: '0px', fade: false });
-      // Sweeps: one corner curves the whole width; the other stays square.
-      expect(tools).toMatchObject({ top: [`100% ${h}`, '0px'], marginTop: `-${h}` });
-      expect(testimonials).toMatchObject({ top: dome, marginTop: `-${h}` });
-      expect(resume).toMatchObject({ top: ['0px', `100% ${h}`], marginTop: `-${h}` });
+      // …and Courses' white bulges down into the Toolbox the same way.
+      expect(courses).toMatchObject({ bottom: dome, z: '10' });
+      expect(tools).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}` });
+      // Then straight edges: gray Toolbox to white Testimonials, white to white Résumé.
+      for (const band of [testimonials, resume]) {
+        expect(band).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false });
+      }
       expect(footer).toMatchObject({ top: dome, marginTop: `-${h}` });
     } finally {
       await tab.close();

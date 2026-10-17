@@ -23,14 +23,14 @@ describe('page structure', () => {
     }
   });
 
-  it('alternates white and gray bands from a white Hero, before the dark footer', () => {
+  it('alternates white and gray bands from a white Hero to Testimonials, then a white Résumé, before the dark footer', () => {
     expect(sections.map((s) => s.getAttribute('data-tone'))).toEqual([
       'white', // Hero
       'gray', // About, with the Brands
       'white', // Courses
       'gray', // Toolbox
       'white', // Testimonials
-      'gray', // Résumé
+      'white', // Résumé
     ]);
   });
 

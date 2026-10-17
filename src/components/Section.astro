@@ -3,15 +3,15 @@ import Eyebrow from './Eyebrow.astro';
 
 /*
  * One landing-page section: a full-width band holding the centered ~680px
- * column. Bands meet with curves, not rules, each meeting its own shape
- * (Hero bulging down into About; About fading into Courses; sweeps and domes
- * further down). Curves are drawn by the band's corner radii plus a negative
- * margin that slides it over (or under) its neighbour by the curve's height:
- * 32px, 64px from md:. The column pads 20px inline and 48px on top (64px
+ * column. Bands meet without rules: a white band may bulge down into the gray
+ * one below (`sag` + `top="under"`), a band may fade to white into the next
+ * (`fade`), or two simply meet edge to edge. Curves are drawn by the band's
+ * corner radii plus a negative margin that slides the next band under it by
+ * the curve's height: 32px, 64px from md:. The column pads 20px inline and 48px on top (64px
  * from md:); at the bottom it adds a curve's height, so no curve ever covers
  * content. Children go in the default slot.
  *
- *   <Section id="tools" eyebrow="جعبه‌ابزار" title="ابزارها" tone="gray" top="sweep">…</Section>
+ *   <Section id="tools" eyebrow="جعبه‌ابزار" title="ابزارها" tone="gray" top="under">…</Section>
  *
  * Props (all optional):
  * - id:      anchor id on the <section> (e.g. "courses", "tools").
@@ -23,11 +23,8 @@ import Eyebrow from './Eyebrow.astro';
  *            `--tone` is the band's own color (e.g. for rings that cut a line).
  *            The page's one dark block is the footer (Footer.astro), not a band.
  * - top:     how the band meets the one above. "flat" (default): edge to
- *            edge. "dome": its top rises into the band above as a half-ellipse
- *            as wide as the band. "sweep": one quarter-ellipse across the whole
- *            width, low at the left and level at the right; "sweep-reverse"
- *            mirrors it. "under": it slides under the band above, which must
- *            `sag` into it, and pads its top by the curve.
+ *            edge. "under": it slides under the band above, which must `sag`
+ *            into it, and pads its top by the curve.
  * - sag:     the band's bottom bulges down into the next one (a half-ellipse),
  *            painting over it; the next band takes `top="under"`.
  * - fade:    the band's color fades to white over its last 10rem, so a white
@@ -45,7 +42,7 @@ interface Props {
   eyebrow?: string;
   title?: string;
   tone?: 'white' | 'gray';
-  top?: 'flat' | 'dome' | 'sweep' | 'sweep-reverse' | 'under';
+  top?: 'flat' | 'under';
   sag?: boolean;
   fade?: boolean;
   class?: string;
@@ -67,12 +64,9 @@ const tones = {
   white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
   gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
 };
-/** Each top edge: corner radii and the overlap, at the curve's height (2rem, 4rem from md:). */
+/** Each top edge: the overlap under a sagging band above, at the curve's height (2rem, 4rem from md:). */
 const tops = {
   flat: '',
-  dome: '-mt-8 rounded-t-[50%_2rem] md:-mt-16 md:rounded-t-[50%_4rem]',
-  sweep: '-mt-8 rounded-tl-[100%_2rem] md:-mt-16 md:rounded-tl-[100%_4rem]',
-  'sweep-reverse': '-mt-8 rounded-tr-[100%_2rem] md:-mt-16 md:rounded-tr-[100%_4rem]',
   under: '-mt-8 md:-mt-16',
 };
 ---

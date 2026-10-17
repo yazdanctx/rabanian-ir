@@ -12,7 +12,7 @@ const others = courses.filter((course) => !course.masterclass);
 const { eyebrow, title, swipeHint } = COPY.courses;
 ---
 
-<Section id="courses" eyebrow={eyebrow} title={title}>
+<Section id="courses" eyebrow={eyebrow} title={title} sag>
   {
     masterclass && (
       <div data-reveal class="lift rounded-card">
