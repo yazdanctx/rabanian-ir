@@ -7,7 +7,7 @@ import { PALETTE } from './palette';
 import { SITE } from './site';
 
 /**
- * The site's Open Graph image: name + tagline on palette P, rendered at build
+ * The site's Open Graph image: name + tagline on palette Iris, rendered at build
  * time by `src/pages/og.png.ts` (satori → SVG → sharp → PNG). Nothing is
  * committed; edit the layout below and rebuild.
  */

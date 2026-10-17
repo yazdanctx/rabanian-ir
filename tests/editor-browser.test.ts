@@ -228,13 +228,13 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       expect(states).toEqual(['کنسول:false:hidden', 'کنسول:true:shown', 'کنسول:false:hidden']);
     });
 
-    it('heads the Code Pane and the Preview with palette P bars: surface, a line beneath', async () => {
+    it('heads the Code Pane and the Preview with palette bars: surface, a line beneath', async () => {
       const bars = await tab.evaluate<string[]>(`(() =>
         [document.querySelector('[role="tablist"]'), document.querySelector('[data-actions]').parentElement].map((bar) => {
           const s = getComputedStyle(bar);
           return [s.backgroundColor, s.borderBottomWidth, s.borderBottomStyle, s.borderBottomColor].join(' ');
         }))()`);
-      const bar = 'rgb(245, 247, 250) 1px solid rgb(220, 227, 238)';
+      const bar = 'rgb(241, 245, 249) 1px solid rgb(226, 232, 240)';
       expect(bars).toEqual([bar, bar]);
     });
 
@@ -391,10 +391,10 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       const { x, y } = await separator();
       const color = () =>
         tab.evaluate<string>(`getComputedStyle(document.querySelector('[role="separator"]')).backgroundColor`);
-      expect(await color()).toBe('rgb(220, 227, 238)'); // line
+      expect(await color()).toBe('rgb(226, 232, 240)'); // line
       await tab.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y });
       await tab.evaluate(`new Promise((r) => setTimeout(r, 250))`); // past the 150ms colour change
-      expect(await color()).toBe('rgb(5, 8, 22)');
+      expect(await color()).toBe('rgb(15, 23, 42)');
       await tab.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: x + 200, y: y + 200 });
     });
 

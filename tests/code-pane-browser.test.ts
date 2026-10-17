@@ -86,9 +86,9 @@ const STRING = 'rgb(10, 48, 105)';
 const CONSTANT = 'rgb(5, 80, 174)';
 const FUNCTION = 'rgb(111, 66, 193)';
 const DEFINITION = 'rgb(149, 56, 0)';
-const PUNCTUATION = 'rgb(83, 96, 120)';
+const PUNCTUATION = 'rgb(71, 85, 105)';
 // Not italic: slanted Farsi reads poorly, and comments here are mostly Farsi.
-const COMMENT = 'rgb(83, 96, 120)';
+const COMMENT = 'rgb(71, 85, 105)';
 
 const pick = (tab: BrowserPage, label: string) =>
   tab.evaluate(`(async () => { ${lib} await pick(${JSON.stringify(label)}); })()`);
@@ -220,8 +220,8 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       fontSize: '14px',
       lineHeight: '23.8px',
       background: 'rgb(255, 255, 255)',
-      ink: 'rgb(5, 8, 22)',
-      gutter: 'rgb(83, 96, 120) on rgb(255, 255, 255)',
+      ink: 'rgb(15, 23, 42)',
+      gutter: 'rgb(71, 85, 105) on rgb(255, 255, 255)',
       gutterBorder: '0px',
       // No IRANYekanXFaNum here: it would draw line numbers in Persian digits.
       gutterFont: 'JetBrains Mono, ui-monospace, monospace',
@@ -377,7 +377,7 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
       );
     })()`);
     // Marked in primary-soft.
-    expect(matched).toEqual(['( on rgb(234, 241, 255)', ') on rgb(234, 241, 255)']);
+    expect(matched).toEqual(['( on rgb(237, 233, 254)', ') on rgb(237, 233, 254)']);
   });
 
   it('has only the line-number gutter, and leaves Ctrl/Cmd-F to the browser', async () => {
@@ -395,8 +395,8 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
   });
 
   it('shades the caret line in surface and draws selections in primary-soft, on that line too', async () => {
-    const SURFACE = [245, 247, 250];
-    const PRIMARY_SOFT = [234, 241, 255];
+    const SURFACE = [241, 245, 249];
+    const PRIMARY_SOFT = [237, 233, 254];
     await pick(tab, 'JS');
     await clear(tab);
     await tab.type('let a = 1;');
@@ -435,7 +435,7 @@ describe.skipIf(!chromePath)('Code Pane in the browser', () => {
         ring: editor.outlineStyle,
       };
     })()`);
-    expect(look).toEqual({ caret: 'rgb(5, 8, 22)', ring: 'none' });
+    expect(look).toEqual({ caret: 'rgb(15, 23, 42)', ring: 'none' });
   });
 
   describe('Farsi inside code', () => {

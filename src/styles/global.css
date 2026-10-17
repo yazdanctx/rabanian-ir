@@ -11,31 +11,32 @@
 @source not './editor.css';
 
 /*
- * Palette P (spec: .scratch/landing-page/spec.md). `static` keeps every token
- * on :root as a CSS variable even when no utility uses it. `src/palette.ts`
- * mirrors these colors for the OG image; keep the two in step (a test checks).
- * Tailwind's default colors are dropped: palette P is the only palette, with
- * no second accent. No gradients except About’s fade to white (Section `fade`);
- * no dark mode.
+ * Palette Iris (spec: .scratch/landing-page/spec.md): slate neutrals with
+ * violet as the one accent. `static` keeps every token on :root as a CSS
+ * variable even when no utility uses it. `src/palette.ts` mirrors these
+ * colors for the OG image; keep the two in step (a test checks). Tailwind's
+ * default colors are dropped: Iris is the only palette, with no second
+ * accent. No gradients except About’s fade to white (Section `fade`); no dark
+ * mode.
  */
 @theme static {
   --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
 
   --color-*: initial;
-  --color-ink: #050816;
-  --color-muted: #536078;
-  --color-primary: #1769ff;
-  --color-primary-text: #0d5be0;
-  --color-primary-soft: #eaf1ff;
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-primary: #7c3aed;
+  --color-primary-text: #6d28d9;
+  --color-primary-soft: #ede9fe;
   /* Text and icons on a `primary` fill, and that fill under the pointer. */
   --color-on-primary: #ffffff;
-  --color-primary-hover: #0d5be0;
-  --color-surface: #f5f7fa;
-  --color-line: #dce3ee;
+  --color-primary-hover: #6d28d9;
+  --color-surface: #f1f5f9;
+  --color-line: #e2e8f0;
   --color-bg: #ffffff;
   --color-white: #ffffff;
   /* Spec "on dark block": the eyebrow on the ink CTA. */
-  --color-primary-on-ink: #56a6ff;
+  --color-primary-on-ink: #a78bfa;
   /*
    * HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax
    * colours, and the console strip's warnings and errors. All pass AA as text
@@ -55,7 +56,7 @@
   --container-page: 680px;
 
   --radius-btn: 8px;
-  --radius-card: 12px;
+  --radius-card: 14px;
   --radius-cta: 18px;
 
   --shadow-card:

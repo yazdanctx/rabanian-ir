@@ -347,7 +347,7 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
         }
         return 'rgb(255, 255, 255)';
       };
-      const surface = 'rgb(245, 247, 250)';
+      const surface = 'rgb(241, 245, 249)';
       return Object.fromEntries(
         [...document.querySelectorAll('[data-console] li')].map((li) => {
           const color = getComputedStyle(li).color;
@@ -355,7 +355,7 @@ describe.skipIf(!chromePath)('console strip in the browser', () => {
         }),
       );
     })()`);
-    const ink = 'rgb(5, 8, 22)';
+    const ink = 'rgb(15, 23, 42)';
     expect(colors.log.color).toBe(ink);
     expect(colors.info.color).toBe(ink);
     const [r, g, b] = colors.error.color.match(/\d+/g)!.map(Number);

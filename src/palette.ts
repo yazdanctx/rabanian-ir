@@ -1,24 +1,24 @@
 /**
- * Palette P (spec: .scratch/landing-page/spec.md) for code that cannot read
+ * Palette Iris (spec: .scratch/landing-page/spec.md) for code that cannot read
  * CSS variables, such as the OG image renderer. Markup uses the Tailwind
  * tokens in `src/styles/global.css` instead. Every `--color-<kebab-key>` there
  * has its entry here with the same hex; tests/theme.test.ts keeps them equal.
  */
 export const PALETTE = {
-  ink: '#050816',
-  muted: '#536078',
-  primary: '#1769FF',
-  primaryText: '#0D5BE0',
-  primarySoft: '#EAF1FF',
+  ink: '#0F172A',
+  muted: '#475569',
+  primary: '#7C3AED',
+  primaryText: '#6D28D9',
+  primarySoft: '#EDE9FE',
   /** Text and icons on a `primary` fill, and that fill under the pointer. */
   onPrimary: '#FFFFFF',
-  primaryHover: '#0D5BE0',
-  surface: '#F5F7FA',
-  line: '#DCE3EE',
+  primaryHover: '#6D28D9',
+  surface: '#F1F5F9',
+  line: '#E2E8F0',
   bg: '#FFFFFF',
   white: '#FFFFFF',
   /** Spec "on dark block": the eyebrow on the ink CTA. */
-  primaryOnInk: '#56A6FF',
+  primaryOnInk: '#A78BFA',
   /**
    * HTML Editor: the Code Pane's syntax colours, a GitHub-light style
    * palette (comments and brackets are `muted`; plain names stay `ink`).

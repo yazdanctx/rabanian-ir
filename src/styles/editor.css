@@ -28,7 +28,7 @@
 }
 
 /*
- * Layout and chrome. Plain CSS on palette P's variables (global.css keeps
+ * Layout and chrome. Plain CSS on the palette's variables (global.css keeps
  * every token on :root): the editor's files are left out of Tailwind's
  * class scan (`@source not` in global.css) so its utilities can't grow the
  * landing page's stylesheet.
@@ -352,7 +352,7 @@ body {
 }
 
 /*
- * CodeMirror's light theme, on palette P. Selectors start with
+ * CodeMirror's light theme, on the site palette. Selectors start with
  * `.editor-code .cm-editor` to outrank CodeMirror's base theme, which it
  * injects at runtime.
  */
@@ -382,11 +382,11 @@ body {
  * The caret's line reads as surface on white. It is a translucent tint, not
  * the opaque token, because CodeMirror draws selections beneath the lines:
  * an opaque line would hide the selection on it. The tint is surface's own
- * distance from white, 25 times over at 4%: over white, exactly surface.
+ * distance from white, 5 times over at 20%: over white, exactly surface.
  */
 .editor-code .cm-editor .cm-activeLine {
   background-color: rgb(
-    from var(--color-surface) calc(255 - (255 - r) * 25) calc(255 - (255 - g) * 25) calc(255 - (255 - b) * 25) / 4%
+    from var(--color-surface) calc(255 - (255 - r) * 5) calc(255 - (255 - g) * 5) calc(255 - (255 - b) * 5) / 20%
   );
 }
 

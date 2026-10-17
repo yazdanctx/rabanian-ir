@@ -17,23 +17,23 @@ A Farsi, RTL, light-mode-only personal site for Amin Rabanian (AI educator / pro
 - Content in Astro content collections (`src/content/*.json`, Zod schemas). Components never hard-code copy, prices or links.
 - `<html lang="fa" dir="rtl">`. Light mode only: no dark theme, no `prefers-color-scheme` handling, no toggle.
 
-## Palette (P — "Paasta", no gradient hero)
+## Palette (Iris — slate neutrals, one violet accent; no gradient hero)
 
 | token | value | use |
 |---|---|---|
-| `--ink` | `#050816` | headings, body text, dark CTA block background |
-| `--muted` | `#536078` | descriptions, labels, captions |
-| `--primary` | `#1769FF` | filled buttons, logo mark, pulsing dot, hover `#0D5BE0` |
-| `--primary-text` | `#0D5BE0` | text links, hero tagline, section eyebrows (≥ 5.8:1 on white) |
-| `--primary-soft` | `#EAF1FF` | tool icon tiles |
-| `--surface` | `#F5F7FA` | cards, stat tiles, editor chrome, Masterclass banner slot |
-| `--line` | `#DCE3EE` | all borders; 1px section dividers |
+| `--ink` | `#0F172A` | headings, body text, dark footer background |
+| `--muted` | `#475569` | descriptions, labels, captions |
+| `--primary` | `#7C3AED` | filled buttons, logo mark, pulsing dot; white text on it (`--on-primary`), hover `#6D28D9` (`--primary-hover`) |
+| `--primary-text` | `#6D28D9` | text links, hero tagline, section eyebrows (7.1:1 on white) |
+| `--primary-soft` | `#EDE9FE` | tool icon tiles; the HTML Editor's selection (violet-100: violet-50 was lighter than the caret line) |
+| `--surface` | `#F1F5F9` | gray bands, cards, stat tiles, editor chrome, Masterclass banner slot |
+| `--line` | `#E2E8F0` | all borders; 1px section dividers |
 | `--bg` | `#FFFFFF` | page |
-| on dark block | text `#FFFFFF`, eyebrow `#56A6FF`, button `#1769FF`/white text | CTA section only |
+| on dark block | text `#FFFFFF`, eyebrow `#A78BFA`, button `#7C3AED`/white text | the footer only |
 
-Shape: buttons 8px radius; cards 12px with 1px `--line` border and shadow `0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a, 0 0 0 1px #27272a0f`. Sections are full-width bands, paasta.cloud-style (2026-10-17), each meeting of two bands shaped its own way (slashes and curves 32px tall, 64px from md:; bands pad their bottom by that so none covers content): About rises into the Hero along a straight diagonal, «/» (low at the left); About's gray fades to white over its last 10rem so Courses meets it with no curve; the Toolbox is a sweep at both ends — it rises into Courses along a quarter-ellipse one band wide (bending at the left, level at the right), and its foot is that curve turned 180° (bending at the right), lying over Testimonials, so both edges rise to the right like a wave; Testimonials meets the (white) Résumé under a 1px `--line` hairline; the dark footer rises into the Résumé with a dome (a half-ellipse): white (`--bg`) and gray (`--surface`) bands alternate from a white Hero — Hero white · About (with the Brands) gray · Courses white · Toolbox gray · Testimonials white · Résumé white — and cards follow their band (gray on white, white on gray). No side borders (a framed page with vertical guides was tried and dropped). The footer — the CTA and the links together — is the one dark block, the same at the end of every content page (not the full-screen HTML Editor, decided 2026-10-17). **No gradients anywhere** — two exceptions, both asked for on 2026-10-17: About's gray-to-white fade at its foot (the only CSS gradient; a test pins it), and the Masterclass banner *placeholder* image, a subtle gray diagonal gradient with a gray «</>» (Amin's real banner replaces it). **No background artwork.** No second accent (paasta's violet is not used).
+Shape: buttons 8px radius; cards 14px with 1px `--line` border and shadow `0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a, 0 0 0 1px #27272a0f`. Sections are full-width bands, paasta.cloud-style (2026-10-17), each meeting of two bands shaped its own way (slashes and curves 32px tall, 64px from md:; bands pad their bottom by that so none covers content): About rises into the Hero along a straight diagonal, «/» (low at the left); About's gray fades to white over its last 10rem so Courses meets it with no curve; the Toolbox is a sweep at both ends — it rises into Courses along a quarter-ellipse one band wide (bending at the left, level at the right), and its foot is that curve turned 180° (bending at the right), lying over Testimonials, so both edges rise to the right like a wave; Testimonials meets the (white) Résumé under a 1px `--line` hairline; the dark footer rises into the Résumé with a dome (a half-ellipse): white (`--bg`) and gray (`--surface`) bands alternate from a white Hero — Hero white · About (with the Brands) gray · Courses white · Toolbox gray · Testimonials white · Résumé white — and cards follow their band (gray on white, white on gray). No side borders (a framed page with vertical guides was tried and dropped). The footer — the CTA and the links together — is the one dark block, the same at the end of every content page (not the full-screen HTML Editor, decided 2026-10-17). **No gradients anywhere** — two exceptions, both asked for on 2026-10-17: About's gray-to-white fade at its foot (the only CSS gradient; a test pins it), and the Masterclass banner *placeholder* image, a subtle gray diagonal gradient with a gray «</>» (Amin's real banner replaces it). **No background artwork.** No second accent: violet is the only hue.
 
-Reference mock: `.scratch/palettes/index.html`, column P.
+Iris was picked on 2026-10-17 from four rendered variants of a shadcn violet theme (an amber theme was tried first and rejected). It replaced palette P (paasta blue, `#1769FF`), whose reference mock is `.scratch/palettes/index.html`, column P; the layout, shadows and band shapes are still P's.
 
 ## Typography
 
@@ -93,7 +93,7 @@ Dark mode · auth or any gating of Locked Tools · course detail pages · paymen
 
 ## Acceptance
 
-- All 10 sections render with the copy above, RTL, in IRANYekanXFaNum, on palette P, with no gradient and no violet.
+- All 10 sections render with the copy above, RTL, in IRANYekanXFaNum, on palette Iris, with no gradient and no second accent.
 - Every Course link resolves (`url` or Support fallback); the HTML Editor row opens `/editor`; Locked Tools are inert.
 - Images are served as AVIF/WebP with dimensions; no layout shift; Lighthouse mobile ≥ 95 Performance, 100 Accessibility.
 - Motion runs as specified and is fully disabled under reduced motion.

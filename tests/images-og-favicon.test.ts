@@ -101,7 +101,7 @@ describe('favicon', () => {
     const root = svg.querySelector('svg');
     expect(root?.getAttribute('xmlns')).toBe('http://www.w3.org/2000/svg');
     expect(root?.getAttribute('viewBox')).toBe('0 0 32 32');
-    expect(svg.querySelector('rect')?.getAttribute('fill')).toBe('#1769FF');
+    expect(svg.querySelector('rect')?.getAttribute('fill')).toBe('#7C3AED');
     const star = svg.querySelector('path');
     expect(star?.getAttribute('d')).toBe('M12 2.5l2 6.4 6.4 2-6.4 2-2 6.4-2-6.4-6.4-2 6.4-2z');
     expect(star?.getAttribute('fill')).toBe('#FFFFFF');

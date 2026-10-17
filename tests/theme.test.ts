@@ -4,21 +4,21 @@ import { join } from 'node:path';
 import { PALETTE } from '../src/palette';
 import { utilityValue } from './helpers/tailwind';
 
-// Palette P, radii and card shadow, as specified in .scratch/landing-page/spec.md.
+// Palette Iris, radii and card shadow, as specified in .scratch/landing-page/spec.md.
 describe('theme tokens resolve as Tailwind utilities', () => {
   it.each([
-    ['ink', '#050816'],
-    ['muted', '#536078'],
-    ['primary', '#1769FF'],
-    ['primary-text', '#0D5BE0'],
-    ['primary-soft', '#EAF1FF'],
+    ['ink', '#0F172A'],
+    ['muted', '#475569'],
+    ['primary', '#7C3AED'],
+    ['primary-text', '#6D28D9'],
+    ['primary-soft', '#EDE9FE'],
     ['on-primary', '#FFFFFF'],
-    ['primary-hover', '#0D5BE0'],
-    ['surface', '#F5F7FA'],
-    ['line', '#DCE3EE'],
+    ['primary-hover', '#6D28D9'],
+    ['surface', '#F1F5F9'],
+    ['line', '#E2E8F0'],
     ['bg', '#FFFFFF'],
     // Spec "on dark block": the eyebrow on the ink CTA.
-    ['primary-on-ink', '#56A6FF'],
+    ['primary-on-ink', '#A78BFA'],
     // HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax colours;
     // console warnings and errors.
     ['code-keyword', '#CF222E'],
@@ -38,7 +38,7 @@ describe('theme tokens resolve as Tailwind utilities', () => {
 
   it.each([
     ['btn', '8px'],
-    ['card', '12px'],
+    ['card', '14px'],
     ['cta', '18px'],
   ])('radius %s = %s', async (token, value) => {
     expect(await utilityValue(`rounded-${token}`, 'border-radius')).toBe(value);
@@ -54,9 +54,10 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     );
   });
 
-  it("drops Tailwind's default palette, so no second accent (violet) is available", async () => {
+  it("drops Tailwind's default palette, so no second accent is available", async () => {
     expect(await utilityValue('bg-violet-500', 'background-color')).toBeUndefined();
     expect(await utilityValue('text-blue-600', 'color')).toBeUndefined();
+    expect(await utilityValue('text-amber-600', 'color')).toBeUndefined();
   });
 
   it('the page column (max-w-page) is 680px wide', async () => {

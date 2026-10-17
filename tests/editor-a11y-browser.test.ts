@@ -35,8 +35,8 @@ async function openEditor(origin: string): Promise<BrowserPage> {
   return tab;
 }
 
-/** Palette P's focus ring: 2px solid primary (#1769FF). */
-const RING = 'solid 2px rgb(23, 105, 255)';
+/** The focus ring: 2px solid primary (#7C3AED). */
+const RING = 'solid 2px rgb(124, 58, 237)';
 
 /**
  * Where the keyboard focus is: the control's name, and the ring drawn for it.
