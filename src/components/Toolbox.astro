@@ -9,7 +9,7 @@ const tools = await getOrderedCollection('tools');
 const { eyebrow, title, note } = COPY.tools;
 ---
 
-<Section id="tools" eyebrow={eyebrow} title={title} tone="gray" top="under">
+<Section id="tools" eyebrow={eyebrow} title={title} tone="gray" top="sweep" bottom="sweep">
   <p data-reveal class="mb-5 text-sm/[1.9] text-muted">{note}</p>
   <div data-reveal class="mb-4"><EditorPreview /></div>
   <ul data-stagger class="grid gap-2">

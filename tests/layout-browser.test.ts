@@ -150,17 +150,15 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       expect(hero).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', z: 'auto', clip: 'none' });
       expect(about).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: true });
       expect(about.clip).toBe(`polygon(0px ${h}, 100% 0px, 100% 100%, 0px 100%)`);
-      // About fades from gray to white, so Courses meets it with no curve…
-      expect(courses).toMatchObject({ top: flat, marginTop: '0px', fade: false });
-      // …and Courses' white bulges down into the Toolbox the same way.
-      expect(courses).toMatchObject({ bottom: dome, z: '10' });
-      expect(tools).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}` });
-      // Then straight edges: gray Toolbox to white Testimonials; a 1px rule above the (white) Résumé.
-      for (const band of [testimonials, resume]) {
-        expect(band).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none' });
-      }
-      expect(testimonials.rule).toBe('0px');
-      expect(resume.rule).toBe('1px');
+      // About fades from gray to white, so Courses meets it with no curve.
+      expect(courses).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, z: 'auto' });
+      // The Toolbox is a sweep at both ends, the bottom one its top turned 180°: the top bends at
+      // the left (top-left radius), the bottom at the right (bottom-right), so both edges rise to
+      // the right. It rises over Courses and lies over Testimonials, which tucks under it.
+      expect(tools).toMatchObject({ top: [`100% ${h}`, '0px'], bottom: ['0px', `100% ${h}`], marginTop: `-${h}`, z: '10' });
+      expect(testimonials).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, rule: '0px' });
+      // A 1px rule above the (white) Résumé.
+      expect(resume).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none', rule: '1px' });
       expect(footer).toMatchObject({ top: dome, marginTop: `-${h}` });
     } finally {
       await tab.close();
