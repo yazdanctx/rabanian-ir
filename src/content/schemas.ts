@@ -70,7 +70,16 @@ export const education = z.object({
   logo: z.string(),
 });
 
-/** A Brand, shown by name only (no logo). */
+/**
+ * A photo in the About section's strip, in display order. The image is
+ * `src/assets/gallery/<id>.*`; `alt` describes it in Farsi.
+ */
+export const photo = z.object({
+  id: z.string(),
+  alt: z.string().min(1),
+});
+
+/** A Brand: its name, and its logo `src/assets/logos/<id>.*` (CompanyLogo.astro). */
 export const brand = z.object({
   id: z.string(),
   name: z.string(),
@@ -91,4 +100,5 @@ export const schemas = {
   testimonials: testimonial,
   experiences: experience,
   education,
+  gallery: photo,
 };

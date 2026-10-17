@@ -11,61 +11,43 @@
  *   </Rail>
  *
  * Props:
- * - label:      accessible name of the list (the list is focusable so
- *               keyboard users can scroll it).
- * - cols:       grid columns at md: and up, 2 or 3.
- * - itemWidth:  each card's width on mobile, any CSS length. Cards fill
- *               their cell at md:.
- * - autoScroll: on mobile, when motion is allowed, the row scrolls itself in
- *               an endless loop instead of waiting for a swipe, pausing while
- *               hovered, touched or focused. The motion script
- *               (src/scripts/motion.ts) closes the loop by appending a hidden
- *               copy of the cards and sets `data-looping`; with reduced motion
- *               or no JS it stays a plain swipeable Rail. At md: it is the grid.
- * - class:      optional extra classes on the <ul>.
+ * - label:     accessible name of the list (the list is focusable so
+ *              keyboard users can scroll it).
+ * - cols:      grid columns at md: and up, 2 or 3.
+ * - itemWidth: each card's width on mobile, any CSS length. Cards fill
+ *              their cell at md:.
+ * - class:     optional extra classes on the <ul>.
  *
  * The Rail is a motion group (`data-stagger`): mark each <li> `data-reveal`
  * and the cards stagger in 60ms apart when it scrolls into view.
  */
-import type { HTMLAttributes } from 'astro/types';
-
 interface Props {
   label: string;
   cols: 2 | 3;
   itemWidth: string;
-  autoScroll?: boolean;
   class?: string;
 }
 
-const { label, cols, itemWidth, autoScroll = false, class: className } = Astro.props;
+const { label, cols, itemWidth, class: className } = Astro.props;
 const gridCols = { 2: 'md:grid-cols-2', 3: 'md:grid-cols-3' }[cols];
-/** Bleeds through the Section's inline padding on mobile. */
-const bleed = '-mx-5 md:mx-0';
-// An auto-scrolling Rail sits in a frame that clips the moving row and does the bleed.
-const Frame = autoScroll ? 'div' : Fragment;
-const frameProps: HTMLAttributes<'div'> = autoScroll ? { 'data-rail-frame': '', class: bleed } : {};
 ---
 
-<Frame {...frameProps}>
-  <ul
-    data-rail
-    data-stagger
-    data-autoscroll={autoScroll ? '' : undefined}
-    aria-label={label}
-    tabindex="0"
-    style={{ '--rail-item': itemWidth }}
-    class:list={[
-      'rail flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1',
-      'focus-visible:outline-2 focus-visible:outline-primary',
-      'md:grid md:overflow-visible md:px-0',
-      !autoScroll && bleed,
-      gridCols,
-      className,
-    ]}
-  >
-    <slot />
-  </ul>
-</Frame>
+<ul
+  data-rail
+  data-stagger
+  aria-label={label}
+  tabindex="0"
+  style={{ '--rail-item': itemWidth }}
+  class:list={[
+    'rail -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1',
+    'focus-visible:outline-2 focus-visible:outline-primary',
+    'md:mx-0 md:grid md:overflow-visible md:px-0',
+    gridCols,
+    className,
+  ]}
+>
+  <slot />
+</ul>
 
 <style>
   .rail {
@@ -83,51 +65,9 @@ const frameProps: HTMLAttributes<'div'> = autoScroll ? { 'data-rail-frame': '', 
     scroll-snap-align: start;
   }
 
-  /*
-   * The auto-scroll loop (mobile only). The row holds the cards twice, each
-   * card followed by its gap as a margin, so half the row is exactly one set:
-   * sliding it by 50% puts the copies where the cards were and the loop
-   * restarts unseen. RTL: the next card is on the left, so the row moves right.
-   * The frame clips it and keeps the 20px start inset the Rail's padding gave.
-   */
-  @keyframes rail-loop {
-    to {
-      transform: translateX(50%);
-    }
-  }
-
-  @media (width < 48rem) {
-    [data-rail-frame]:has(> [data-looping]) {
-      overflow: hidden;
-      padding-inline-start: 1.25rem;
-    }
-
-    .rail[data-looping] {
-      width: max-content;
-      gap: 0;
-      padding-inline: 0;
-      overflow: visible;
-      scroll-snap-type: none;
-      /* About 36px a second with 150px cards. */
-      animation: rail-loop calc(var(--rail-count) * 4.5s) linear infinite;
-    }
-
-    .rail[data-looping] > :global(*) {
-      margin-inline-end: 0.75rem;
-    }
-
-    .rail[data-looping]:is(:hover, :focus-within, :active) {
-      animation-play-state: paused;
-    }
-  }
-
   @media (min-width: 48rem) {
     .rail > :global(*) {
       width: auto;
-    }
-
-    .rail > :global([data-rail-clone]) {
-      display: none;
     }
   }
 </style>

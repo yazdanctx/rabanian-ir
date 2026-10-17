@@ -25,4 +25,5 @@ export const collections = {
     loader: file('src/content/education.json'),
     schema: schemas.education,
   }),
+  gallery: defineCollection({ loader: file('src/content/gallery.json'), schema: schemas.gallery }),
 };

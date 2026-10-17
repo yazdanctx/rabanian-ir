@@ -39,7 +39,7 @@ describe('reveal markup', () => {
 
   it('reveals every section after the Hero, heading and content', () => {
     const sections = [...doc.querySelectorAll('main > section')].slice(1);
-    expect(sections.length).toBeGreaterThanOrEqual(6);
+    expect(sections.length).toBeGreaterThanOrEqual(5);
     for (const section of sections) {
       expect(section.querySelector('[data-reveal]')).not.toBeNull();
       const header = section.querySelector('header');
@@ -54,7 +54,7 @@ describe('reveal markup', () => {
       doc.querySelector('[data-timeline]'),
       doc.querySelector('#resume [data-timeline] ~ ul'),
     ];
-    expect(lists).toHaveLength(6);
+    expect(lists).toHaveLength(5);
     for (const list of lists) {
       expect(list?.hasAttribute('data-stagger')).toBe(true);
       const items = [...list!.children];

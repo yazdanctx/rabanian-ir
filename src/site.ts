@@ -64,6 +64,8 @@ export const COPY = {
       { brand: 'سی‌آر‌ام دیدار' },
       ' و … فقط بخشی از کسب‌وکارهایی هستن که افتخار همراهی، مدیریت یا مشاوره‌شون رو داشتم.',
     ] as readonly AboutPart[],
+    /** Accessible name of the photo strip (the photos: src/content/gallery.json). */
+    galleryLabel: 'تصاویری از مسیر کاری امین ربانیان',
   },
   brands: {
     caption: 'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام',

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { collection } from './helpers/content';
 import { page } from './helpers/dist';
 
 const doc = page('index.html');
@@ -9,14 +10,10 @@ const text = (el: Element | null | undefined) =>
 describe('page structure', () => {
   const sections = [...doc.querySelectorAll('main > section')];
 
-  it('puts the top bar first, then Hero, About and Brands in spec order', () => {
+  it('puts the top bar first, then Hero, About (with the Brands in it) and Courses in spec order', () => {
     const content = [...doc.body.children].filter((el) => el.tagName !== 'SCRIPT');
     expect(content[0]?.tagName).toBe('HEADER');
-    expect(sections.slice(0, 3).map((s) => s.id || text(s.querySelector('p')))).toEqual([
-      'top',
-      'about',
-      'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام',
-    ]);
+    expect(sections.slice(0, 3).map((s) => s.id)).toEqual(['top', 'about', 'courses']);
   });
 
   it('separates sections with a 1px line rule and centers them in the page column', () => {
@@ -30,8 +27,7 @@ describe('page structure', () => {
   it('alternates white and gray bands from a white Hero, before the dark footer', () => {
     expect(sections.map((s) => s.getAttribute('data-tone'))).toEqual([
       'white', // Hero
-      'white', // About
-      'gray', // Brands
+      'gray', // About, with the Brands
       'white', // Courses
       'gray', // Toolbox
       'white', // Testimonials
@@ -118,14 +114,43 @@ describe('hero (#top)', () => {
 
 describe('about (#about)', () => {
   const about = doc.querySelector('main #about');
+  const caption = 'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام';
 
   it('has its eyebrow and h2', () => {
     expect(text(about?.querySelector('header p'))).toBe('من کی هستم؟');
     expect(text(about?.querySelector('h2'))).toBe('یک مسیر؛ از مهندسی تا محصول');
   });
 
-  it('tells the story with the four Brand names emphasised in ink', () => {
-    const paragraph = about?.querySelector('header + p');
+  it('opens with a strip of the five photos, in gallery order, each named in Farsi', () => {
+    const strip = about?.querySelector('header + [data-gallery-frame] > ul[data-gallery]');
+    expect(strip?.getAttribute('aria-label')).toBe('تصاویری از مسیر کاری امین ربانیان');
+    expect(strip?.getAttribute('tabindex')).toBe('0');
+    const photos = [...(strip?.querySelectorAll(':scope > li') ?? [])];
+    expect(photos.map((li) => li.querySelector('img')?.getAttribute('alt'))).toEqual(
+      collection('gallery').map((photo) => photo.alt),
+    );
+    for (const li of photos) {
+      const picture = li.querySelector('picture');
+      expect([...(picture?.querySelectorAll('source') ?? [])].map((s) => s.getAttribute('type'))).toEqual([
+        'image/avif',
+        'image/webp',
+      ]);
+      const img = picture?.querySelector('img');
+      expect(img?.getAttribute('loading')).toBe('lazy');
+      expect(Number(img?.getAttribute('width'))).toBeGreaterThan(0);
+      expect(Number(img?.getAttribute('height'))).toBeGreaterThan(0);
+    }
+  });
+
+  it('makes the photo strip the one auto-scrolling row; its loop copies are made in the browser', () => {
+    const strip = about?.querySelector('ul[data-gallery]');
+    expect(strip?.hasAttribute('data-autoscroll')).toBe(true);
+    expect([...doc.querySelectorAll('[data-autoscroll]')]).toEqual([strip]);
+    expect(strip?.children).toHaveLength(5);
+  });
+
+  it('tells the story under the photos, with the four Brand names emphasised in ink', () => {
+    const paragraph = about?.querySelector('[data-gallery-frame] + p');
     expect(text(paragraph)).toBe(
       'از دنیای مهندسی برق و کامپیوتر به فضای کسب‌وکارهای آنلاین رسیدم و الان 10 ساله که در توسعه و رشد کسب‌وکارهای بزرگ در ایران و انگلیس نقش داشتم. کسب‌وکارهایی مثل اسنپ، گروه صنعتی انتخاب، مستربلیط، سی‌آر‌ام دیدار و … فقط بخشی از کسب‌وکارهایی هستن که افتخار همراهی، مدیریت یا مشاوره‌شون رو داشتم.',
     );
@@ -136,48 +161,29 @@ describe('about (#about)', () => {
       expect(brand.classList.contains('text-ink')).toBe(true);
     }
   });
-});
 
-describe('brands', () => {
-  const caption = 'برندهایی که افتخار همکاری با آن‌ها را داشته‌ام';
-  const brands = [...doc.querySelectorAll('main > section')].find((s) =>
-    text(s).startsWith(caption),
-  );
-  const rail = brands?.querySelector('ul[data-rail]');
-
-  it('captions a Rail of the five Brands, each its logo + name, in order', () => {
-    expect(brands).toBeDefined();
-    const chips = [...(rail?.querySelectorAll(':scope > li') ?? [])];
-    expect(chips.map(text)).toEqual([
-      'اسنپ',
-      'مستربلیط',
-      'گروه صنعتی انتخاب',
-      'سی‌آر‌ام دیدار',
-      'ویسِند انگلیس',
-    ]);
-    const logos = chips.map((chip) => chip.querySelector('[data-logo] img'));
+  it('ends with the Brands as a still wall: the caption cell, then the five logos with names', () => {
+    const wall = about?.querySelector('[data-gallery-frame] + p + [data-brand-wall]');
+    const label = wall?.querySelector(':scope > p');
+    expect(text(label)).toBe(caption);
+    const list = wall?.querySelector(':scope > ul');
+    expect(list?.getAttribute('aria-labelledby')).toBe(label?.id);
+    const cells = [...(list?.querySelectorAll(':scope > li') ?? [])];
+    expect(cells.map(text)).toEqual(['اسنپ', 'مستربلیط', 'گروه صنعتی انتخاب', 'سی‌آر‌ام دیدار', 'ویسِند انگلیس']);
+    const logos = cells.map((cell) => cell.querySelector('[data-logo] img'));
     for (const img of logos) {
       // Decorative: the Brand's name is right below it.
       expect(img?.getAttribute('alt')).toBe('');
       expect(img?.getAttribute('loading')).toBe('lazy');
     }
     expect(new Set(logos.map((img) => img?.getAttribute('src'))).size).toBe(5);
+    // Still: no scrolling row, no loop.
+    expect(wall?.querySelector('[data-rail], [data-autoscroll]')).toBeNull();
   });
 
-  it('makes the Rail a named, keyboard-scrollable list', () => {
-    expect(rail?.getAttribute('aria-label')).toBe(caption);
-    expect(rail?.getAttribute('tabindex')).toBe('0');
-  });
-
-  it('marks only the Brands Rail to auto-scroll; the loop’s copies are made in the browser', () => {
-    expect(rail?.hasAttribute('data-autoscroll')).toBe(true);
-    expect(doc.querySelectorAll('[data-autoscroll]')).toHaveLength(1);
-    expect(rail?.querySelectorAll(':scope > li')).toHaveLength(5);
-  });
-
-  it('snaps the Rail horizontally on mobile and turns it into a grid at md', () => {
-    const classes = [...(rail?.classList ?? [])];
-    expect(classes).toEqual(expect.arrayContaining(['snap-x', 'snap-mandatory', 'md:grid']));
-    expect(classes.some((c) => /^md:grid-cols-[23]$/.test(c))).toBe(true);
+  it('reveals the wall as one block (cells fading alone would flash the hairline backing)', () => {
+    const wall = about?.querySelector('[data-brand-wall]');
+    expect(wall?.hasAttribute('data-reveal')).toBe(true);
+    expect(wall?.querySelector('[data-reveal]')).toBeNull();
   });
 });

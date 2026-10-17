@@ -1,16 +1,55 @@
 ---
+import { getOrderedCollection } from '../content/ordered';
 import { COPY } from '../site';
+import CompanyLogo from './CompanyLogo.astro';
+import Gallery from './Gallery.astro';
 import Section from './Section.astro';
 
+/*
+ * About, with the Brands in it: the heading, the self-scrolling photo strip,
+ * the story, then the Brands as a still wall: hairline-divided cells, three
+ * to a row, the caption in the first and a logo with its name in each of the
+ * other five. The wall reveals as one block: its hairlines are the 1px gaps
+ * over a `line` backing, which cells fading in one by one would flash.
+ */
+const brands = await getOrderedCollection('brands');
 const { eyebrow, title, paragraph } = COPY.about;
+const { caption } = COPY.brands;
 ---
 
-<Section id="about" eyebrow={eyebrow} title={title}>
-  <p data-reveal class="text-[15px]/[2.1] text-muted md:text-base/[2.1]">
+<Section id="about" eyebrow={eyebrow} title={title} tone="gray">
+  <Gallery />
+  <p data-reveal class="mb-8 text-[15px]/[2.1] text-muted md:text-base/[2.1]">
     {
       paragraph.map((part) =>
         typeof part === 'string' ? part : <strong class="font-semibold text-ink">{part.brand}</strong>,
       )
     }
   </p>
+  <div
+    data-brand-wall
+    data-reveal
+    class="grid grid-cols-3 gap-px overflow-hidden rounded-card border border-line bg-line shadow-card"
+  >
+    <p
+      id="brands-caption"
+      class="flex items-center bg-(--card) p-4 text-[12.5px]/[1.9] font-medium text-muted md:p-6 md:text-sm/[1.9]"
+    >
+      {caption}
+    </p>
+    <ul aria-labelledby="brands-caption" class="contents">
+      {
+        brands.map(({ id, data }) => (
+          <li class="group flex flex-col items-center justify-center gap-3 bg-(--card) px-2 py-6 text-center text-[13px] font-semibold md:py-8 md:text-sm">
+            <CompanyLogo
+              id={id}
+              size={44}
+              class="shadow-card transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none"
+            />
+            {data.name}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
 </Section>

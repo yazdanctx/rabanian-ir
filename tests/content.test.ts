@@ -153,6 +153,18 @@ describe('education collection', () => {
   });
 });
 
+describe('gallery collection', () => {
+  it('lists the five About photos in strip order, each with a Farsi alt and one image file', () => {
+    const photos = collection('gallery');
+    expect(photos.map((photo) => photo.id)).toEqual(['office-team', 'speaking', 'travel', 'meetup', 'celebration']);
+    const files = readdirSync('src/assets/gallery');
+    for (const { id, alt } of photos) {
+      expect(alt).toMatch(/[\u0600-\u06FF]/);
+      expect(files.filter((f) => f.replace(/\.\w+$/, '') === id), id).toHaveLength(1);
+    }
+  });
+});
+
 describe('testimonials collection', () => {
   it('holds the four Masterclass Learner quotes verbatim, emoji included', () => {
     const role = 'دانش‌پذیر مسترکلاس';

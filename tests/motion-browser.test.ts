@@ -77,7 +77,49 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
     });
   });
 
-  describe('the Brands Rail on a phone', () => {
+  /** Page-side: loops the photo strip and reports on it. */
+  const stripReport = `(async () => {
+    ${lib}
+    const strip = document.querySelector('[data-gallery]');
+    strip.scrollIntoView({ block: 'center', behavior: 'instant' });
+    await waitFor(() => strip.hasAttribute('data-looping'));
+    const photos = [...strip.children];
+    const copies = photos.filter((li) => li.hasAttribute('data-loop-copy'));
+    const x = () => new DOMMatrix(getComputedStyle(strip).transform).m41;
+    const x0 = x();
+    await new Promise((r) => setTimeout(r, 600));
+    const right = (el) => el.getBoundingClientRect().right;
+    return {
+      photos: photos.length,
+      copies: copies.length,
+      copiesHidden: copies.every((li) => li.getAttribute('aria-hidden') === 'true' && li.inert),
+      moved: x() - x0,
+      // One loop slides the strip by one set: photo 1 to where its copy was.
+      period: right(photos[0]) - right(photos[5]),
+      half: strip.getBoundingClientRect().width / 2,
+      pageOverflow: document.documentElement.scrollWidth - innerWidth,
+    };
+  })()`;
+  type StripReport = {
+    photos: number;
+    copies: number;
+    copiesHidden: boolean;
+    moved: number;
+    period: number;
+    half: number;
+    pageOverflow: number;
+  };
+  const expectLooping = (result: StripReport) => {
+    expect(result.photos).toBe(10);
+    expect(result.copies).toBe(5);
+    expect(result.copiesHidden).toBe(true);
+    // RTL: the next photo is on the left, so the strip moves right.
+    expect(result.moved).toBeGreaterThan(0);
+    expect(Math.abs(result.period - result.half)).toBeLessThan(1);
+    expect(result.pageOverflow).toBe(0);
+  };
+
+  describe('the About photo strip on a phone', () => {
     let tab: BrowserPage;
     beforeAll(async () => {
       tab = await openPage(`${site.origin}/`);
@@ -85,74 +127,45 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
     afterAll(() => tab?.close());
 
     it('scrolls itself forward in a seamless loop, its copies hidden from assistive tech', async () => {
-      const result = await tab.evaluate<{
-        cards: number;
-        copies: number;
-        copiesHidden: boolean;
-        moved: number;
-        period: number;
-        half: number;
-        pageOverflow: number;
-      }>(`(async () => {
-        ${lib}
-        const rail = document.querySelector('[data-autoscroll]');
-        rail.scrollIntoView({ block: 'center', behavior: 'instant' });
-        await waitFor(() => rail.hasAttribute('data-looping'));
-        const cards = [...rail.children];
-        const copies = cards.filter((li) => li.hasAttribute('data-rail-clone'));
-        const x = () => new DOMMatrix(getComputedStyle(rail).transform).m41;
-        const x0 = x();
-        await new Promise((r) => setTimeout(r, 600));
-        const right = (el) => el.getBoundingClientRect().right;
-        return {
-          cards: cards.length,
-          copies: copies.length,
-          copiesHidden: copies.every((li) => li.getAttribute('aria-hidden') === 'true' && li.inert),
-          moved: x() - x0,
-          // One loop slides the row by one set: card 1 to where its copy was.
-          period: right(cards[0]) - right(cards[5]),
-          half: rail.getBoundingClientRect().width / 2,
-          pageOverflow: document.documentElement.scrollWidth - innerWidth,
-        };
-      })()`);
-      expect(result.cards).toBe(10);
-      expect(result.copies).toBe(5);
-      expect(result.copiesHidden).toBe(true);
-      // RTL: the next Brand is on the left, so the row moves right.
-      expect(result.moved).toBeGreaterThan(0);
-      expect(Math.abs(result.period - result.half)).toBeLessThan(1);
-      expect(result.pageOverflow).toBe(0);
+      expectLooping(await tab.evaluate<StripReport>(stripReport));
     });
 
     it('pauses while it has keyboard focus', async () => {
       const state = await tab.evaluate<string>(`(() => {
-        const rail = document.querySelector('[data-autoscroll]');
-        rail.focus();
-        return getComputedStyle(rail).animationPlayState;
+        const strip = document.querySelector('[data-gallery]');
+        strip.focus();
+        return getComputedStyle(strip).animationPlayState;
       })()`);
       expect(state).toBe('paused');
     });
   });
 
-  describe('the Brands Rail on desktop', () => {
+  describe('the About section on desktop', () => {
     let tab: BrowserPage;
     beforeAll(async () => {
       tab = await openPage(`${site.origin}/`, { width: 1280, height: 900 });
     });
     afterAll(() => tab?.close());
 
-    it('stays a still grid of the five Brands', async () => {
-      const result = await tab.evaluate<{ shown: number; animations: number }>(`(async () => {
-        ${lib}
-        const rail = document.querySelector('[data-autoscroll]');
-        rail.scrollIntoView({ block: 'center', behavior: 'instant' });
-        await waitFor(() => rail.hasAttribute('data-looping'));
+    it('loops the photo strip across the full width of the window', async () => {
+      expectLooping(await tab.evaluate<StripReport>(stripReport));
+      const frame = await tab.evaluate<{ left: number; right: number }>(
+        `(() => { const r = document.querySelector('[data-gallery-frame]').getBoundingClientRect(); return { left: r.left, right: r.right }; })()`,
+      );
+      expect(frame.left).toBe(0);
+      expect(frame.right).toBe(await tab.evaluate<number>('document.documentElement.clientWidth'));
+    });
+
+    it('keeps the Brands still, as a wall of six cells in three columns', async () => {
+      const wall = await tab.evaluate<{ animations: number; columns: number; cells: number }>(`(() => {
+        const wall = document.querySelector('[data-brand-wall]');
         return {
-          shown: [...rail.children].filter((li) => getComputedStyle(li).display !== 'none').length,
-          animations: rail.getAnimations().length,
+          animations: wall.getAnimations({ subtree: true }).filter((a) => a.playState === 'running' && a.effect.getComputedTiming().iterations === Infinity).length,
+          columns: getComputedStyle(wall).gridTemplateColumns.split(' ').length,
+          cells: wall.querySelectorAll(':scope > p, :scope > ul > li').length,
         };
       })()`);
-      expect(result).toEqual({ shown: 5, animations: 0 });
+      expect(wall).toEqual({ animations: 0, columns: 3, cells: 6 });
     });
   });
 
@@ -177,16 +190,16 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
       expect(result).toEqual({ motion: false, hidden: 0, animations: 0 });
     });
 
-    it('leaves the Brands Rail a plain row to swipe, without copies', async () => {
-      const result = await tab.evaluate<{ cards: number; looping: boolean; scrollable: boolean }>(`(() => {
-        const rail = document.querySelector('[data-autoscroll]');
+    it('leaves the photo strip a plain row to swipe, without copies', async () => {
+      const result = await tab.evaluate<{ photos: number; looping: boolean; scrollable: boolean }>(`(() => {
+        const strip = document.querySelector('[data-gallery]');
         return {
-          cards: rail.children.length,
-          looping: rail.hasAttribute('data-looping'),
-          scrollable: rail.scrollWidth > rail.clientWidth,
+          photos: strip.children.length,
+          looping: strip.hasAttribute('data-looping'),
+          scrollable: strip.scrollWidth > strip.clientWidth,
         };
       })()`);
-      expect(result).toEqual({ cards: 5, looping: false, scrollable: true });
+      expect(result).toEqual({ photos: 5, looping: false, scrollable: true });
     });
   });
 

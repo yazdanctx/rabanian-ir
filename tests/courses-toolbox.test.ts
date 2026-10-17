@@ -11,9 +11,8 @@ const SUPPORT = 'https://t.me/codaminsupport';
 describe('courses (#courses)', () => {
   const courses = doc.querySelector('main > section#courses');
 
-  it('follows the Brands section, with its eyebrow and h2', () => {
-    const previous = courses?.previousElementSibling;
-    expect(text(previous)).toMatch(/^برندهایی که افتخار همکاری با آن‌ها را داشته‌ام/);
+  it('follows About (which holds the Brands), with its eyebrow and h2', () => {
+    expect(courses?.previousElementSibling?.id).toBe('about');
     expect(text(courses?.querySelector('header p'))).toBe('آموزش');
     expect(text(courses?.querySelector('h2'))).toBe('دوره‌های من');
   });

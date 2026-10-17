@@ -88,6 +88,11 @@
     scroll-behavior: smooth;
   }
 
+  /* Full-window bands (the About photo strip, 100vw) never scroll the page sideways. */
+  body {
+    overflow-x: clip;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

@@ -28,8 +28,8 @@ The flagship Course — the AI programming and web-design masterclass. Enrolling
 _Avoid_: featured course, main course (the "flagship" badge is a label on it, not its name)
 
 **Brand** (برند):
-A company Amin has worked with or advised, shown by name only.
-_Avoid_: client, partner, logo
+A company Amin has worked with or advised, shown by its name and logo.
+_Avoid_: client, partner
 
 **Testimonial** (نظر):
 A quote from a Learner, attributed by name and role.
@@ -73,5 +73,9 @@ _Avoid_: boilerplate, default code
 ### Layout
 
 **Rail** (ردیف):
-A horizontally scrolling, snap-aligned row of cards (Courses, Brands, Testimonials), used instead of a grid on narrow screens.
+A horizontally scrolling, snap-aligned row of cards (Courses, Testimonials), used instead of a grid on narrow screens.
 _Avoid_: carousel, slider, swiper
+
+**Gallery** (گالری):
+The strip of photos of Amin at work in the About section, scrolling itself in a loop. Not a Rail: its photos are not cards and it never becomes a grid.
+_Avoid_: carousel, slider

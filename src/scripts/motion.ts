@@ -9,8 +9,8 @@
  *   when the group comes ~10% into view; `data-stagger="load"` reveals them
  *   on page load instead (the Hero).
  * - A `data-reveal` outside any group reveals itself when ~10% in view.
- * - `data-autoscroll` (a Rail with `autoScroll`): gets a hidden copy of its
- *   cards and `data-looping`, and Rail.astro's CSS loops it on mobile.
+ * - `data-autoscroll` (the About photo strip, Gallery.astro): gets a hidden
+ *   copy of its items and `data-looping`, and the component's CSS loops it.
  *
  * The hidden starting state lives in CSS under `html.motion`, a class the
  * inline script in `Motion.astro` adds only when reduced motion is off. So
@@ -45,23 +45,23 @@ function reveal(items: HTMLElement[]) {
 }
 
 /**
- * Closes the loop of each auto-scrolling Rail: appends an inert, aria-hidden
- * copy of every card (already in its final state, so not a reveal), then sets
- * `data-looping` and `--rail-count` for the CSS animation in Rail.astro.
+ * Closes the loop of each auto-scrolling row: appends an inert, aria-hidden
+ * copy of every item (already in its final state, so not a reveal), then sets
+ * `data-looping` and `--loop-count` for the row's CSS animation.
  */
-function loopRails(doc: Document) {
-  for (const rail of doc.querySelectorAll<HTMLElement>('[data-autoscroll]')) {
-    const cards = [...rail.children];
-    for (const card of cards) {
-      const copy = card.cloneNode(true) as HTMLElement;
+function loopRows(doc: Document) {
+  for (const row of doc.querySelectorAll<HTMLElement>('[data-autoscroll]')) {
+    const items = [...row.children];
+    for (const item of items) {
+      const copy = item.cloneNode(true) as HTMLElement;
       copy.removeAttribute('data-reveal');
-      copy.setAttribute('data-rail-clone', '');
+      copy.setAttribute('data-loop-copy', '');
       copy.setAttribute('aria-hidden', 'true');
       copy.inert = true;
-      rail.append(copy);
+      row.append(copy);
     }
-    rail.style.setProperty('--rail-count', String(cards.length));
-    rail.setAttribute('data-looping', '');
+    row.style.setProperty('--loop-count', String(items.length));
+    row.setAttribute('data-looping', '');
   }
 }
 
@@ -86,5 +86,5 @@ export function startMotion(doc: Document = document) {
   }
   inView(loners, (el) => reveal([el as HTMLElement]), IN_VIEW);
   // After the reveals are collected, so the copies are not among them.
-  loopRails(doc);
+  loopRows(doc);
 }

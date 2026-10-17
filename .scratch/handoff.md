@@ -24,7 +24,7 @@ Browser tests (`tests/*-browser.test.ts`) drive the system Chrome at `/Applicati
 
 - **No React on the landing page** — ADR-0003. Motion is one bundled script (`src/scripts/motion.ts`, `motion` + `motion/mini`) driven by `data-reveal` / `data-stagger` attributes. `@astrojs/react` stays for the editor island only. Content is visible with JS off or under reduced motion (hiding only happens under `html.motion`, set by `Motion.astro`).
 - **Logo** = Amin's photo (30px circle, same file as the Hero photo) + «آکادمی ربانیان».
-- **Company logos** on the Brands rail and résumé timeline: `src/assets/logos/<id>.*`, rendered by `CompanyLogo.astro`; ids are shared by `brands.json` and `experiences.json`. Sources and caveats in `src/assets/logos/README.md`. One file per id — the build fails on zero or two.
+- **Company logos** on the About section's Brands wall and the résumé timeline: `src/assets/logos/<id>.*`, rendered by `CompanyLogo.astro`; ids are shared by `brands.json` and `experiences.json`. Sources and caveats in `src/assets/logos/README.md`. One file per id — the build fails on zero or two.
 - **Résumé dates** are in the Persian calendar (each Gregorian month → the Persian month covering most of it). Digits stay ASCII (ADR-0002).
 - Masterclass banner is 16:9; locked tools aren't faded (contrast); swipe hint sits above the course rail.
 - Tailwind's default colours are removed — only palette P tokens exist (`src/styles/global.css`, mirrored in `src/palette.ts`, a test keeps them equal).
@@ -34,7 +34,7 @@ Browser tests (`tests/*-browser.test.ts`) drive the system Chrome at `/Applicati
 
 - All copy lives in `src/site.ts` (`SITE`, `COPY`, `LINKS`) or `src/content/*.json`; components never hard-code copy, prices or links.
 - Read collections with `getOrderedCollection()` (`src/content/ordered.ts`) — plain `getCollection()` sorts by id, not file order.
-- Shared building blocks: `Section.astro` (`tone`: white / gray band), `Footer.astro` (the dark end of every content page, CTA + links; not on the full-screen `/editor`), `Rail.astro` (`label`, `cols`, `itemWidth` required; `autoScroll`), `Eyebrow.astro`, `Icon.astro`, `Price.astro`, `CompanyLogo.astro`, `EditorPreview.astro`.
+- Shared building blocks: `Section.astro` (`tone`: white / gray band), `Footer.astro` (the dark end of every content page, CTA + links; not on the full-screen `/editor`), `Rail.astro` (`label`, `cols`, `itemWidth` required), `Gallery.astro` (the self-scrolling About photo strip; photos in `src/content/gallery.json` + `src/assets/gallery/`), `Eyebrow.astro`, `Icon.astro`, `Price.astro`, `CompanyLogo.astro`, `EditorPreview.astro`.
 - Cards take `bg-(--card)`, not `bg-surface`: a Section's `tone` makes it gray on white bands and white on gray ones (`--tone` is the band's own color).
 - Tests assert on built output via `tests/helpers/dist.ts` (`page('index.html')`), not on component internals.
 
