@@ -19,6 +19,8 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     ['bg', '#FFFFFF'],
     // Spec "on dark block": the eyebrow on the ink CTA.
     ['primary-on-ink', '#A78BFA'],
+    // The Hero badge's live dot: emerald, the one color outside violet and slate.
+    ['status', '#10B981'],
     // HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax colours;
     // console warnings and errors.
     ['code-keyword', '#CF222E'],

@@ -16,8 +16,8 @@
  * variable even when no utility uses it. `src/palette.ts` mirrors these
  * colors for the OG image; keep the two in step (a test checks). Tailwind's
  * default colors are dropped: Iris is the only palette, with no second
- * accent. No gradients except About’s subtle gray one (Section `gradient`);
- * no dark mode.
+ * accent but the emerald status dot. No gradients except About’s subtle gray
+ * one (Section `gradient`) and the Hero tagline’s violet shine; no dark mode.
  */
 @theme static {
   --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
@@ -37,6 +37,8 @@
   --color-white: #ffffff;
   /* Spec "on dark block": the eyebrow on the ink CTA. */
   --color-primary-on-ink: #a78bfa;
+  /* The Hero badge's live dot: emerald, the one color outside violet and slate. */
+  --color-status: #10b981;
   /*
    * HTML Editor (.scratch/html-editor/spec.md): the Code Pane's syntax
    * colours, and the console strip's warnings and errors. All pass AA as text

@@ -19,6 +19,8 @@ export const PALETTE = {
   white: '#FFFFFF',
   /** Spec "on dark block": the eyebrow on the ink CTA. */
   primaryOnInk: '#A78BFA',
+  /** The Hero badge's live dot: emerald, the one color outside violet and slate. */
+  status: '#10B981',
   /**
    * HTML Editor: the Code Pane's syntax colours, a GitHub-light style
    * palette (comments and brackets are `muted`; plain names stay `ink`).

@@ -83,9 +83,20 @@ describe('hero (#top)', () => {
     );
   });
 
-  it('marks the badge dot as the pulsing dot, hidden from screen readers', () => {
+  it('marks the badge dot as the pulsing dot, emerald, hidden from screen readers', () => {
     const dot = hero?.querySelector('[data-badge] .pulse-dot');
     expect(dot?.getAttribute('aria-hidden')).toBe('true');
+    expect(dot?.classList.contains('bg-status')).toBe(true);
+  });
+
+  it('draws the tagline in a subtle violet shine, over a solid primary-text fallback', () => {
+    const tagline = [...(hero?.querySelectorAll('p') ?? [])].find((p) => text(p) === 'با من هوش مصنوعی رو اصولی یاد بگیر!');
+    const classes = [...(tagline?.classList ?? [])];
+    // The gradient shows through the glyphs; the color stays for tools and browsers without it.
+    expect(classes).toEqual(expect.arrayContaining(['bg-clip-text', '[-webkit-text-fill-color:transparent]', 'text-primary-text']));
+    expect(classes.some((c) => c.startsWith('bg-[linear-gradient('))).toBe(true);
+    // As wide as its text, so the whole shine falls on the words.
+    expect(classes).toEqual(expect.arrayContaining(['mx-auto', 'w-fit']));
   });
 
   it('holds a profile photo slot named for Amin, with a static pill label', () => {

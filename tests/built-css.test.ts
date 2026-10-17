@@ -55,18 +55,19 @@ describe('built stylesheet', () => {
     expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
   });
 
-  it('has one gradient only — About’s subtle gray-to-gray shade, never to white — and no dark-mode styles', () => {
-    // The build also emits the shade with its color-mix precomputed, for browsers without color-mix.
+  it('has two gradients only — About’s gray shade (never to white) and the tagline’s violet shine — and no dark mode', () => {
+    // The build also emits each with its color-mix precomputed, for browsers without color-mix.
     const gradients = css.match(/[a-z-]*gradient\([^;}]*/g) ?? [];
-    expect(gradients.length).toBeGreaterThan(0);
-    expect(gradients.length).toBeLessThanOrEqual(2);
-    expect(gradients).toContainEqual(
-      expect.stringMatching(/^linear-gradient\(to bottom,\s*var\(--color-surface\),\s*color-mix\(in oklab,\s*var\(--color-surface\) 40%,\s*var\(--color-line\)\)\)/),
+    const about = gradients.filter((g) => g.startsWith('linear-gradient(to bottom,var(--color-surface),'));
+    const tagline = gradients.filter((g) => g.startsWith('linear-gradient(90deg,var(--color-primary-text),'));
+    expect(about.length + tagline.length).toBe(gradients.length);
+    expect(about).toContainEqual(
+      expect.stringMatching(/color-mix\(in oklab,\s*var\(--color-surface\) 40%,\s*var\(--color-line\)\)\)$/),
     );
-    for (const gradient of gradients) {
-      expect(gradient).toMatch(/^linear-gradient\(to bottom,\s*var\(--color-surface\),/);
-      expect(gradient).not.toMatch(/--color-bg|#fff\b|#ffffff|white/i);
-    }
+    for (const gradient of about) expect(gradient).not.toMatch(/--color-bg|#fff\b|#ffffff|white/i);
+    // The shine: primary-text at both ends, a slightly lighter primary at the middle.
+    expect(tagline.length).toBeGreaterThan(0);
+    for (const gradient of tagline) expect(gradient).toMatch(/,var\(--color-primary-text\)\)$/);
     expect(css).not.toMatch(/prefers-color-scheme/);
   });
 });

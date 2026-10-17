@@ -16,11 +16,16 @@ const buttonClasses =
     data-badge
     class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted"
   >
-    <span aria-hidden="true" class="pulse-dot size-1.75 rounded-full bg-primary"></span>
+    <span aria-hidden="true" class="pulse-dot size-1.75 rounded-full bg-status"></span>
     {SITE.badge}
   </div>
   <h1 data-reveal class="mt-5 mb-2 text-[44px]/[1.1] font-bold tracking-[-0.03em] md:text-[56px]/[1.1]">{SITE.name}</h1>
-  <p data-reveal class="mb-3 text-lg font-semibold text-primary-text md:text-xl">{SITE.tagline}</p>
+  <p
+    data-reveal
+    class="mx-auto mb-3 w-fit bg-[linear-gradient(90deg,var(--color-primary-text),color-mix(in_oklab,var(--color-primary)_88%,white)_50%,var(--color-primary-text))] bg-clip-text text-lg font-semibold text-primary-text [-webkit-text-fill-color:transparent] md:text-xl"
+  >
+    {SITE.tagline}
+  </p>
   <p data-reveal class="mx-auto max-w-[30rem] text-[15px]/[1.9] text-muted">{SITE.lead}</p>
 
   <div data-reveal><ProfilePhoto /></div>
