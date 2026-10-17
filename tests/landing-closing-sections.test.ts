@@ -191,7 +191,7 @@ describe('CTA', () => {
     const button = block?.querySelector('a[href="https://t.me/codaminsupport"]');
     expect(text(button)).toBe('پیام در تلگرام');
     expect(button?.classList.contains('bg-primary')).toBe(true);
-    expect(button?.classList.contains('text-white')).toBe(true);
+    expect(button?.classList.contains('text-on-primary')).toBe(true);
   });
 
   it('is on the only dark surface on the page, the footer', () => {

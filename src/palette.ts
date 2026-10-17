@@ -10,6 +10,9 @@ export const PALETTE = {
   primary: '#1769FF',
   primaryText: '#0D5BE0',
   primarySoft: '#EAF1FF',
+  /** Text and icons on a `primary` fill, and that fill under the pointer. */
+  onPrimary: '#FFFFFF',
+  primaryHover: '#0D5BE0',
   surface: '#F5F7FA',
   line: '#DCE3EE',
   bg: '#FFFFFF',

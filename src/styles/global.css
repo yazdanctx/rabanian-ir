@@ -27,6 +27,9 @@
   --color-primary: #1769ff;
   --color-primary-text: #0d5be0;
   --color-primary-soft: #eaf1ff;
+  /* Text and icons on a `primary` fill, and that fill under the pointer. */
+  --color-on-primary: #ffffff;
+  --color-primary-hover: #0d5be0;
   --color-surface: #f5f7fa;
   --color-line: #dce3ee;
   --color-bg: #ffffff;

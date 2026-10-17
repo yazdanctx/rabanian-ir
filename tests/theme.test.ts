@@ -12,6 +12,8 @@ describe('theme tokens resolve as Tailwind utilities', () => {
     ['primary', '#1769FF'],
     ['primary-text', '#0D5BE0'],
     ['primary-soft', '#EAF1FF'],
+    ['on-primary', '#FFFFFF'],
+    ['primary-hover', '#0D5BE0'],
     ['surface', '#F5F7FA'],
     ['line', '#DCE3EE'],
     ['bg', '#FFFFFF'],

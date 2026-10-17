@@ -210,7 +210,7 @@ body {
 .editor-button-primary {
   border-color: var(--color-primary);
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-on-primary);
 }
 
 @media (hover: hover) {
@@ -224,9 +224,9 @@ body {
   }
 
   .editor-button-primary:hover {
-    border-color: var(--color-primary-text);
-    background-color: var(--color-primary-text);
-    color: var(--color-white);
+    border-color: var(--color-primary-hover);
+    background-color: var(--color-primary-hover);
+    color: var(--color-on-primary);
   }
 
   .editor-button-danger:hover {
