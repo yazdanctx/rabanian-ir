@@ -3,15 +3,12 @@ import { COPY, SITE } from '../site';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
-/*
- * Light, like the rest of the page: the CTA above is the only dark surface.
- * Its column carries the page's guides from md:, closing the frame.
- */
+/* Light, like the rest of the page: the CTA above is the only dark surface. */
 const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
 ---
 
 <footer>
-  <div class="mx-auto max-w-page px-5 pt-10 pb-8 md:border-x md:border-line">
+  <div class="mx-auto max-w-page px-5 pt-10 pb-8">
     <Logo />
     <p class="mt-4 mb-5 text-[13px]/[2] text-muted">{SITE.footerBio}</p>
     <nav>

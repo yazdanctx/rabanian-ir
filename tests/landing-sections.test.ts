@@ -40,13 +40,16 @@ describe('page structure', () => {
     ]);
   });
 
-  it('frames the page from md: with guides on every column, top bar to footer', () => {
+  it('draws no side borders on any column, top bar to footer (the frame was dropped)', () => {
     const columns = [
       doc.querySelector('body > header > div'),
       ...sections.map((s) => s.querySelector(':scope > .max-w-page')),
       doc.querySelector('body > footer > div'),
     ];
-    for (const column of columns) expect(column?.classList.contains('md:border-x')).toBe(true);
+    for (const column of columns) {
+      expect(column).not.toBeNull();
+      expect([...column!.classList].filter((c) => /border-(x|s|e|l|r)\b/.test(c))).toEqual([]);
+    }
   });
 });
 

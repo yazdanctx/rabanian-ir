@@ -4,9 +4,7 @@ import Eyebrow from './Eyebrow.astro';
 /*
  * One landing-page section: a full-width band with the 1px `line` bottom
  * rule, holding the centered ~680px column with section padding (20px inline,
- * 48px block; 64px from md:). From md: the column is framed by 1px `line`
- * guides, so all the columns stack into one framed page. Children go in the
- * default slot.
+ * 48px block; 64px from md:). Children go in the default slot.
  *
  *   <Section id="courses" eyebrow="آموزش" title="دوره‌های من" tone="gray">…</Section>
  *
@@ -18,7 +16,7 @@ import Eyebrow from './Eyebrow.astro';
  *            down the page; cards inside follow the tone through two
  *            variables: `bg-(--card)` is gray on white and white on gray, and
  *            `--tone` is the band's own color (e.g. for rings that cut a line).
- *            "ink" is the dark band (the CTA): white text, dim guides.
+ *            "ink" is the dark band (the CTA): white text.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
  *            whose `data-reveal` children reveal 60ms apart on page load
@@ -49,14 +47,7 @@ const tones = {
 
 <section id={id} data-tone={tone} class:list={['border-b border-line', tones[tone]]}>
   <slot name="backdrop" />
-  <div
-    class:list={[
-      'relative mx-auto max-w-page px-5 py-12 md:border-x md:py-16',
-      tone === 'ink' ? 'md:border-white/10' : 'md:border-line',
-      className,
-    ]}
-    data-stagger={stagger}
-  >
+  <div class:list={['relative mx-auto max-w-page px-5 py-12 md:py-16', className]} data-stagger={stagger}>
     {
       title && (
         <header data-reveal class="mb-6">
