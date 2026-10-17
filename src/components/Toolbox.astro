@@ -1,7 +1,6 @@
 ---
 import { getOrderedCollection } from '../content/ordered';
 import { COPY } from '../site';
-import EditorPreview from './EditorPreview.astro';
 import Section from './Section.astro';
 import ToolRow from './ToolRow.astro';
 
@@ -11,7 +10,6 @@ const { eyebrow, title, note } = COPY.tools;
 
 <Section id="tools" eyebrow={eyebrow} title={title} tone="gray" top="sweep" bottom="sweep" gradient="fade-in">
   <p data-reveal class="mb-5 text-sm/[1.9] text-muted">{note}</p>
-  <div data-reveal class="mb-4"><EditorPreview /></div>
   <ul data-stagger class="grid gap-2">
     {
       tools.map(({ data }) => (
