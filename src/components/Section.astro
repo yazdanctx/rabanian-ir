@@ -2,20 +2,30 @@
 import Eyebrow from './Eyebrow.astro';
 
 /*
- * One landing-page section: a full-width <section> with the 1px `line`
- * bottom rule, holding the centered ~680px column with section padding
- * (20px inline, 40px block). Children go in the default slot.
+ * One landing-page section: a full-width band with the 1px `line` bottom
+ * rule, holding the centered ~680px column with section padding (20px inline,
+ * 48px block; 64px from md:). From md: the column is framed by 1px `line`
+ * guides, so all the columns stack into one framed page. Children go in the
+ * default slot.
  *
- *   <Section id="courses" eyebrow="آموزش" title="دوره‌های من">…</Section>
+ *   <Section id="courses" eyebrow="آموزش" title="دوره‌های من" tone="gray">…</Section>
  *
  * Props (all optional):
  * - id:      anchor id on the <section> (e.g. "courses", "tools").
  * - eyebrow: small label above the title (rendered only with it).
  * - title:   the section's h2.
+ * - tone:    the band's background. "white" (default) and "gray" alternate
+ *            down the page; cards inside follow the tone through two
+ *            variables: `bg-(--card)` is gray on white and white on gray, and
+ *            `--tone` is the band's own color (e.g. for rings that cut a line).
+ *            "ink" is the dark band (the CTA): white text, dim guides.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
  *            whose `data-reveal` children reveal 60ms apart on page load
  *            (src/scripts/motion.ts); the Hero uses it.
+ *
+ * Slot "backdrop": decoration behind the column, filling the whole band
+ * (the CTA's grid).
  *
  * The header is always a `data-reveal`; mark other content blocks
  * with `data-reveal` (and lists with `data-stagger`) where they are written.
@@ -24,22 +34,34 @@ interface Props {
   id?: string;
   eyebrow?: string;
   title?: string;
+  tone?: 'white' | 'gray' | 'ink';
   class?: string;
   stagger?: 'load';
 }
 
-const { id, eyebrow, title, class: className, stagger } = Astro.props;
+const { id, eyebrow, title, tone = 'white', class: className, stagger } = Astro.props;
+const tones = {
+  white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
+  gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
+  ink: 'relative isolate overflow-hidden bg-ink text-white',
+};
 ---
 
-<section id={id} class="border-b border-line">
-  <div class:list={['mx-auto max-w-page px-5 py-10', className]} data-stagger={stagger}>
+<section id={id} data-tone={tone} class:list={['border-b border-line', tones[tone]]}>
+  <slot name="backdrop" />
+  <div
+    class:list={[
+      'relative mx-auto max-w-page px-5 py-12 md:border-x md:py-16',
+      tone === 'ink' ? 'md:border-white/10' : 'md:border-line',
+      className,
+    ]}
+    data-stagger={stagger}
+  >
     {
       title && (
-        <header data-reveal class="mb-4.5">
+        <header data-reveal class="mb-6">
           {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-          <h2 class="mt-1.5 text-xl/normal font-bold tracking-[-0.01em] md:text-2xl/normal">
-            {title}
-          </h2>
+          <h2 class="mt-2 text-2xl/snug font-bold tracking-[-0.02em] md:text-[32px]/snug">{title}</h2>
         </header>
       )
     }

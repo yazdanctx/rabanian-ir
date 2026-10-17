@@ -57,10 +57,10 @@ describe('testimonials', () => {
     ]);
   });
 
-  it('draws each quote on a surface card, like every other card', () => {
+  it('draws each quote on a card that follows its band (gray on this white one), like every other card', () => {
     expect(cards).toHaveLength(4);
     for (const card of cards) {
-      expect(card.classList.contains('bg-surface')).toBe(true);
+      expect(card.classList.contains('bg-(--card)')).toBe(true);
       expect(card.classList.contains('rounded-card')).toBe(true);
     }
   });
@@ -163,10 +163,16 @@ describe('CTA', () => {
   const section = sectionTitled('سوالی دربارهٔ دوره‌ها یا ثبت‌نام داری؟');
   const block = section?.querySelector('h2')?.closest('.bg-ink');
 
-  it('sits on an ink block with an 18px radius and white text', () => {
-    expect(block).toBeTruthy();
-    expect(block?.classList.contains('rounded-cta')).toBe(true);
+  it('is a full-width ink band with white text', () => {
+    expect(block).toBe(section);
     expect(block?.classList.contains('text-white')).toBe(true);
+  });
+
+  it('draws a faint grid of squares behind it as a decorative SVG pattern, no gradient', () => {
+    const grid = section?.querySelector(':scope > svg');
+    expect(grid?.getAttribute('aria-hidden')).toBe('true');
+    expect(grid?.querySelector('pattern')).not.toBeNull();
+    expect(grid?.innerHTML).not.toMatch(/gradient/i);
   });
 
   it('carries the Support eyebrow in the on-dark blue, and the line', () => {

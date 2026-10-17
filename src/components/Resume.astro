@@ -11,7 +11,7 @@ const { eyebrow, title, experienceTitle, educationTitle, separator } = COPY.resu
 const subheadingClasses = 'mb-4 text-[17px] font-bold';
 ---
 
-<Section id="resume" eyebrow={eyebrow} title={title}>
+<Section id="resume" eyebrow={eyebrow} title={title} tone="gray">
   <h3 data-reveal class={subheadingClasses}>{experienceTitle}</h3>
   <ol
     data-timeline
@@ -21,7 +21,7 @@ const subheadingClasses = 'mb-4 text-[17px] font-bold';
     {
       experiences.map(({ id, data }) => (
         <li data-reveal class="relative ps-13">
-          <CompanyLogo id={id} size={36} class="absolute start-0 top-0 ring-4 ring-bg" />
+          <CompanyLogo id={id} size={36} class="absolute start-0 top-0 ring-4 ring-(--tone)" />
           <b class="block text-[15px] font-semibold">{data.role}</b>{' '}
           <span data-meta class="mt-0.5 mb-1.5 flex items-center gap-0.75 text-xs text-muted">
             {data.employer}{' '}
@@ -41,7 +41,7 @@ const subheadingClasses = 'mb-4 text-[17px] font-bold';
       education.map(({ data }) => (
         <li
           data-reveal
-          class="flex items-center justify-between gap-3 rounded-card border border-line bg-surface px-4 py-3.5"
+          class="flex items-center justify-between gap-3 rounded-card border border-line bg-(--card) px-4 py-3.5"
         >
           <div>
             <b class="block text-sm font-semibold">{data.degree}</b>{' '}

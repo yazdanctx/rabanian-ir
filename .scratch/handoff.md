@@ -34,7 +34,8 @@ Browser tests (`tests/*-browser.test.ts`) drive the system Chrome at `/Applicati
 
 - All copy lives in `src/site.ts` (`SITE`, `COPY`, `LINKS`) or `src/content/*.json`; components never hard-code copy, prices or links.
 - Read collections with `getOrderedCollection()` (`src/content/ordered.ts`) — plain `getCollection()` sorts by id, not file order.
-- Shared building blocks: `Section.astro`, `Rail.astro` (`label`, `cols`, `itemWidth` required), `Eyebrow.astro`, `Icon.astro`, `Price.astro`, `CompanyLogo.astro`.
+- Shared building blocks: `Section.astro` (`tone`: white / gray / ink band), `Rail.astro` (`label`, `cols`, `itemWidth` required; `autoScroll`), `Eyebrow.astro`, `Icon.astro`, `Price.astro`, `CompanyLogo.astro`, `EditorPreview.astro`.
+- Cards take `bg-(--card)`, not `bg-surface`: a Section's `tone` makes it gray on white bands and white on gray ones (`--tone` is the band's own color).
 - Tests assert on built output via `tests/helpers/dist.ts` (`page('index.html')`), not on component internals.
 
 ## Waiting on Amin

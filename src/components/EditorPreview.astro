@@ -1,0 +1,70 @@
+---
+import { STARTER_TEMPLATE } from './editor/starterTemplate';
+
+/*
+ * A still picture of the HTML Editor for the Toolbox: a window with the three
+ * file tabs, the Starter Template's markup (its comments left out) in the
+ * Code Pane's colors, and what it renders. Decorative (aria-hidden): the Free
+ * Tool row below is the link. Taken from the real Starter Template, so it
+ * never drifts from what the editor opens with.
+ */
+const markup = STARTER_TEMPLATE.html
+  .split('\n')
+  .filter((line) => line.trim() && !line.trim().startsWith('<!--'));
+const heading = STARTER_TEMPLATE.html.match(/<h1>(.*?)<\/h1>/)?.[1] ?? '';
+const paragraph = STARTER_TEMPLATE.html.match(/<p>(.*?)<\/p>/)?.[1] ?? '';
+const button = STARTER_TEMPLATE.html.match(/<button[^>]*>(.*?)<\/button>/)?.[1] ?? '';
+
+type Kind = 'punct' | 'tag' | 'attr' | 'string' | 'text';
+const colors: Record<Kind, string> = {
+  punct: 'text-muted',
+  tag: 'text-code-tag',
+  attr: 'text-code-attribute',
+  string: 'text-code-string',
+  text: 'text-ink',
+};
+/** Splits one line of markup into colored runs: `<`/`</`, tag names, attributes, strings, text. */
+function runs(line: string): [string, Kind][] {
+  const out: [string, Kind][] = [];
+  for (const m of line.matchAll(/(<\/?)([a-z][a-z0-9]*)|\s+([a-z-]+)=("[^"]*")|(\/?>)|([^<]+)/g)) {
+    if (m[1]) out.push([m[1], 'punct'], [m[2], 'tag']);
+    else if (m[3]) out.push([' ', 'text'], [m[3], 'attr'], ['=', 'punct'], [m[4], 'string']);
+    else if (m[5]) out.push([m[5], 'punct']);
+    else out.push([shorten(m[6]), 'text']);
+  }
+  return out;
+}
+/** Keeps a long text run to its first three words, so every line fits the window. */
+function shorten(text: string): string {
+  const words = text.split(' ');
+  return words.length > 3 ? `${words.slice(0, 3).join(' ')} …` : text;
+}
+const tabs = ['index.html', 'style.css', 'script.js'];
+---
+
+<div
+  aria-hidden="true"
+  data-editor-preview
+  class="overflow-hidden rounded-card border border-line bg-(--card) shadow-card"
+>
+  <div dir="ltr" class="flex items-center gap-1.5 border-b border-line px-3.5 py-2.5">
+    <span class="size-2.5 rounded-full bg-line"></span>
+    <span class="size-2.5 rounded-full bg-line"></span>
+    <span class="size-2.5 rounded-full bg-line"></span>
+    <span class="ms-3 flex gap-3.5 text-[11.5px] text-muted">
+      {tabs.map((tab, i) => <span class:list={[i === 0 && 'font-semibold text-ink']}>{tab}</span>)}
+    </span>
+  </div>
+  <div class="grid md:grid-cols-[1fr_15rem]">
+    <pre
+      dir="ltr"
+      class="overflow-hidden px-3.5 py-3.5 font-sans text-[12.5px]/[2]">{markup.map((line, i) => (
+        <span class="block whitespace-pre"><span class="me-4 inline-block w-3 text-end text-muted">{i + 1}</span>{runs(line).map(([text, kind]) => <span class={colors[kind]}>{text}</span>)}</span>
+      ))}</pre>
+    <div class="border-t border-line bg-bg px-4 py-4 md:border-t-0 md:border-s">
+      <p class="text-lg font-bold text-primary-text">{heading}</p>
+      <p class="mt-1 mb-3 line-clamp-2 text-xs/[1.9] text-muted">{paragraph}</p>
+      <span class="inline-block rounded-btn bg-primary px-3.5 py-1.5 text-xs font-semibold text-white">{button}</span>
+    </div>
+  </div>
+</div>

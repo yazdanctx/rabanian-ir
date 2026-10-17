@@ -23,8 +23,30 @@ describe('page structure', () => {
     for (const section of sections) {
       expect(section.classList.contains('border-b')).toBe(true);
       expect(section.classList.contains('border-line')).toBe(true);
-      expect(section.firstElementChild?.classList.contains('max-w-page')).toBe(true);
+      expect(section.querySelector(':scope > .max-w-page')).not.toBeNull();
     }
+  });
+
+  it('alternates white and gray bands from a white Hero, ending on the dark CTA band', () => {
+    expect(sections.map((s) => s.getAttribute('data-tone'))).toEqual([
+      'white', // Hero
+      'white', // About
+      'gray', // Brands
+      'white', // Courses
+      'gray', // Toolbox
+      'white', // Testimonials
+      'gray', // Résumé
+      'ink', // CTA
+    ]);
+  });
+
+  it('frames the page from md: with guides on every column, top bar to footer', () => {
+    const columns = [
+      doc.querySelector('body > header > div'),
+      ...sections.map((s) => s.querySelector(':scope > .max-w-page')),
+      doc.querySelector('body > footer > div'),
+    ];
+    for (const column of columns) expect(column?.classList.contains('md:border-x')).toBe(true);
   });
 });
 

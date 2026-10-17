@@ -123,6 +123,16 @@ describe('toolbox (#tools)', () => {
     );
   });
 
+  it('shows a still of the HTML Editor, from its Starter Template, hidden from assistive tech', () => {
+    const preview = tools?.querySelector('[data-editor-preview]');
+    expect(preview?.getAttribute('aria-hidden')).toBe('true');
+    // The Starter Template's markup in the Code Pane, and what it renders.
+    expect(preview?.textContent).toContain('<h1>سلام دنیا</h1>');
+    expect(preview?.textContent).toContain('کلیک کن');
+    // Decorative only: the Free Tool row is the link to /editor.
+    expect(preview?.querySelector('a, button, [tabindex]')).toBeNull();
+  });
+
   it('lists the 8 Tools in order', () => {
     expect(rows.map((row) => text(row.querySelector('[data-title]')))).toEqual([
       'ویرایشگر HTML',

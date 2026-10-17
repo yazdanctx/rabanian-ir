@@ -3,33 +3,38 @@ import { COPY, SITE } from '../site';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
-/* Light, like the rest of the page: the CTA above is the only dark surface. */
+/*
+ * Light, like the rest of the page: the CTA above is the only dark surface.
+ * Its column carries the page's guides from md:, closing the frame.
+ */
 const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
 ---
 
-<footer class="mx-auto max-w-page px-5 pt-10 pb-8">
-  <Logo />
-  <p class="mt-4 mb-5 text-[13px]/[2] text-muted">{SITE.footerBio}</p>
-  <nav>
-    <ul class="flex flex-col gap-2 md:flex-row">
-      {
-        links.map((link) => (
-          <li>
-            <a
-              href={link.href}
-              class="flex items-center gap-2.5 rounded-btn border border-line bg-surface px-4 py-3 text-sm md:py-2.5 lift hover:border-primary hover:text-primary-text"
-            >
-              <Icon name={link.icon} size={16} class="text-muted" />
-              {link.label}
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
-  <p class="mt-7 flex items-center justify-center gap-1.5 border-t border-line pt-5 text-xs text-muted">
-    {creditBefore}{' '}
-    <Icon name="heart" size={14} class="text-primary" /><span class="sr-only">{creditHeart}</span>{' '}
-    {creditAfter}
-  </p>
+<footer>
+  <div class="mx-auto max-w-page px-5 pt-10 pb-8 md:border-x md:border-line">
+    <Logo />
+    <p class="mt-4 mb-5 text-[13px]/[2] text-muted">{SITE.footerBio}</p>
+    <nav>
+      <ul class="flex flex-col gap-2 md:flex-row">
+        {
+          links.map((link) => (
+            <li>
+              <a
+                href={link.href}
+                class="flex items-center gap-2.5 rounded-btn border border-line bg-(--card) px-4 py-3 text-sm md:py-2.5 lift hover:border-primary hover:text-primary-text"
+              >
+                <Icon name={link.icon} size={16} class="text-muted" />
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+    <p class="mt-7 flex items-center justify-center gap-1.5 border-t border-line pt-5 text-xs text-muted">
+      {creditBefore}{' '}
+      <Icon name="heart" size={14} class="text-primary" /><span class="sr-only">{creditHeart}</span>{' '}
+      {creditAfter}
+    </p>
+  </div>
 </footer>

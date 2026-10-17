@@ -72,6 +72,13 @@
   :root {
     --focus-ring: 2px solid var(--color-primary);
     --focus-ring-offset: 2px;
+    /*
+     * A card's fill and its band's color, outside any Section (top bar,
+     * footer). Section.astro's `tone` sets both per band: cards are gray on
+     * white bands and white on gray ones.
+     */
+    --card: var(--color-surface);
+    --tone: var(--color-bg);
   }
 
   html {

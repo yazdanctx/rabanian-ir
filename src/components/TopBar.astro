@@ -2,15 +2,19 @@
 import { COPY, LINKS } from '../site';
 import Icon from './Icon.astro';
 import Logo from './Logo.astro';
+
+/* Framed like the Sections below it: a hairline underneath, guides from md:. */
 ---
 
-<header class="mx-auto flex max-w-page items-center justify-between px-5 pt-4.5">
-  <Logo />
-  <a
-    href={LINKS.support}
-    aria-label={COPY.topBar.supportLabel}
-    class="grid size-9 place-items-center rounded-[11px] border border-line bg-surface text-ink lift hover:border-primary hover:text-primary-text focus-ring"
-  >
-    <Icon name="telegram" size={17} />
-  </a>
+<header class="border-b border-line">
+  <div class="mx-auto flex max-w-page items-center justify-between px-5 py-3.5 md:border-x md:border-line">
+    <Logo />
+    <a
+      href={LINKS.support}
+      aria-label={COPY.topBar.supportLabel}
+      class="grid size-9 place-items-center rounded-[11px] border border-line bg-surface text-ink lift hover:border-primary hover:text-primary-text focus-ring"
+    >
+      <Icon name="telegram" size={17} />
+    </a>
+  </div>
 </header>
