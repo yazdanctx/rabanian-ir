@@ -55,22 +55,37 @@ describe('built stylesheet', () => {
     expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
   });
 
-  it('has three gradients only — About’s gray shade (never to white), the tagline’s violet shine, the Toolbox’s fade-in — and no dark mode', () => {
+  it('has gradients only for About’s gray shade (never to white), the tagline’s violet shine and fade, the stats’ glint, the Toolbox’s dots, and the Free Tool’s emerald border — and no dark mode', () => {
     // The build also emits each with its color-mix precomputed, for browsers without color-mix.
     const gradients = css.match(/[a-z-]*gradient\([^;}]*/g) ?? [];
     const about = gradients.filter((g) => g.startsWith('linear-gradient(to bottom,var(--color-surface),'));
-    const tagline = gradients.filter((g) => g.startsWith('linear-gradient(90deg,var(--color-primary-text),'));
-    // The Toolbox: transparent to gray, top to bottom.
-    const toolbox = gradients.filter((g) => g === 'linear-gradient(to bottom,transparent,var(--color-surface))');
-    expect(toolbox).toHaveLength(1);
-    expect(about.length + tagline.length + toolbox.length).toBe(gradients.length);
+    // The shine: a deep violet (primary-text toward ink) at both ends, a light primary at the middle.
+    const deep = 'color-mix(in oklab,var(--color-primary-text) 65%,var(--color-ink))';
+    const shine = gradients.filter((g) => g.startsWith('linear-gradient(90deg,'));
+    // The Hero's stat numbers: ink with a light slate glint across the middle.
+    const stats = gradients.filter((g) => g.startsWith('linear-gradient(100deg,var(--color-ink) 25%,'));
+    expect(stats.length).toBeGreaterThan(0);
+    // The tagline fades out a little toward its foot (a mask: opaque at the top).
+    const taglineFade = gradients.filter((g) => g === 'linear-gradient(#000 40%,#000000a6)');
+    // The Toolbox's dots fade out from behind the header.
+    const dots = gradients.filter((g) => g.startsWith('radial-gradient(80% 70% at 50% 20%,#000 35%,'));
+    // The Free Tool: its fill over an emerald ring with a light glint (one background, two layers).
+    const emerald = gradients.filter((g) => /^linear-gradient\(var\(--fill\), ?var\(--fill\)\) padding-box,/.test(g));
+    expect(emerald).toHaveLength(1);
+    expect(emerald[0]).toMatch(/var\(--emerald-glint\) 50%/);
+    // Masks are emitted twice: standard and -webkit- prefixed.
+    expect(taglineFade.length).toBeGreaterThan(0);
+    expect(dots.length).toBeGreaterThan(0);
+    expect(about.length + shine.length + stats.length + taglineFade.length + dots.length + emerald.length).toBe(
+      gradients.length,
+    );
     expect(about).toContainEqual(
       expect.stringMatching(/color-mix\(in oklab,\s*var\(--color-surface\) 40%,\s*var\(--color-line\)\)\)$/),
     );
     for (const gradient of about) expect(gradient).not.toMatch(/--color-bg|#fff\b|#ffffff|white/i);
-    // The shine: primary-text at both ends, a slightly lighter primary at the middle.
-    expect(tagline.length).toBeGreaterThan(0);
-    for (const gradient of tagline) expect(gradient).toMatch(/,var\(--color-primary-text\)\)$/);
+    expect(shine).toContain(
+      `linear-gradient(90deg,${deep},color-mix(in oklab,var(--color-primary) 75%,white) 50%,${deep})`,
+    );
     expect(css).not.toMatch(/prefers-color-scheme/);
   });
 });

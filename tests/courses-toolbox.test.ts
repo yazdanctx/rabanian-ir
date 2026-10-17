@@ -122,6 +122,15 @@ describe('toolbox (#tools)', () => {
     );
   });
 
+  it('lays a fine SVG dot pattern behind it, decorative and out of the way of the pointer', () => {
+    const layer = tools?.firstElementChild;
+    expect(layer?.getAttribute('data-pattern')).toBe('dots');
+    expect(layer?.getAttribute('aria-hidden')).toBe('true');
+    expect(layer?.getAttribute('class')).toContain('pointer-events-none');
+    expect(layer?.querySelector('pattern#tools-dots circle')).not.toBeNull();
+    expect(layer?.querySelector('rect')?.getAttribute('fill')).toBe('url(#tools-dots)');
+  });
+
   it('lists the 8 Tools in order', () => {
     expect(rows.map((row) => text(row.querySelector('[data-title]')))).toEqual([
       'ویرایشگر HTML',
@@ -144,12 +153,22 @@ describe('toolbox (#tools)', () => {
     }
   });
 
-  it('opens the HTML Editor, the Free Tool, as a link to /editor with a primary border', () => {
+  it('opens the HTML Editor, the Free Tool, as a link to /editor in an emerald border, with a check', () => {
     const editor = rows[0];
     expect(editor?.tagName).toBe('A');
     expect(editor?.getAttribute('href')).toBe('/editor');
-    expect(editor?.classList.contains('border-primary')).toBe(true);
+    expect(editor?.classList.contains('free-tool')).toBe(true);
+    expect(editor?.querySelector('[data-check] svg')?.getAttribute('aria-hidden')).toBe('true');
+    // The check sits last: at the left end of the RTL row, where Locked Tools have their lock.
+    expect(editor?.lastElementChild?.hasAttribute('data-check')).toBe(true);
     expect(text(editor)).toBe('ویرایشگر HTML فعال · ورود ←');
+  });
+
+  it('writes the Free Tool’s note in muted gray, its «·» drawn as a dot icon', () => {
+    const note = rows[0]?.querySelector('[data-dotted]');
+    expect(note?.classList.contains('text-muted')).toBe(true);
+    expect(note?.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    expect(text(note?.querySelector('.sr-only'))).toBe('·');
   });
 
   it('shows the 7 Locked Tools as inert rows: no link, not focusable, aria-disabled, with a lock', () => {

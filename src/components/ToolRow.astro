@@ -1,10 +1,12 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import Dotted from './Dotted.astro';
 import Icon from './Icon.astro';
 
 /*
  * One Tool in the Toolbox list: icon tile, title, note.
- * - Free Tool: an <a> to its `href`, with a `primary` border.
+ * - Free Tool: an <a> to its `href`, in a shiny emerald border, with a
+ *   check at its end (left, RTL) where Locked Tools have their lock.
  * - Locked Tool: a presentational <div aria-disabled="true"> with a lock;
  *   not focusable, not a link, no hover or focus affordance.
  */
@@ -23,8 +25,8 @@ const { Tag, attrs, rowClasses, noteClasses } = tool.locked
   : {
       Tag: 'a' as const,
       attrs: { href: tool.href },
-      rowClasses: 'border-primary lift hover:bg-primary-soft',
-      noteClasses: 'font-medium text-primary-text',
+      rowClasses: 'free-tool lift',
+      noteClasses: 'font-medium text-muted',
     };
 ---
 
@@ -43,15 +45,60 @@ const { Tag, attrs, rowClasses, noteClasses } = tool.locked
   </span>
   <span class="flex-1">
     <b data-title class="block text-sm font-semibold">{tool.title}</b>{' '}
-    <span class:list={['text-xs', noteClasses]}>
-      {tool.note}
-    </span>
+    <Dotted text={tool.note} class={`text-xs ${noteClasses}`} />
   </span>
   {
-    tool.locked && (
+    tool.locked ? (
       <span data-lock class="text-muted">
         <Icon name="lock" size={15} />
+      </span>
+    ) : (
+      <span data-check class="check-badge grid size-6 flex-none place-items-center rounded-full">
+        <Icon name="check" size={14} />
       </span>
     )
   }
 </Tag>
+
+<style>
+  /*
+   * The Free Tool's shiny emerald border: a 1.5px gradient ring (deep emerald,
+   * emerald, a light glint in the middle) under the card's own fill, and a
+   * faint emerald glow beneath. Emerald is the Hero badge dot's `status`.
+   */
+  .free-tool {
+    --emerald-deep: color-mix(in oklab, var(--color-status) 70%, var(--color-ink));
+    --emerald-glint: color-mix(in oklab, var(--color-status) 40%, white);
+    --fill: var(--card);
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(var(--fill), var(--fill)) padding-box,
+      linear-gradient(
+          115deg,
+          var(--emerald-deep),
+          var(--color-status) 35%,
+          var(--emerald-glint) 50%,
+          var(--color-status) 65%,
+          var(--emerald-deep)
+        )
+        border-box;
+    box-shadow:
+      var(--shadow-card),
+      0 6px 16px -8px color-mix(in oklab, var(--color-status) 55%, transparent);
+  }
+
+  @media (hover: hover) {
+    .free-tool:hover {
+      --fill: color-mix(in oklab, var(--color-status) 7%, var(--card));
+      box-shadow:
+        var(--shadow-lift),
+        0 10px 22px -10px color-mix(in oklab, var(--color-status) 60%, transparent);
+    }
+  }
+
+  /* The check, deep emerald (3:1 and more on its tint) on a soft emerald disc. */
+  .check-badge {
+    background-color: color-mix(in oklab, var(--color-status) 14%, white);
+    color: var(--emerald-deep);
+  }
+</style>

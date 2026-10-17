@@ -1,0 +1,44 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+import Icon from './Icon.astro';
+
+/*
+ * Short items in a row with a dot between them: «متخصص هوش مصنوعی · مدیریت
+ * محصول». The font's «·» sits above the line's middle, so a dot icon is
+ * drawn instead, 1px up to meet the Farsi text's middle (its dash, its
+ * digits); screen readers still hear «·».
+ *
+ *   <Dotted text="فعال · ورود ←" />          split at each «·»
+ *   <Dotted parts={[employer, period]} block data-meta class="text-xs" />
+ *
+ * Props: `text` (split at «·») or `parts`; `block` lays it out as a block
+ * (`flex`) instead of inline (`inline-flex`). Anything else (classes, data
+ * attributes) goes on the wrapper <span>.
+ */
+interface Props extends HTMLAttributes<'span'> {
+  text?: string;
+  parts?: string[];
+  block?: boolean;
+}
+
+const SEPARATOR = '·';
+const { text = '', parts = text.split(SEPARATOR).map((part) => part.trim()), block, class: className, ...attrs } =
+  Astro.props;
+---
+
+<span {...attrs} data-dotted class:list={[block ? 'flex' : 'inline-flex', 'items-center gap-0.75', className]}>
+  {
+    parts.map((part, index) => (
+      <>
+        {index > 0 && (
+          <>
+            {' '}
+            <Icon name="dot" size={9} class="-translate-y-px" />
+            <span class="sr-only">{SEPARATOR}</span>{' '}
+          </>
+        )}
+        {part}
+      </>
+    ))
+  }
+</span>

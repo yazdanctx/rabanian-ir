@@ -56,7 +56,7 @@ describe.skipIf(!chromePath)('Masterclass banner sizes', () => {
  * employer and period, and of the en dash's ink in the same line, in px.
  */
 const resumeDotCenters = `document.fonts.ready.then(() =>
-  [...document.querySelectorAll('#resume [data-meta]')].map((meta) => {
+  [...document.querySelectorAll('[data-dotted]:has(svg)')].map((meta) => {
     const ctx = document.createElement('canvas').getContext('2d');
     const style = getComputedStyle(meta);
     ctx.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
@@ -72,12 +72,13 @@ const resumeDotCenters = `document.fonts.ready.then(() =>
   }),
 )`;
 
-describe.skipIf(!chromePath)('résumé employer · period separator', () => {
-  it('centers the dot on the line of the period’s dash', async () => {
+describe.skipIf(!chromePath)('dot separators (the Hero badge, the Free Tool, the résumé)', () => {
+  it('centre each dot on the middle of the Farsi text beside it', async () => {
     const tab = await openPage(`${site.origin}/`, { reducedMotion: true });
     try {
       const rows = await tab.evaluate<{ dot: number; dash: number }[]>(resumeDotCenters);
-      expect(rows).toHaveLength(4);
+      // The badge, the Free Tool's note, the four Experiences.
+      expect(rows).toHaveLength(6);
       for (const { dot, dash } of rows) expect(Math.abs(dot - dash)).toBeLessThanOrEqual(0.5);
     } finally {
       await tab.close();
@@ -149,20 +150,16 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       const flat = ['0px', '0px'];
       const dome = [`50% ${h}`, `50% ${h}`];
       const wave = { top: [`100% ${h}`, '0px'], bottom: ['0px', `100% ${h}`], marginTop: `-${h}`, z: '10' };
-      // About is a wave like the Toolbox: it rises over the Hero and lies over Courses, which tucks
-      // under it. It keeps a gray gradient (not a fade to white).
+      // About is a wave: it rises over the Hero and lies over Courses, which tucks under it. It
+      // keeps a gray gradient (not a fade to white).
       expect(hero).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', z: 'auto', clip: 'none' });
       expect(about).toMatchObject({ ...wave, fade: true, clip: 'none' });
       expect(courses).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: false, z: 'auto' });
-      // The Toolbox is a sweep at both ends, the bottom one its top turned 180°: the top bends at
-      // the left (top-left radius), the bottom at the right (bottom-right), so both edges rise to
-      // the right. It rises over Courses and lies over Testimonials, which tucks under it.
-      expect(tools).toMatchObject(wave);
-      // The Toolbox fades in from transparent (the white page shows through) to gray at its foot,
-      // so it has no fill of its own.
-      expect(tools.fill).toBe('rgba(0, 0, 0, 0)');
-      expect(tools.image).toMatch(/^linear-gradient\((rgba\(0, 0, 0, 0\)|transparent), rgb\(241, 245, 249\)\)$/);
-      expect(testimonials).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, rule: '0px' });
+      // The Toolbox has no curves: a 1px rule above it, and another above Testimonials below it.
+      expect(tools).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', z: 'auto', rule: '1px' });
+      // The Toolbox is flat white, no gradient: its dots are the only thing behind it.
+      expect(tools).toMatchObject({ fill: 'rgb(255, 255, 255)', image: 'none', fade: false });
+      expect(testimonials).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', rule: '1px' });
       // A 1px rule above the (white) Résumé.
       expect(resume).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none', rule: '1px' });
       expect(footer).toMatchObject({ top: dome, marginTop: `-${h}` });

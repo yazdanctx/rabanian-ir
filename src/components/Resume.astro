@@ -2,12 +2,12 @@
 import { getOrderedCollection } from '../content/ordered';
 import { COPY } from '../site';
 import CompanyLogo from './CompanyLogo.astro';
-import Icon from './Icon.astro';
+import Dotted from './Dotted.astro';
 import Section from './Section.astro';
 
 const experiences = await getOrderedCollection('experiences');
 const education = await getOrderedCollection('education');
-const { eyebrow, title, experienceTitle, educationTitle, separator } = COPY.resume;
+const { eyebrow, title, experienceTitle, educationTitle } = COPY.resume;
 const subheadingClasses = 'mb-4 text-[17px] font-bold';
 ---
 
@@ -23,12 +23,7 @@ const subheadingClasses = 'mb-4 text-[17px] font-bold';
         <li data-reveal class="relative ps-13">
           <CompanyLogo id={id} size={36} class="absolute start-0 top-0 ring-4 ring-(--tone)" />
           <b class="block text-[15px] font-semibold">{data.role}</b>{' '}
-          <span data-meta class="mt-0.5 mb-1.5 flex items-center gap-0.75 text-xs text-muted">
-            {data.employer}{' '}
-            {/* Up 1px: the font's middle (its dash, its digits) sits above the line box's. */}
-            <Icon name="dot" size={9} class="-translate-y-px" /><span class="sr-only">{separator}</span>{' '}
-            {data.period}
-          </span>{' '}
+          <Dotted parts={[data.employer, data.period]} block data-meta class="mt-0.5 mb-1.5 text-xs text-muted" />{' '}
           <p class="text-[13px]/[1.9] text-muted">{data.summary}</p>
         </li>
       ))

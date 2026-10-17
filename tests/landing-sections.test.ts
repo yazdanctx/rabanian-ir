@@ -16,20 +16,27 @@ describe('page structure', () => {
     expect(sections.slice(0, 3).map((s) => s.id)).toEqual(['top', 'about', 'courses']);
   });
 
-  it('separates sections by shape, with one hairline only (above the Résumé), and centers them in the page column', () => {
+  it('separates sections by shape, with hairlines only around the Toolbox and above the Résumé, and centers them in the page column', () => {
+    // The Toolbox's top, Testimonials' top (the Toolbox's foot), the Résumé's top.
+    const ruled = sections.filter((section) => section.classList.contains('border-t'));
+    expect(ruled.map((section) => section.id || section.querySelector('h2')?.textContent?.trim())).toEqual([
+      'tools',
+      'نظرات',
+      'resume',
+    ]);
     for (const section of sections) {
       const rules = [...section.classList].filter((c) => /^border/.test(c));
-      expect(rules).toEqual(section.id === 'resume' ? ['border-t', 'border-line'] : []);
+      expect(rules).toEqual(ruled.includes(section) ? ['border-t', 'border-line'] : []);
       expect(section.querySelector(':scope > .max-w-page')).not.toBeNull();
     }
   });
 
-  it('alternates white and gray bands from a white Hero to Testimonials, then a white Résumé, before the dark footer', () => {
+  it('has a gray About between white bands, the white ones from Courses on split by hairlines, before the dark footer', () => {
     expect(sections.map((s) => s.getAttribute('data-tone'))).toEqual([
       'white', // Hero
       'gray', // About, with the Brands
       'white', // Courses
-      'gray', // Toolbox
+      'white', // Toolbox, with its dots
       'white', // Testimonials
       'white', // Résumé
     ]);
@@ -89,12 +96,21 @@ describe('hero (#top)', () => {
     expect(dot?.classList.contains('bg-status')).toBe(true);
   });
 
-  it('draws the tagline in a subtle violet shine, over a solid primary-text fallback', () => {
+  it('separates the badge’s two titles with a dot icon, read out as «·»', () => {
+    const dotted = hero?.querySelector('[data-badge] [data-dotted]');
+    expect(dotted?.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    expect(text(dotted?.querySelector('.sr-only'))).toBe('·');
+    const visible = [...(dotted?.childNodes ?? [])].filter((n) => n.nodeType === 3).map((n) => n.textContent);
+    expect(visible.join('')).not.toContain('·');
+  });
+
+  it('draws the tagline in a deep violet shine, fading toward its foot, over a solid primary-text fallback', () => {
     const tagline = [...(hero?.querySelectorAll('p') ?? [])].find((p) => text(p) === 'با من هوش مصنوعی رو اصولی یاد بگیر!');
     const classes = [...(tagline?.classList ?? [])];
     // The gradient shows through the glyphs; the color stays for tools and browsers without it.
     expect(classes).toEqual(expect.arrayContaining(['bg-clip-text', '[-webkit-text-fill-color:transparent]', 'text-primary-text']));
     expect(classes.some((c) => c.startsWith('bg-[linear-gradient('))).toBe(true);
+    expect(classes.some((c) => c.startsWith('[mask-image:linear-gradient(to_bottom,'))).toBe(true);
     // As wide as its text, so the whole shine falls on the words.
     expect(classes).toEqual(expect.arrayContaining(['mx-auto', 'w-fit']));
   });
@@ -120,6 +136,16 @@ describe('hero (#top)', () => {
     const tiles = [...(hero?.querySelectorAll('[data-stats] > li') ?? [])].map(text);
     expect(tiles).toEqual(['10 سال تجربه', '8 دوره تخصصی', '+2000 دانش‌پذیر']);
     expect(hero?.textContent).not.toMatch(/[۰-۹٠-٩]/);
+  });
+
+  it('draws each stat number with a subtle glint, as wide as the number, over a solid ink fallback', () => {
+    const values = [...(hero?.querySelectorAll('[data-stats] [data-value]') ?? [])];
+    expect(values).toHaveLength(3);
+    for (const value of values) {
+      const classes = [...value.classList];
+      expect(classes).toEqual(expect.arrayContaining(['bg-clip-text', '[-webkit-text-fill-color:transparent]', 'text-ink', 'w-fit']));
+      expect(classes.some((c) => c.startsWith('bg-[linear-gradient(100deg,var(--color-ink)'))).toBe(true);
+    }
   });
 });
 

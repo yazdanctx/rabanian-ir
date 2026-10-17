@@ -1,6 +1,7 @@
 ---
 import { getOrderedCollection } from '../content/ordered';
 import { COPY, SITE } from '../site';
+import Dotted from './Dotted.astro';
 import Icon from './Icon.astro';
 import ProfilePhoto from './ProfilePhoto.astro';
 import Section from './Section.astro';
@@ -17,12 +18,12 @@ const buttonClasses =
     class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-muted"
   >
     <span aria-hidden="true" class="pulse-dot size-1.75 rounded-full bg-status"></span>
-    {SITE.badge}
+    <Dotted text={SITE.badge} />
   </div>
   <h1 data-reveal class="mt-5 mb-2 text-[44px]/[1.1] font-bold tracking-[-0.03em] md:text-[56px]/[1.1]">{SITE.name}</h1>
   <p
     data-reveal
-    class="mx-auto mb-3 w-fit bg-[linear-gradient(90deg,var(--color-primary-text),color-mix(in_oklab,var(--color-primary)_88%,white)_50%,var(--color-primary-text))] bg-clip-text text-lg font-semibold text-primary-text [-webkit-text-fill-color:transparent] md:text-xl"
+    class="mx-auto mb-3 w-fit bg-[linear-gradient(90deg,color-mix(in_oklab,var(--color-primary-text)_65%,var(--color-ink)),color-mix(in_oklab,var(--color-primary)_75%,white)_50%,color-mix(in_oklab,var(--color-primary-text)_65%,var(--color-ink)))] bg-clip-text text-lg font-semibold text-primary-text [-webkit-text-fill-color:transparent] [mask-image:linear-gradient(to_bottom,#000_40%,rgb(0_0_0/0.65))] md:text-xl"
   >
     {SITE.tagline}
   </p>
@@ -43,7 +44,12 @@ const buttonClasses =
     {
       stats.map(({ data }) => (
         <li class="rounded-card border border-line bg-(--card) px-2.5 py-4 text-center">
-          <b class="block text-[26px]/tight font-bold tracking-[-0.02em]">{data.value}</b>{' '}
+          <b
+            data-value
+            class="mx-auto block w-fit bg-[linear-gradient(100deg,var(--color-ink)_25%,color-mix(in_oklab,var(--color-muted)_75%,white)_50%,var(--color-ink)_75%)] bg-clip-text text-[26px]/tight font-bold tracking-[-0.02em] text-ink [-webkit-text-fill-color:transparent]"
+          >
+            {data.value}
+          </b>{' '}
           <span class="text-[11.5px] text-muted">{data.label}</span>
         </li>
       ))

@@ -100,8 +100,6 @@ export const COPY = {
     title: 'خلاصه‌ای از سوابق',
     experienceTitle: 'تجربهٔ حرفه‌ای',
     educationTitle: 'تحصیلات',
-    /** Screen-reader text for the dot icon between employer and period. */
-    separator: '·',
   },
   cta: {
     eyebrow: 'پشتیبانی',
