@@ -8,16 +8,20 @@ import Logo from './Logo.astro';
  * The end of every content page, and its one dark surface: a single `ink`
  * block holding the call to action, then the logo, the one-line bio, the
  * links and the credit. Place it right after <main>; the full-screen HTML
- * Editor has none. Behind it, a barely-there grid of 64px squares keeps the
- * ink calm and even: one SVG pattern cell repeated, hairlines at 3.5% white,
- * no gradients. Each cell's lines are on its far edges, so none runs along
- * the footer's top edge.
+ * Editor has none. Like the bands above it, it rises into the last one with
+ * a domed top edge (see Section.astro); its overflow clip trims the grid to
+ * the dome. Behind it, a barely-there grid of 64px squares keeps the ink calm
+ * and even: one SVG pattern cell repeated, hairlines at 3.5% white, no
+ * gradients. Each cell's lines are on its far edges, so none runs along the
+ * footer's top edge.
  */
 const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
 const CELL = 64;
 ---
 
-<footer class="relative isolate overflow-hidden bg-ink text-white">
+<footer
+  class="relative isolate -mt-10 overflow-hidden rounded-t-[50%_2.5rem] bg-ink text-white md:-mt-16 md:rounded-t-[50%_4rem]"
+>
   <svg aria-hidden="true" class="absolute inset-0 -z-10 size-full">
     <defs>
       <pattern id="footer-grid" width={CELL} height={CELL} patternUnits="userSpaceOnUse">

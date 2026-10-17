@@ -120,3 +120,29 @@ describe.skipIf(!chromePath)('the dark footer', () => {
     }
   });
 });
+
+describe.skipIf(!chromePath)('curved band edges', () => {
+  /** Page-side: each band's (and the footer's) top-edge shape, overlap and rules. */
+  const edges = `[...document.querySelectorAll('main > section'), document.querySelector('body > footer')].map((el) => {
+    const s = getComputedStyle(el);
+    return { radius: s.borderTopLeftRadius, radiusEnd: s.borderTopRightRadius, marginTop: s.marginTop, rule: s.borderBottomWidth };
+  })`;
+  type Edge = { radius: string; radiusEnd: string; marginTop: string; rule: string };
+
+  it.each([
+    [390, '40px'],
+    [1280, '64px'],
+  ])('domes every band after the Hero, and the footer, into the one above at %ipx', async (width, height) => {
+    const tab = await openPage(`${site.origin}/`, { width, reducedMotion: true });
+    try {
+      const [hero, ...rest] = await tab.evaluate<Edge[]>(edges);
+      expect(hero).toEqual({ radius: '0px', radiusEnd: '0px', marginTop: '0px', rule: '0px' });
+      expect(rest).toHaveLength(6); // About, Courses, Toolbox, Testimonials, Résumé, footer
+      for (const edge of rest) {
+        expect(edge).toEqual({ radius: `50% ${height}`, radiusEnd: `50% ${height}`, marginTop: `-${height}`, rule: '0px' });
+      }
+    } finally {
+      await tab.close();
+    }
+  });
+});

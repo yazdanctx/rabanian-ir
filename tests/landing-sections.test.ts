@@ -16,10 +16,9 @@ describe('page structure', () => {
     expect(sections.slice(0, 3).map((s) => s.id)).toEqual(['top', 'about', 'courses']);
   });
 
-  it('separates sections with a 1px line rule and centers them in the page column', () => {
+  it('separates sections with curves, not rules, and centers them in the page column', () => {
     for (const section of sections) {
-      expect(section.classList.contains('border-b')).toBe(true);
-      expect(section.classList.contains('border-line')).toBe(true);
+      expect([...section.classList].filter((c) => /^border/.test(c))).toEqual([]);
       expect(section.querySelector(':scope > .max-w-page')).not.toBeNull();
     }
   });
