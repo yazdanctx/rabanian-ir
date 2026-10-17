@@ -32,9 +32,11 @@ import Eyebrow from './Eyebrow.astro';
  *            top sweep turned 180° — bending at the right — laid over the next
  *            band, which takes `top="under"`. With a sweep at both ends both
  *            edges rise to the right, so the band flows like a wave.
- * - gradient: a smooth, subtle gray gradient for a gray band, top to bottom,
- *            from `surface` to a slightly deeper gray (40% `surface`, 60%
- *            `line`); it never reaches white.
+ * - gradient: a gray band's background as a gradient, top to bottom, instead
+ *            of its flat fill. "shade": smooth and subtle, from `surface` to a
+ *            slightly deeper gray (40% `surface`, 60% `line`), never reaching
+ *            white. "fade-in": from transparent (the white page shows through,
+ *            hiding a top sweep) to `surface` at the foot.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
  *            whose `data-reveal` children reveal 60ms apart on page load
@@ -50,7 +52,7 @@ interface Props {
   tone?: 'white' | 'gray';
   top?: 'flat' | 'rule' | 'sweep' | 'under';
   bottom?: 'flat' | 'sweep';
-  gradient?: boolean;
+  gradient?: 'shade' | 'fade-in';
   class?: string;
   stagger?: 'load';
 }
@@ -62,13 +64,18 @@ const {
   tone = 'white',
   top = 'flat',
   bottom = 'flat',
-  gradient = false,
+  gradient,
   class: className,
   stagger,
 } = Astro.props;
+/** Each tone: the band's flat fill, and the card/band colors inside it. */
 const tones = {
-  white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
-  gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
+  white: { fill: 'bg-bg', vars: '[--card:var(--color-surface)] [--tone:var(--color-bg)]' },
+  gray: { fill: 'bg-surface', vars: '[--card:var(--color-bg)] [--tone:var(--color-surface)]' },
+};
+const gradients = {
+  shade: 'bg-[linear-gradient(to_bottom,var(--color-surface),color-mix(in_oklab,var(--color-surface)_40%,var(--color-line)))]',
+  'fade-in': 'bg-[linear-gradient(to_bottom,transparent,var(--color-surface))]',
 };
 /** Each top edge; sweeps overlap by their height (2rem, 4rem from md:). */
 const tops = {
@@ -96,11 +103,12 @@ const bottoms = {
   data-tone={tone}
   class:list={[
     'relative',
-    tones[tone],
+    tones[tone].vars,
+    // A fade-in has no fill of its own: its transparent top shows the page.
+    gradient !== 'fade-in' && tones[tone].fill,
+    gradient && gradients[gradient],
     tops[top],
     bottoms[bottom],
-    gradient &&
-      'bg-[linear-gradient(to_bottom,var(--color-surface),color-mix(in_oklab,var(--color-surface)_40%,var(--color-line)))]',
   ]}
 >
   <div

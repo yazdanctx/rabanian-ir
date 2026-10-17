@@ -130,12 +130,14 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       bottom: [s.borderBottomLeftRadius, s.borderBottomRightRadius],
       marginTop: s.marginTop,
       fade: s.backgroundImage.startsWith('linear-gradient'),
+      image: s.backgroundImage,
+      fill: s.backgroundColor,
       z: s.zIndex,
       clip: s.clipPath,
       rule: s.borderTopWidth,
     };
   })`;
-  type Edge = { top: string[]; bottom: string[]; marginTop: string; fade: boolean; z: string; clip: string; rule: string };
+  type Edge = { top: string[]; bottom: string[]; marginTop: string; fade: boolean; image: string; fill: string; z: string; clip: string; rule: string };
 
   it.each([
     [390, '32px'],
@@ -156,6 +158,10 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       // the left (top-left radius), the bottom at the right (bottom-right), so both edges rise to
       // the right. It rises over Courses and lies over Testimonials, which tucks under it.
       expect(tools).toMatchObject(wave);
+      // The Toolbox fades in from transparent (the white page shows through) to gray at its foot,
+      // so it has no fill of its own.
+      expect(tools.fill).toBe('rgba(0, 0, 0, 0)');
+      expect(tools.image).toMatch(/^linear-gradient\((rgba\(0, 0, 0, 0\)|transparent), rgb\(241, 245, 249\)\)$/);
       expect(testimonials).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, rule: '0px' });
       // A 1px rule above the (white) Résumé.
       expect(resume).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none', rule: '1px' });

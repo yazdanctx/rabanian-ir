@@ -55,12 +55,15 @@ describe('built stylesheet', () => {
     expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
   });
 
-  it('has two gradients only — About’s gray shade (never to white) and the tagline’s violet shine — and no dark mode', () => {
+  it('has three gradients only — About’s gray shade (never to white), the tagline’s violet shine, the Toolbox’s fade-in — and no dark mode', () => {
     // The build also emits each with its color-mix precomputed, for browsers without color-mix.
     const gradients = css.match(/[a-z-]*gradient\([^;}]*/g) ?? [];
     const about = gradients.filter((g) => g.startsWith('linear-gradient(to bottom,var(--color-surface),'));
     const tagline = gradients.filter((g) => g.startsWith('linear-gradient(90deg,var(--color-primary-text),'));
-    expect(about.length + tagline.length).toBe(gradients.length);
+    // The Toolbox: transparent to gray, top to bottom.
+    const toolbox = gradients.filter((g) => g === 'linear-gradient(to bottom,transparent,var(--color-surface))');
+    expect(toolbox).toHaveLength(1);
+    expect(about.length + tagline.length + toolbox.length).toBe(gradients.length);
     expect(about).toContainEqual(
       expect.stringMatching(/color-mix\(in oklab,\s*var\(--color-surface\) 40%,\s*var\(--color-line\)\)\)$/),
     );

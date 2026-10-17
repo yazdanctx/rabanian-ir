@@ -16,8 +16,8 @@
  * variable even when no utility uses it. `src/palette.ts` mirrors these
  * colors for the OG image; keep the two in step (a test checks). Tailwind's
  * default colors are dropped: Iris is the only palette, with no second
- * accent but the emerald status dot. No gradients except About’s subtle gray
- * one (Section `gradient`) and the Hero tagline’s violet shine; no dark mode.
+ * accent but the emerald status dot. No gradients except two gray ones on
+ * bands (Section `gradient`) and the Hero tagline’s violet shine; no dark mode.
  */
 @theme static {
   --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;
