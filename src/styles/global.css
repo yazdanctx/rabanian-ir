@@ -15,7 +15,8 @@
  * on :root as a CSS variable even when no utility uses it. `src/palette.ts`
  * mirrors these colors for the OG image; keep the two in step (a test checks).
  * Tailwind's default colors are dropped: palette P is the only palette, with
- * no second accent. No gradients anywhere; no dark mode.
+ * no second accent. No gradients except About’s fade to white (Section `fade`);
+ * no dark mode.
  */
 @theme static {
   --font-sans: 'IRANYekanXFaNum', Tahoma, sans-serif;

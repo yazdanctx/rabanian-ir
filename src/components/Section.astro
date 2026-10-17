@@ -3,14 +3,15 @@ import Eyebrow from './Eyebrow.astro';
 
 /*
  * One landing-page section: a full-width band holding the centered ~680px
- * column. Bands are separated by curves, not rules: every band but the first
- * (the Hero) rises into the one above with a domed top edge — a half-ellipse
- * as wide as the band and 40px tall (64px from md:), drawn by its top corner
- * radii and a matching negative margin. The column pads 20px inline and 48px
- * on top (64px from md:); at the bottom it adds the next dome's height, so
- * the dome never covers content. Children go in the default slot.
+ * column. Bands meet with curves, not rules, each meeting its own shape
+ * (Hero bulging down into About; About fading into Courses; sweeps and domes
+ * further down). Curves are drawn by the band's corner radii plus a negative
+ * margin that slides it over (or under) its neighbour by the curve's height:
+ * 32px, 64px from md:. The column pads 20px inline and 48px on top (64px
+ * from md:); at the bottom it adds a curve's height, so no curve ever covers
+ * content. Children go in the default slot.
  *
- *   <Section id="courses" eyebrow="آموزش" title="دوره‌های من" tone="gray">…</Section>
+ *   <Section id="tools" eyebrow="جعبه‌ابزار" title="ابزارها" tone="gray" top="sweep">…</Section>
  *
  * Props (all optional):
  * - id:      anchor id on the <section> (e.g. "courses", "tools").
@@ -21,6 +22,16 @@ import Eyebrow from './Eyebrow.astro';
  *            variables: `bg-(--card)` is gray on white and white on gray, and
  *            `--tone` is the band's own color (e.g. for rings that cut a line).
  *            The page's one dark block is the footer (Footer.astro), not a band.
+ * - top:     how the band meets the one above. "flat" (default): edge to
+ *            edge. "dome": its top rises into the band above as a half-ellipse
+ *            as wide as the band. "sweep": one quarter-ellipse across the whole
+ *            width, low at the left and level at the right; "sweep-reverse"
+ *            mirrors it. "under": it slides under the band above, which must
+ *            `sag` into it, and pads its top by the curve.
+ * - sag:     the band's bottom bulges down into the next one (a half-ellipse),
+ *            painting over it; the next band takes `top="under"`.
+ * - fade:    the band's color fades to white over its last 10rem, so a white
+ *            band below meets it `top="flat"` with no seam.
  * - class:   extra classes on the inner column, e.g. "pt-7" to change padding.
  * - stagger: "load" makes the column a motion group (`data-stagger="load"`)
  *            whose `data-reveal` children reveal 60ms apart on page load
@@ -34,14 +45,35 @@ interface Props {
   eyebrow?: string;
   title?: string;
   tone?: 'white' | 'gray';
+  top?: 'flat' | 'dome' | 'sweep' | 'sweep-reverse' | 'under';
+  sag?: boolean;
+  fade?: boolean;
   class?: string;
   stagger?: 'load';
 }
 
-const { id, eyebrow, title, tone = 'white', class: className, stagger } = Astro.props;
+const {
+  id,
+  eyebrow,
+  title,
+  tone = 'white',
+  top = 'flat',
+  sag = false,
+  fade = false,
+  class: className,
+  stagger,
+} = Astro.props;
 const tones = {
   white: 'bg-bg [--card:var(--color-surface)] [--tone:var(--color-bg)]',
   gray: 'bg-surface [--card:var(--color-bg)] [--tone:var(--color-surface)]',
+};
+/** Each top edge: corner radii and the overlap, at the curve's height (2rem, 4rem from md:). */
+const tops = {
+  flat: '',
+  dome: '-mt-8 rounded-t-[50%_2rem] md:-mt-16 md:rounded-t-[50%_4rem]',
+  sweep: '-mt-8 rounded-tl-[100%_2rem] md:-mt-16 md:rounded-tl-[100%_4rem]',
+  'sweep-reverse': '-mt-8 rounded-tr-[100%_2rem] md:-mt-16 md:rounded-tr-[100%_4rem]',
+  under: '-mt-8 md:-mt-16',
 };
 ---
 
@@ -49,12 +81,19 @@ const tones = {
   id={id}
   data-tone={tone}
   class:list={[
-    'relative not-first:-mt-10 not-first:rounded-t-[50%_2.5rem] md:not-first:-mt-16 md:not-first:rounded-t-[50%_4rem]',
+    'relative',
     tones[tone],
+    tops[top],
+    sag && 'z-10 rounded-b-[50%_2rem] md:rounded-b-[50%_4rem]',
+    fade && 'bg-[linear-gradient(to_bottom,var(--color-surface)_calc(100%-10rem),var(--color-bg))]',
   ]}
 >
   <div
-    class:list={['relative mx-auto max-w-page px-5 pt-12 pb-22 md:pt-16 md:pb-32', className]}
+    class:list={[
+      'relative mx-auto max-w-page px-5 pb-20 md:pb-32',
+      top === 'under' ? 'pt-20 md:pt-32' : 'pt-12 md:pt-16',
+      className,
+    ]}
     data-stagger={stagger}
   >
     {

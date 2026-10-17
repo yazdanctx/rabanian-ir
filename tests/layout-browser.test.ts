@@ -122,25 +122,38 @@ describe.skipIf(!chromePath)('the dark footer', () => {
 });
 
 describe.skipIf(!chromePath)('curved band edges', () => {
-  /** Page-side: each band's (and the footer's) top-edge shape, overlap and rules. */
+  /** Page-side: each band's (and the footer's) edges, overlap, fill and stacking. */
   const edges = `[...document.querySelectorAll('main > section'), document.querySelector('body > footer')].map((el) => {
     const s = getComputedStyle(el);
-    return { radius: s.borderTopLeftRadius, radiusEnd: s.borderTopRightRadius, marginTop: s.marginTop, rule: s.borderBottomWidth };
+    return {
+      top: [s.borderTopLeftRadius, s.borderTopRightRadius],
+      bottom: [s.borderBottomLeftRadius, s.borderBottomRightRadius],
+      marginTop: s.marginTop,
+      fade: s.backgroundImage.startsWith('linear-gradient'),
+      z: s.zIndex,
+    };
   })`;
-  type Edge = { radius: string; radiusEnd: string; marginTop: string; rule: string };
+  type Edge = { top: string[]; bottom: string[]; marginTop: string; fade: boolean; z: string };
 
   it.each([
-    [390, '40px'],
+    [390, '32px'],
     [1280, '64px'],
-  ])('domes every band after the Hero, and the footer, into the one above at %ipx', async (width, height) => {
+  ])('shapes each meeting of two bands its own way at %ipx', async (width, h) => {
     const tab = await openPage(`${site.origin}/`, { width, reducedMotion: true });
     try {
-      const [hero, ...rest] = await tab.evaluate<Edge[]>(edges);
-      expect(hero).toEqual({ radius: '0px', radiusEnd: '0px', marginTop: '0px', rule: '0px' });
-      expect(rest).toHaveLength(6); // About, Courses, Toolbox, Testimonials, Résumé, footer
-      for (const edge of rest) {
-        expect(edge).toEqual({ radius: `50% ${height}`, radiusEnd: `50% ${height}`, marginTop: `-${height}`, rule: '0px' });
-      }
+      const [hero, about, courses, tools, testimonials, resume, footer] = await tab.evaluate<Edge[]>(edges);
+      const flat = ['0px', '0px'];
+      const dome = [`50% ${h}`, `50% ${h}`];
+      // The Hero's white bulges down into About, which tucks under it.
+      expect(hero).toMatchObject({ top: flat, bottom: dome, marginTop: '0px', z: '10' });
+      expect(about).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: true });
+      // About fades from gray to white, so Courses meets it with no curve.
+      expect(courses).toMatchObject({ top: flat, marginTop: '0px', fade: false });
+      // Sweeps: one corner curves the whole width; the other stays square.
+      expect(tools).toMatchObject({ top: [`100% ${h}`, '0px'], marginTop: `-${h}` });
+      expect(testimonials).toMatchObject({ top: dome, marginTop: `-${h}` });
+      expect(resume).toMatchObject({ top: ['0px', `100% ${h}`], marginTop: `-${h}` });
+      expect(footer).toMatchObject({ top: dome, marginTop: `-${h}` });
     } finally {
       await tab.close();
     }

@@ -9,7 +9,7 @@ const testimonials = await getOrderedCollection('testimonials');
 const { eyebrow, title } = COPY.testimonials;
 ---
 
-<Section eyebrow={eyebrow} title={title}>
+<Section eyebrow={eyebrow} title={title} top="dome">
   <Rail label={title} cols={2} itemWidth="290px">
     {
       testimonials.map(({ data }) => (

@@ -55,8 +55,10 @@ describe('built stylesheet', () => {
     expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
   });
 
-  it('has no gradients and no dark-mode styles', () => {
-    expect(css).not.toMatch(/gradient\(/);
+  it('has one gradient only — About’s gray fading to white at its foot — and no dark-mode styles', () => {
+    const gradients = css.match(/[a-z-]*gradient\([^;}]*/g) ?? [];
+    expect(gradients).toHaveLength(1);
+    expect(gradients[0]).toMatch(/^linear-gradient\(to bottom,\s*var\(--color-surface\)\s*calc\(100% - 10rem\),\s*var\(--color-bg\)\)/);
     expect(css).not.toMatch(/prefers-color-scheme/);
   });
 });
