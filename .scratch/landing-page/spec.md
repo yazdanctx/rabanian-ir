@@ -25,13 +25,13 @@ A Farsi, RTL, light-mode-only personal site for Amin Rabanian (AI educator / pro
 | `--muted` | `#536078` | descriptions, labels, captions |
 | `--primary` | `#1769FF` | filled buttons, logo mark, pulsing dot, hover `#0D5BE0` |
 | `--primary-text` | `#0D5BE0` | text links, hero tagline, section eyebrows (≥ 5.8:1 on white) |
-| `--primary-soft` | `#EAF1FF` | tool icon tiles, Masterclass banner placeholder bg |
-| `--surface` | `#F5F7FA` | cards, stat tiles, editor chrome |
+| `--primary-soft` | `#EAF1FF` | tool icon tiles |
+| `--surface` | `#F5F7FA` | cards, stat tiles, editor chrome, Masterclass banner slot |
 | `--line` | `#DCE3EE` | all borders; 1px section dividers |
 | `--bg` | `#FFFFFF` | page |
 | on dark block | text `#FFFFFF`, eyebrow `#56A6FF`, button `#1769FF`/white text | CTA section only |
 
-Shape: buttons 8px radius; cards 12px with 1px `--line` border and shadow `0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a, 0 0 0 1px #27272a0f`; dark CTA block 18px. Sections separated by a 1px `--line` rule. **No gradients anywhere. No background artwork.** No second accent (paasta's violet is not used).
+Shape: buttons 8px radius; cards 12px with 1px `--line` border and shadow `0 0 10px 1px #27272a08, 0 4px 5px -4px #27272a14, 0 1px 5px -2px #27272a1a, 0 0 0 1px #27272a0f`; dark CTA block 18px. Sections separated by a 1px `--line` rule. **No gradients anywhere** — the one exception is the Masterclass banner *placeholder* image, a subtle gray diagonal gradient with a gray «</>» (asked for on 2026-10-17; Amin's real banner replaces it). **No background artwork.** No second accent (paasta's violet is not used).
 
 Reference mock: `.scratch/palettes/index.html`, column P.
 

@@ -21,9 +21,9 @@ describe('courses (#courses)', () => {
   describe('Masterclass card', () => {
     const card = courses?.querySelector('[data-masterclass]');
 
-    it('leads with a primary-soft banner slot carrying the «دوره پرچم‌دار» badge', () => {
+    it('leads with a gray (surface) banner slot carrying the «دوره پرچم‌دار» badge', () => {
       const banner = card?.querySelector('[data-banner]');
-      expect(banner?.classList.contains('bg-primary-soft')).toBe(true);
+      expect(banner?.classList.contains('bg-surface')).toBe(true);
       expect(text(banner)).toBe('دوره پرچم‌دار');
       expect(text(card)).not.toContain('قابل آپلود');
     });
