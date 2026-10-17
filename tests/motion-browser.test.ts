@@ -77,6 +77,85 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
     });
   });
 
+  describe('the Brands Rail on a phone', () => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openPage(`${site.origin}/`);
+    });
+    afterAll(() => tab?.close());
+
+    it('scrolls itself forward in a seamless loop, its copies hidden from assistive tech', async () => {
+      const result = await tab.evaluate<{
+        cards: number;
+        copies: number;
+        copiesHidden: boolean;
+        moved: number;
+        period: number;
+        half: number;
+        pageOverflow: number;
+      }>(`(async () => {
+        ${lib}
+        const rail = document.querySelector('[data-autoscroll]');
+        rail.scrollIntoView({ block: 'center', behavior: 'instant' });
+        await waitFor(() => rail.hasAttribute('data-looping'));
+        const cards = [...rail.children];
+        const copies = cards.filter((li) => li.hasAttribute('data-rail-clone'));
+        const x = () => new DOMMatrix(getComputedStyle(rail).transform).m41;
+        const x0 = x();
+        await new Promise((r) => setTimeout(r, 600));
+        const right = (el) => el.getBoundingClientRect().right;
+        return {
+          cards: cards.length,
+          copies: copies.length,
+          copiesHidden: copies.every((li) => li.getAttribute('aria-hidden') === 'true' && li.inert),
+          moved: x() - x0,
+          // One loop slides the row by one set: card 1 to where its copy was.
+          period: right(cards[0]) - right(cards[5]),
+          half: rail.getBoundingClientRect().width / 2,
+          pageOverflow: document.documentElement.scrollWidth - innerWidth,
+        };
+      })()`);
+      expect(result.cards).toBe(10);
+      expect(result.copies).toBe(5);
+      expect(result.copiesHidden).toBe(true);
+      // RTL: the next Brand is on the left, so the row moves right.
+      expect(result.moved).toBeGreaterThan(0);
+      expect(Math.abs(result.period - result.half)).toBeLessThan(1);
+      expect(result.pageOverflow).toBe(0);
+    });
+
+    it('pauses while it has keyboard focus', async () => {
+      const state = await tab.evaluate<string>(`(() => {
+        const rail = document.querySelector('[data-autoscroll]');
+        rail.focus();
+        return getComputedStyle(rail).animationPlayState;
+      })()`);
+      expect(state).toBe('paused');
+    });
+  });
+
+  describe('the Brands Rail on desktop', () => {
+    let tab: BrowserPage;
+    beforeAll(async () => {
+      tab = await openPage(`${site.origin}/`, { width: 1280, height: 900 });
+    });
+    afterAll(() => tab?.close());
+
+    it('stays a still grid of the five Brands', async () => {
+      const result = await tab.evaluate<{ shown: number; animations: number }>(`(async () => {
+        ${lib}
+        const rail = document.querySelector('[data-autoscroll]');
+        rail.scrollIntoView({ block: 'center', behavior: 'instant' });
+        await waitFor(() => rail.hasAttribute('data-looping'));
+        return {
+          shown: [...rail.children].filter((li) => getComputedStyle(li).display !== 'none').length,
+          animations: rail.getAnimations().length,
+        };
+      })()`);
+      expect(result).toEqual({ shown: 5, animations: 0 });
+    });
+  });
+
   describe('with prefers-reduced-motion: reduce', () => {
     let tab: BrowserPage;
     beforeAll(async () => {
@@ -96,6 +175,18 @@ describe.skipIf(!chromePath)('landing motion in the browser', () => {
         };
       })()`);
       expect(result).toEqual({ motion: false, hidden: 0, animations: 0 });
+    });
+
+    it('leaves the Brands Rail a plain row to swipe, without copies', async () => {
+      const result = await tab.evaluate<{ cards: number; looping: boolean; scrollable: boolean }>(`(() => {
+        const rail = document.querySelector('[data-autoscroll]');
+        return {
+          cards: rail.children.length,
+          looping: rail.hasAttribute('data-looping'),
+          scrollable: rail.scrollWidth > rail.clientWidth,
+        };
+      })()`);
+      expect(result).toEqual({ cards: 5, looping: false, scrollable: true });
     });
   });
 

@@ -11,7 +11,7 @@ const { caption } = COPY.brands;
 
 <Section>
   <p data-reveal class="mb-5 text-center text-xs text-muted">{caption}</p>
-  <Rail label={caption} cols={3} itemWidth="150px">
+  <Rail label={caption} cols={3} itemWidth="150px" autoScroll>
     {
       brands.map(({ id, data }) => (
         <li data-reveal class="flex min-h-18 flex-col items-center justify-center gap-2.5 rounded-card border border-line bg-surface px-3 py-4 text-center text-[13px] font-semibold">

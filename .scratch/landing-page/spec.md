@@ -76,7 +76,8 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 - Hero: soft load stagger (badge → h1 → tagline → lead → photo → buttons → stats), 60ms apart, fade + 8px rise, ~400ms ease-out.
 - Sections: fade + 8px rise once on entering the viewport (`inView`, once); list/rail items staggered 60ms.
 - Cards and links: subtle hover lift (2px) / color transition.
-- Pulsing status dot: CSS keyframe (3s opacity), the one ambient animation kept.
+- Pulsing status dot: CSS keyframe (3s opacity).
+- Brands Rail, mobile only: scrolls itself in an endless loop (CSS keyframe, ~36px/s, moving right — forward in RTL), paused while hovered, touched or focused. The motion script appends an inert, aria-hidden copy of the chips to close the loop. Under reduced motion or without JS it is a plain swipeable Rail; at ≥ 768px it is the grid. These two are the only ambient animations.
 - **Removed from the design**: spinning orbit (rings are static), floating pill (static label).
 - `prefers-reduced-motion: reduce` → no transforms, instant appearance, dot static.
 - Nothing scroll-linked, no parallax, no cursor effects.

@@ -145,6 +145,12 @@ describe('brands', () => {
     expect(rail?.getAttribute('tabindex')).toBe('0');
   });
 
+  it('marks only the Brands Rail to auto-scroll; the loop’s copies are made in the browser', () => {
+    expect(rail?.hasAttribute('data-autoscroll')).toBe(true);
+    expect(doc.querySelectorAll('[data-autoscroll]')).toHaveLength(1);
+    expect(rail?.querySelectorAll(':scope > li')).toHaveLength(5);
+  });
+
   it('snaps the Rail horizontally on mobile and turns it into a grid at md', () => {
     const classes = [...(rail?.classList ?? [])];
     expect(classes).toEqual(expect.arrayContaining(['snap-x', 'snap-mandatory', 'md:grid']));
