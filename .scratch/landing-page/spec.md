@@ -50,7 +50,7 @@ Reference mock: `.scratch/palettes/index.html`, column P.
 
 ## Sections (order fixed, content from the design)
 
-1. **Top bar** — logo (the academy's mark — a white «>_» prompt on a 30px `--ink` tile, `src/logo-mark.ts`, also the favicon — + «آکادمی ربانیان»; the footer repeats it) linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
+1. **Top bar** — logo (Amin's profile photo in a 30px circle — same source file as the Hero photo — + «آکادمی ربانیان») linking `#top`; Telegram icon button → `https://t.me/codaminsupport` (`aria-label="پشتیبانی تلگرام"`).
 2. **Hero** `#top` — status badge (pulsing dot + «متخصص هوش مصنوعی · مدیریت محصول»); `h1` «امین ربانیان»; tagline «با من هوش مصنوعی رو اصولی یاد بگیر!» in `--primary-text`; lead paragraph; profile photo (round, 150–180px, two **static** concentric dashed rings, pill «هوش مصنوعی کاربردی ✦» as a static label); two buttons «دوره‌ها» (`#courses`, filled) and «ابزارها» (`#tools`, outlined); three stat tiles: 10 سال تجربه · 8 دوره تخصصی · +2000 دانش‌پذیر.
 3. **About** `#about` — eyebrow «من کی هستم؟», `h2` «یک مسیر؛ از مهندسی تا محصول», paragraph with the four highlighted Brand names.
 4. **Brands** — caption «برندهایی که افتخار همکاری با آن‌ها را داشته‌ام», Rail of text chips: اسنپ · مستربلیط · گروه صنعتی انتخاب · سی‌آر‌ام دیدار · ویسِند انگلیس. Each chip: the company's logo (40px tile, `src/assets/logos/<brand id>.*`, shared with the résumé) above its name.
@@ -66,7 +66,7 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 
 ## Images
 
-- Slots: profile photo (hero), Masterclass banner, OG image, résumé employer and university logos. Nothing else is raster. Brands are text; course cards use category labels.
+- Slots: profile photo (hero and logo), Masterclass banner, OG image, résumé employer logos. Nothing else is raster. Brands are text; course cards use category labels.
 - Source files live in `src/assets/` (never `public/`) and render through Astro `<Picture>`: AVIF + WebP + fallback, `srcset`/`sizes` per breakpoint, explicit `width`/`height`, `loading="lazy"` + `decoding="async"` below the fold, `fetchpriority="high"` on the profile photo. No LQIP/blur placeholders.
 - Until Amin supplies the photo and banner, neutral placeholders sit in the exact slots with the pipeline already wired; dropping the files in is the only step.
 - Budget: Lighthouse mobile Performance ≥ 95.
@@ -83,7 +83,7 @@ Anchor links scroll smoothly (`scroll-behavior: smooth`, disabled under reduced 
 
 ## SEO & meta
 
-Farsi `<title>` and description per page; `<link rel="canonical">` on `https://rabanian.ir`; `@astrojs/sitemap`; `robots.txt`; static OG image 1200×630 (name + tagline on the P palette) generated at build; favicon/SVG icon from the academy's «>_» mark (the logo's); Open Graph + Twitter card tags.
+Farsi `<title>` and description per page; `<link rel="canonical">` on `https://rabanian.ir`; `@astrojs/sitemap`; `robots.txt`; static OG image 1200×630 (name + tagline on the P palette) generated at build; favicon/SVG icon from the design's star mark; Open Graph + Twitter card tags.
 
 ## Out of scope
 

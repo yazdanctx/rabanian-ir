@@ -1,15 +1,25 @@
 ---
-import { LOGO_MARK_SVG } from '../logo-mark';
+import { Picture } from 'astro:assets';
 import { SITE } from '../site';
+// The same file as the Hero photo (see ProfilePhoto.astro): replacing it
+// updates both.
+import profile from '../assets/images/profile.jpg';
 
-/*
- * The logo: the academy's «>_» mark (src/logo-mark.ts, also the favicon) as a
- * 30px tile + «آکادمی ربانیان», linking to the top. The mark is inline, so it
- * costs no request, and decorative: the text names the link.
- */
+/* The logo: Amin's photo in a 30px circle + «آکادمی ربانیان», linking to the top. */
 ---
 
 <a href="#top" class="inline-flex items-center gap-2.25 rounded-btn text-[15px] font-bold focus-ring">
-  <span data-logo-mark aria-hidden="true" class="size-7.5 shrink-0 [&>svg]:size-full" set:html={LOGO_MARK_SVG} />
+  <Picture
+    src={profile}
+    alt=""
+    formats={['avif', 'webp']}
+    widths={[30, 60, 90]}
+    sizes="30px"
+    width={30}
+    height={30}
+    loading="eager"
+    decoding="async"
+    class="size-7.5 rounded-full border border-line bg-surface object-cover"
+  />
   <span>{SITE.brand}</span>
 </a>
