@@ -146,16 +146,16 @@ describe.skipIf(!chromePath)('curved band edges', () => {
       const [hero, about, courses, tools, testimonials, resume, footer] = await tab.evaluate<Edge[]>(edges);
       const flat = ['0px', '0px'];
       const dome = [`50% ${h}`, `50% ${h}`];
-      // About rises into the Hero along a straight diagonal, «/»: low at the left, at full height at the right.
+      const wave = { top: [`100% ${h}`, '0px'], bottom: ['0px', `100% ${h}`], marginTop: `-${h}`, z: '10' };
+      // About is a wave like the Toolbox: it rises over the Hero and lies over Courses, which tucks
+      // under it. It keeps a gray gradient (not a fade to white).
       expect(hero).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', z: 'auto', clip: 'none' });
-      expect(about).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: true });
-      expect(about.clip).toBe(`polygon(0px ${h}, 100% 0px, 100% 100%, 0px 100%)`);
-      // About fades from gray to white, so Courses meets it with no curve.
-      expect(courses).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, z: 'auto' });
+      expect(about).toMatchObject({ ...wave, fade: true, clip: 'none' });
+      expect(courses).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, fade: false, z: 'auto' });
       // The Toolbox is a sweep at both ends, the bottom one its top turned 180°: the top bends at
       // the left (top-left radius), the bottom at the right (bottom-right), so both edges rise to
       // the right. It rises over Courses and lies over Testimonials, which tucks under it.
-      expect(tools).toMatchObject({ top: [`100% ${h}`, '0px'], bottom: ['0px', `100% ${h}`], marginTop: `-${h}`, z: '10' });
+      expect(tools).toMatchObject(wave);
       expect(testimonials).toMatchObject({ top: flat, bottom: flat, marginTop: `-${h}`, rule: '0px' });
       // A 1px rule above the (white) Résumé.
       expect(resume).toMatchObject({ top: flat, bottom: flat, marginTop: '0px', fade: false, clip: 'none', rule: '1px' });

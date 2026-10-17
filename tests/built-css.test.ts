@@ -55,10 +55,18 @@ describe('built stylesheet', () => {
     expect(css).toMatch(/\.rail[^{]*::-webkit-scrollbar[^{]*{[^}]*display:\s*none/);
   });
 
-  it('has one gradient only — About’s gray fading to white at its foot — and no dark-mode styles', () => {
+  it('has one gradient only — About’s subtle gray-to-gray shade, never to white — and no dark-mode styles', () => {
+    // The build also emits the shade with its color-mix precomputed, for browsers without color-mix.
     const gradients = css.match(/[a-z-]*gradient\([^;}]*/g) ?? [];
-    expect(gradients).toHaveLength(1);
-    expect(gradients[0]).toMatch(/^linear-gradient\(to bottom,\s*var\(--color-surface\)\s*calc\(100% - 10rem\),\s*var\(--color-bg\)\)/);
+    expect(gradients.length).toBeGreaterThan(0);
+    expect(gradients.length).toBeLessThanOrEqual(2);
+    expect(gradients).toContainEqual(
+      expect.stringMatching(/^linear-gradient\(to bottom,\s*var\(--color-surface\),\s*color-mix\(in oklab,\s*var\(--color-surface\) 40%,\s*var\(--color-line\)\)\)/),
+    );
+    for (const gradient of gradients) {
+      expect(gradient).toMatch(/^linear-gradient\(to bottom,\s*var\(--color-surface\),/);
+      expect(gradient).not.toMatch(/--color-bg|#fff\b|#ffffff|white/i);
+    }
     expect(css).not.toMatch(/prefers-color-scheme/);
   });
 });
