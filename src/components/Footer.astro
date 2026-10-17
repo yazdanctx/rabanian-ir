@@ -5,10 +5,11 @@ import Icon from './Icon.astro';
 import Logo from './Logo.astro';
 
 /*
- * The end of every page, and its one dark surface: a single `ink` block over a
- * faint grid of 56px squares (a few shaded) holding the call to action, then
- * the logo, the one-line bio, the links and the credit. Place it right after
- * <main>. The grid is one SVG pattern tile repeated: drawn lines, no gradients.
+ * The end of every content page, and its one dark surface: a single `ink`
+ * block over a faint grid of 56px squares (a few shaded) holding the call to
+ * action, then the logo, the one-line bio, the links and the credit. Place it
+ * right after <main>; the full-screen HTML Editor has none. The grid is one
+ * SVG pattern tile repeated: drawn lines, no gradients.
  */
 const { links, creditBefore, creditHeart, creditAfter } = COPY.footer;
 const CELL = 56;
