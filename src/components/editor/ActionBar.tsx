@@ -4,7 +4,7 @@ import { COPY } from '../../site';
 interface Props {
   /** «اجرای کد»: rebuild the Preview now. */
   onRun: () => void;
-  /** «بازنشانی»: ask, in a dialog, before going back to the Starter Template. */
+  /** «بازنشانی»: ask, in a dialog, before emptying the three files. */
   onReset: () => void;
   /** «دانلود index.html»: the page as one index.html. */
   onDownload: () => void;

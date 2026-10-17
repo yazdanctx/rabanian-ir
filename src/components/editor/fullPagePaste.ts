@@ -3,9 +3,10 @@ import { isFullPage } from './buildDocument';
 
 /**
  * A Full Page pasted into the HTML tab takes the whole file, wherever the
- * caret was. Amin's videos say to paste the page into the box; the box here
- * opens holding the Starter Template, and a page pasted into the middle of it
- * would render as neither. One paste, so one undo brings the old file back.
+ * caret was. Amin's videos say to paste the page into the box; a returning
+ * visitor's box still holds their last code, and a page pasted into the
+ * middle of it would render as neither. One paste, so one undo brings the
+ * old file back.
  */
 export const fullPagePaste = () =>
   EditorView.domEventHandlers({

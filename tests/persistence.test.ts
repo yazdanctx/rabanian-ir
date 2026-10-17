@@ -1,16 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import {
-  clearWorkspace,
-  loadWorkspace,
-  saveWorkspace,
-  type Workspace,
-} from '../src/components/editor/persistence';
-import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
+import { EMPTY_FILES } from '../src/components/editor/files';
+import { clearFiles, loadFiles, saveFiles } from '../src/components/editor/persistence';
 
 /*
- * The HTML Editor's autosave (spec: Persistence): the three files and the
- * active tab in localStorage under `rabanian.editor.v1`, the Starter Template
- * whenever nothing usable is saved.
+ * The HTML Editor's autosave (spec: Persistence): the three files in
+ * localStorage under `rabanian.editor.v1`, empty files whenever nothing
+ * usable is saved.
  */
 
 /** An in-memory Web Storage. */
@@ -23,32 +18,22 @@ function memoryStorage(entries: Record<string, string> = {}) {
   };
 }
 
-const firstVisit: Workspace = { files: STARTER_TEMPLATE, activeTab: 'html' };
-
-describe('loadWorkspace', () => {
-  it('opens the Starter Template on the HTML tab when nothing is saved', () => {
-    expect(loadWorkspace(memoryStorage())).toEqual(firstVisit);
+describe('loadFiles', () => {
+  it('opens three empty files when nothing is saved', () => {
+    expect(loadFiles(memoryStorage())).toEqual({ html: '', css: '', js: '' });
   });
 
-  it('restores what was saved: the three files, Farsi included, and the active tab', () => {
+  it('restores what was saved: the three files, Farsi included', () => {
     const storage = memoryStorage();
-    const edited: Workspace = {
-      files: { html: '<h1>سلام دنیا</h1>', css: 'h1 { color: #0d5be0 }', js: "console.log('سلام')" },
-      activeTab: 'css',
-    };
-    saveWorkspace(edited, storage);
-    expect(loadWorkspace(storage)).toEqual(edited);
+    const edited = { html: '<h1>سلام دنیا</h1>', css: 'h1 { color: #0d5be0 }', js: "console.log('سلام')" };
+    saveFiles(edited, storage);
+    expect(loadFiles(storage)).toEqual(edited);
   });
 
-  it('saves one flat object, as the editor always has, so earlier saves still open', () => {
+  it('saves one flat object', () => {
     const storage = memoryStorage();
-    saveWorkspace({ files: { html: '<p>a</p>', css: 'p {}', js: 'x()' }, activeTab: 'js' }, storage);
-    expect(JSON.parse(storage.getItem('rabanian.editor.v1')!)).toEqual({
-      html: '<p>a</p>',
-      css: 'p {}',
-      js: 'x()',
-      activeTab: 'js',
-    });
+    saveFiles({ html: '<p>a</p>', css: 'p {}', js: 'x()' }, storage);
+    expect(JSON.parse(storage.getItem('rabanian.editor.v1')!)).toEqual({ html: '<p>a</p>', css: 'p {}', js: 'x()' });
   });
 
   it.each([
@@ -56,34 +41,27 @@ describe('loadWorkspace', () => {
     ['is JSON null', 'null'],
     ['is a JSON string', '"<h1>سلام</h1>"'],
     ['is a JSON array', '["<h1>", "h1 {}", "x()"]'],
-    ['lacks a file', '{"html": "<h1>سلام</h1>", "css": "", "activeTab": "html"}'],
-    ['has a file that is not text', '{"html": "<h1>سلام</h1>", "css": "", "js": 42, "activeTab": "html"}'],
-  ])('falls back to the Starter Template when the save %s', (_, saved) => {
+    ['lacks a file', '{"html": "<h1>سلام</h1>", "css": ""}'],
+    ['has a file that is not text', '{"html": "<h1>سلام</h1>", "css": "", "js": 42}'],
+  ])('falls back to empty files when the save %s', (_, saved) => {
     const storage = memoryStorage({ 'rabanian.editor.v1': saved });
-    expect(loadWorkspace(storage)).toEqual(firstVisit);
+    expect(loadFiles(storage)).toEqual(EMPTY_FILES);
   });
 
-  it.each([['"preview"'], ['null'], ['1']])('restores the files on the HTML tab when the saved tab is %s', (tab) => {
-    const storage = memoryStorage({
-      'rabanian.editor.v1': `{"html": "<p>a</p>", "css": "p {}", "js": "", "activeTab": ${tab}}`,
-    });
-    expect(loadWorkspace(storage)).toEqual({ files: { html: '<p>a</p>', css: 'p {}', js: '' }, activeTab: 'html' });
-  });
-
-  it('keeps only the files and the tab, whatever else was saved', () => {
+  it('keeps only the files from earlier saves, which also held the open tab', () => {
     const storage = memoryStorage({
       'rabanian.editor.v1': '{"html": "<p>a</p>", "css": "", "js": "", "activeTab": "js", "theme": "dark"}',
     });
-    expect(loadWorkspace(storage)).toEqual({ files: { html: '<p>a</p>', css: '', js: '' }, activeTab: 'js' });
+    expect(loadFiles(storage)).toEqual({ html: '<p>a</p>', css: '', js: '' });
   });
 });
 
-describe('clearWorkspace', () => {
-  it('forgets the save, so the next visit opens the Starter Template', () => {
+describe('clearFiles', () => {
+  it('forgets the save, so the next visit opens empty', () => {
     const storage = memoryStorage();
-    saveWorkspace({ files: { html: '<p>a</p>', css: '', js: '' }, activeTab: 'js' }, storage);
-    clearWorkspace(storage);
-    expect(loadWorkspace(storage)).toEqual(firstVisit);
+    saveFiles({ html: '<p>a</p>', css: '', js: '' }, storage);
+    clearFiles(storage);
+    expect(loadFiles(storage)).toEqual(EMPTY_FILES);
   });
 });
 
@@ -93,8 +71,8 @@ describe('when storage is unavailable (blocked, private mode) or full', () => {
   };
   const blocked = { getItem: refuse, setItem: refuse, removeItem: refuse };
 
-  it('opens the Starter Template', () => {
-    expect(loadWorkspace(blocked)).toEqual(firstVisit);
+  it('opens empty', () => {
+    expect(loadFiles(blocked)).toEqual(EMPTY_FILES);
   });
 
   it('carries on without saving or clearing', () => {
@@ -104,8 +82,8 @@ describe('when storage is unavailable (blocked, private mode) or full', () => {
         throw new DOMException('The quota has been exceeded.', 'QuotaExceededError');
       },
     };
-    expect(() => saveWorkspace(firstVisit, full)).not.toThrow();
-    expect(() => saveWorkspace(firstVisit, blocked)).not.toThrow();
-    expect(() => clearWorkspace(blocked)).not.toThrow();
+    expect(() => saveFiles(EMPTY_FILES, full)).not.toThrow();
+    expect(() => saveFiles(EMPTY_FILES, blocked)).not.toThrow();
+    expect(() => clearFiles(blocked)).not.toThrow();
   });
 });

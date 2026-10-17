@@ -12,3 +12,6 @@ export type FileId = (typeof FILES)[number]['id'];
 
 /** The text of each file. */
 export type Files = Record<FileId, string>;
+
+/** What the HTML Editor opens with on a first visit, and «بازنشانی» goes back to. */
+export const EMPTY_FILES: Files = { html: '', css: '', js: '' };

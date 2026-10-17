@@ -9,8 +9,8 @@ import { downloadPage } from './downloadPage';
 import Preview from './Preview';
 import StatusMessage from './StatusMessage';
 import TabBar, { tabId } from './TabBar';
-import { clearWorkspace, loadWorkspace, type Workspace } from './persistence';
-import { STARTER_TEMPLATE } from './starterTemplate';
+import { EMPTY_FILES, FILES, type FileId, type Files } from './files';
+import { clearFiles, loadFiles } from './persistence';
 import { useAutosave } from './useAutosave';
 import { useMediaQuery } from './useMediaQuery';
 import { usePreviewBuild } from './usePreviewBuild';
@@ -42,15 +42,15 @@ const PANEL_STYLE = { display: 'flex', flexDirection: 'column', overflow: 'hidde
  * own sizes in localStorage, saved only when the visitor resizes.
  */
 export default function EditorApp() {
-  // The last visit's workspace, else the Starter Template.
-  const [workspace, setWorkspace] = useState<Workspace>(loadWorkspace);
-  // The workspace as opened or last reset: nothing new to save until it changes.
-  const [opened, setOpened] = useState(workspace);
-  useAutosave(workspace, opened);
+  // The last visit's files, else empty ones.
+  const [files, setFiles] = useState<Files>(loadFiles);
+  // The files as opened or last reset: nothing new to save until they change.
+  const [opened, setOpened] = useState(files);
+  useAutosave(files, opened);
+  // Always opens on the HTML tab.
+  const [activeTab, setActiveTab] = useState<FileId>(FILES[0].id);
   // Bumped to remount the Code Pane on files replaced from outside it.
   const [paneKey, setPaneKey] = useState(0);
-  // `files` is a new object only when one of them is edited, not on a tab switch.
-  const { activeTab, files } = workspace;
   const preview = usePreviewBuild(files);
   const frame = useRef<HTMLIFrameElement>(null);
   // «بازنشانی» asks first, in a dialog on the page.
@@ -94,13 +94,13 @@ export default function EditorApp() {
     show(done, 'success');
   }
 
-  /** «بازنشانی», once confirmed: the Starter Template again, and nothing saved. */
+  /** «بازنشانی», once confirmed: empty files on the HTML tab, as on a first visit, and nothing saved. */
   function reset() {
     setAskingReset(false);
-    const template = { files: STARTER_TEMPLATE, activeTab };
-    clearWorkspace();
-    setWorkspace(template);
-    setOpened(template);
+    clearFiles();
+    setFiles(EMPTY_FILES);
+    setOpened(EMPTY_FILES);
+    setActiveTab(FILES[0].id);
     setPaneKey((key) => key + 1);
   }
 
@@ -143,7 +143,7 @@ export default function EditorApp() {
           <section data-code className="editor-pane">
             <TabBar
               active={activeTab}
-              onSelect={(file) => setWorkspace((w) => ({ ...w, activeTab: file }))}
+              onSelect={setActiveTab}
               panelId={PANEL_ID}
               label={COPY.editor.filesLabel}
             />
@@ -152,7 +152,7 @@ export default function EditorApp() {
                 key={paneKey}
                 file={activeTab}
                 initialFiles={files}
-                onChange={(file, text) => setWorkspace((w) => ({ ...w, files: { ...w.files, [file]: text } }))}
+                onChange={(file, text) => setFiles((last) => ({ ...last, [file]: text }))}
               />
             </div>
           </section>

@@ -70,10 +70,6 @@ _Avoid_: output, result
 HTML-tab content that is a whole document, opening with `<!DOCTYPE …>` or `<html>`: what an AI or a tutorial hands over. The Preview runs it and «دانلود index.html» saves it exactly as written, without the CSS and JS tabs.
 _Avoid_: full document, complete HTML
 
-**Starter Template** (قالب شروع):
-The three files the HTML Editor opens with and resets to; a short Farsi page with explanatory comments.
-_Avoid_: boilerplate, default code
-
 ### Layout
 
 **Rail** (ردیف):

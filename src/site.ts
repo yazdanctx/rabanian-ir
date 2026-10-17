@@ -138,10 +138,10 @@ export const COPY = {
      */
     run: 'اجرای کد',
     reset: 'بازنشانی',
-    /** The dialog that asks before «بازنشانی» replaces the visitor's files with the Starter Template. */
+    /** The dialog that asks before «بازنشانی» empties the visitor's three files. */
     resetDialog: {
-      title: 'بازنشانی به قالب شروع؟',
-      message: 'کدی که نوشته‌ای پاک می‌شود و قالب شروع برمی‌گردد.',
+      title: 'بازنشانی ویرایشگر؟',
+      message: 'هرچه در فایل‌های HTML، CSS و JS نوشته‌ای پاک می‌شود.',
       confirm: 'بازنشانی',
       cancel: 'انصراف',
     },

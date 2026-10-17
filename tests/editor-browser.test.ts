@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
 /*
@@ -21,7 +20,11 @@ const lib = `
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const panel = () => document.querySelector('[role="tabpanel"]');
   const code = () => panel().querySelector('.cm-content');
-  const codeText = () => [...code().querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n');
+  /** The open file's text as shown, without an empty file's hint (the placeholder). */
+  const codeText = () =>
+    [...code().querySelectorAll('.cm-line')]
+      .map((l) => [...l.childNodes].filter((n) => !n.classList?.contains('cm-placeholder')).map((n) => n.textContent).join(''))
+      .join('\\n');
 `;
 
 /** Opens /editor and waits for the client-only island to render. */
@@ -95,9 +98,10 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
       const seen = [await pick('CSS')];
       await type('h1 { color: red }');
       seen.push(await pick('JS'), await pick('HTML'), await pick('CSS'));
+      // CSS and JS open empty.
       expect(seen).toEqual([
-        `CSS:${STARTER_TEMPLATE.css}`,
-        `JS:${STARTER_TEMPLATE.js}`,
+        'CSS:',
+        'JS:',
         'HTML:<h1>سلام دنیا</h1>',
         'CSS:h1 { color: red }',
       ]);

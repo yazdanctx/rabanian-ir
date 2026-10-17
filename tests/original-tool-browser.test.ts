@@ -26,7 +26,11 @@ const lib = `
   const tabs = () => [...document.querySelectorAll('[role="tablist"] [role="tab"]')];
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const content = () => document.querySelector('[role="tabpanel"] .cm-content');
-  const codeText = () => [...content().querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n');
+  /** The open file's text as shown, without an empty file's hint (the placeholder). */
+  const codeText = () =>
+    [...content().querySelectorAll('.cm-line')]
+      .map((l) => [...l.childNodes].filter((n) => !n.classList?.contains('cm-placeholder')).map((n) => n.textContent).join(''))
+      .join('\\n');
   const pick = async (label) => {
     tabs().find((t) => t.textContent.trim() === label).click();
     await waitFor(() => selected().textContent.trim() === label);
@@ -151,6 +155,8 @@ describe.skipIf(!chromePath)('status messages', () => {
   beforeAll(async () => {
     tab = await openEditor(site.origin);
     await tab.send('Browser.setDownloadBehavior', { behavior: 'deny' });
+    // The editor opens empty, and with no HTML both actions ask for it instead.
+    await tab.evaluate(`(async () => { ${lib}; await write('HTML', '<p>سلام</p>'); })()`);
   });
   afterAll(() => tab?.close());
 
@@ -228,11 +234,10 @@ describe.skipIf(!chromePath)('a Full Page pasted into the HTML tab', () => {
     rmSync(downloads, { recursive: true, force: true });
   });
 
-  it('takes the whole file, Starter Template and all, and one undo brings it back', async () => {
+  it('takes the whole file, whatever was in it, and one undo brings it back', async () => {
     const pasted = await tab.evaluate<string>(`(async () => {
       ${lib}
-      await pick('HTML');
-      content().focus();
+      await write('HTML', '<h1>سلام دنیا</h1>\\n<p>کد قبلی</p>');
       paste(${JSON.stringify(fullPage)});
       await sleep(50);
       return codeText();

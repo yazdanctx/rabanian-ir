@@ -4,13 +4,13 @@ import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { CONSOLE_BRIDGE } from '../src/components/editor/consoleBridge';
-import { STARTER_TEMPLATE } from '../src/components/editor/starterTemplate';
+import { EMPTY_FILES } from '../src/components/editor/files';
 import { COPY } from '../src/site';
 import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/browser';
 
 /*
- * The HTML Editor's workspace (/editor) in a real (headless) Chrome: the
- * Starter Template on a first visit, autosave across reloads, «بازنشانی» and
+ * The HTML Editor's workspace (/editor) in a real (headless) Chrome: empty
+ * files on a first visit, autosave across reloads, «بازنشانی» and
  * «دانلود index.html». Every `openPage` is a fresh browser profile, so a first visit.
  * Skipped where no Chrome is installed (set CHROME_PATH).
  */
@@ -29,7 +29,11 @@ const lib = `
   const tabs = () => [...document.querySelectorAll('[role="tablist"] [role="tab"]')];
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const content = () => document.querySelector('[role="tabpanel"] .cm-content');
-  const codeText = () => [...content().querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n');
+  /** The open file's text as shown, without an empty file's hint (the placeholder). */
+  const codeText = () =>
+    [...content().querySelectorAll('.cm-line')]
+      .map((l) => [...l.childNodes].filter((n) => !n.classList?.contains('cm-placeholder')).map((n) => n.textContent).join(''))
+      .join('\\n');
   const pick = async (label) => {
     tabs().find((t) => t.textContent.trim() === label).click();
     await waitFor(() => selected().textContent.trim() === label);
@@ -109,42 +113,26 @@ describe.skipIf(!chromePath)('first visit', () => {
   });
   afterAll(() => tab?.close());
 
-  it('opens the Starter Template on the HTML tab, each file in its tab', async () => {
-    expect(await shown(tab)).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
+  it('opens on the HTML tab, all three files empty', async () => {
+    expect(await shown(tab)).toEqual({ tab: 'HTML', files: EMPTY_FILES });
   });
 
-  it('renders the template in the Preview, with an empty console until the button is clicked', async () => {
-    const before = await tab.evaluate<{ rendered: boolean; console: string[] }>(`(async () => {
-      ${lib}
-      const rendered = await waitFor(() => frame().srcdoc.includes(${JSON.stringify(STARTER_TEMPLATE.html)}));
-      await sleep(300);
-      return { rendered, console: entries() };
-    })()`);
-    expect(before).toEqual({ rendered: true, console: [] });
-
-    const heading = await inPreview<string>(
-      tab,
-      `document.getElementById('greet').click(); document.querySelector('h1').textContent`,
-    );
-    expect(heading).toBe('به دنیای وب خوش آمدی');
-    const logged = await tab.evaluate<string[]>(`(async () => {
-      ${lib}
-      await waitFor(() => entries().length > 0);
-      return entries();
-    })()`);
-    expect(logged).toEqual(['log سلام از جاوااسکریپت']);
+  it('shows an empty page in the Preview, and an empty console', async () => {
+    await tab.evaluate(`new Promise((r) => setTimeout(r, 300))`);
+    expect(await inPreview<string>(tab, `document.body.innerText.trim()`)).toBe('');
+    expect(await tab.evaluate(`(() => { ${lib} return entries(); })()`)).toEqual([]);
   });
 });
 
 describe.skipIf(!chromePath)('autosave', () => {
-  it('keeps the three files and the open tab across a reload', async () => {
+  it('keeps the three files across a reload, opening on the HTML tab again', async () => {
     const tab = await openEditor(site.origin);
     try {
       await edit(tab);
       await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // past the save delay
       await tab.reload();
       await waitForEditor(tab);
-      expect(await shown(tab)).toEqual({ tab: 'CSS', files: edited });
+      expect(await shown(tab)).toEqual({ tab: 'HTML', files: edited });
     } finally {
       await tab.close();
     }
@@ -156,7 +144,7 @@ describe.skipIf(!chromePath)('autosave', () => {
       await edit(tab);
       await tab.reload();
       await waitForEditor(tab);
-      expect(await shown(tab)).toEqual({ tab: 'CSS', files: edited });
+      expect(await shown(tab)).toEqual({ tab: 'HTML', files: edited });
     } finally {
       await tab.close();
     }
@@ -245,7 +233,7 @@ describe.skipIf(!chromePath)('«بازنشانی»', () => {
     }
   });
 
-  it('once confirmed, restores the Starter Template and forgets the save', async () => {
+  it('once confirmed, empties the three files, back on the HTML tab, and forgets the save', async () => {
     const tab = await openEditor(site.origin);
     try {
       await edit(tab);
@@ -254,22 +242,17 @@ describe.skipIf(!chromePath)('«بازنشانی»', () => {
       expect(await dialog(tab)).not.toBeNull();
       await answer(tab, confirm);
       expect(await isOpen(tab)).toBe(false);
-      // Checked without switching tabs, which would be an edit to save: the
-      // open file in the Code Pane, all three in the Preview.
-      const restored = await tab.evaluate<{ pane: string; previewed: boolean }>(`(async () => {
+      const emptied = await tab.evaluate<{ tab: string; pane: string; previewed: boolean }>(`(async () => {
         ${lib}
-        const template = ${JSON.stringify(STARTER_TEMPLATE)};
-        const previewed = await waitFor(
-          () => [template.html, template.css, template.js].every((file) => frame().srcdoc.includes(file)),
-          1500,
-        );
-        return { pane: codeText(), previewed };
+        const previewed = await waitFor(() => frame().srcdoc.endsWith('<body><script></script></body></html>'), 1500);
+        return { tab: selected().textContent.trim(), pane: codeText(), previewed };
       })()`);
-      expect(restored).toEqual({ pane: STARTER_TEMPLATE.css, previewed: true });
+      expect(emptied).toEqual({ tab: 'HTML', pane: '', previewed: true });
+      expect(await shown(tab)).toEqual({ tab: 'HTML', files: EMPTY_FILES });
       await tab.evaluate(`new Promise((r) => setTimeout(r, 800))`); // nothing to save
       await tab.reload();
       await waitForEditor(tab);
-      expect(await shown(tab)).toEqual({ tab: 'HTML', files: STARTER_TEMPLATE });
+      expect(await shown(tab)).toEqual({ tab: 'HTML', files: EMPTY_FILES });
     } finally {
       await tab.close();
     }
@@ -289,14 +272,18 @@ describe.skipIf(!chromePath)('«دانلود index.html»', () => {
     rmSync(downloads, { recursive: true, force: true });
   });
 
-  const mine = '<p id="mine">نوشتهٔ من</p>';
+  const mine = {
+    html: '<h1>سلام دنیا</h1>\n<p id="mine">نوشتهٔ من</p>\n<button id="greet">کلیک کن</button>',
+    js: "document.getElementById('greet').onclick = () => (document.querySelector('h1').textContent = 'به دنیای وب خوش آمدی');",
+  };
   let saved: string;
 
   it('saves the Preview page as one index.html, without the console bridge', async () => {
     const previewed = await tab.evaluate<string>(`(async () => {
       ${lib}
-      await write('HTML', ${JSON.stringify(STARTER_TEMPLATE.html + mine)});
-      await waitFor(() => frame().srcdoc.includes(${JSON.stringify(mine)}));
+      await write('HTML', ${JSON.stringify(mine.html)});
+      await write('JS', ${JSON.stringify(mine.js)});
+      await waitFor(() => frame().srcdoc.includes(${JSON.stringify(mine.js)}));
       button('دانلود index.html').click();
       return frame().srcdoc;
     })()`);

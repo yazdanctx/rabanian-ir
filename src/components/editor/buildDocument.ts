@@ -61,9 +61,9 @@ export interface BuildOptions {
  * those in the HTML included.
  *
  * A Full Page is the page as it is, as in Amin's original tool: none of our
- * wrapper, style or fonts, and not the CSS and JS tabs either (theirs would
- * be the Starter Template's, written for its own HTML). Only the console
- * bridge goes in, first in its head.
+ * wrapper, style or fonts, and not the CSS and JS tabs either (what is left
+ * in them was written for other HTML). Only the console bridge goes in,
+ * first in its head.
  */
 export function buildDocument({ html, css, js }: Files, { consoleBridge = true }: BuildOptions = {}): string {
   const bridge = consoleBridge ? `<script>${CONSOLE_BRIDGE}</script>` : '';

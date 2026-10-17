@@ -1,24 +1,25 @@
 import { useEffect } from 'react';
-import { saveWorkspace, type Workspace } from './persistence';
+import type { Files } from './files';
+import { saveFiles } from './persistence';
 
 /** How long edits must pause before they are saved (ticket 04). */
 const SAVE_DELAY_MS = 500;
 
 /**
- * Saves `workspace` once it stops changing for `SAVE_DELAY_MS`, or at once if
+ * Saves `files` once they stop changing for `SAVE_DELAY_MS`, or at once if
  * the page is left first (reload, close, navigation). Nothing is saved while
- * it is still `opened`, the workspace as it was opened or reset: that is
- * already saved, or is the Starter Template.
+ * they are still `opened`, the files as they were opened or reset: those are
+ * already saved, or empty.
  */
-export function useAutosave(workspace: Workspace, opened: Workspace) {
+export function useAutosave(files: Files, opened: Files) {
   useEffect(() => {
-    if (workspace === opened) return;
-    const save = () => saveWorkspace(workspace);
+    if (files === opened) return;
+    const save = () => saveFiles(files);
     const timer = setTimeout(save, SAVE_DELAY_MS);
     addEventListener('pagehide', save);
     return () => {
       clearTimeout(timer);
       removeEventListener('pagehide', save);
     };
-  }, [workspace, opened]);
+  }, [files, opened]);
 }
