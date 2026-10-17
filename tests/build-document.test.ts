@@ -1,11 +1,13 @@
 import { readFileSync } from 'node:fs';
 import { parseHTML } from 'linkedom';
 import { describe, expect, it } from 'vitest';
-import { buildDocument } from '../src/components/editor/buildDocument';
+import { buildDocument, isFullPage } from '../src/components/editor/buildDocument';
+import { CONSOLE_BRIDGE } from '../src/components/editor/consoleBridge';
 
 /*
- * The page the Preview renders and «دانلود» saves (spec: Preview): the three
- * files inside our Farsi, right-to-left wrapper.
+ * The page the Preview renders and «دانلود index.html» saves (spec: Preview):
+ * the three files inside our Farsi, right-to-left wrapper, or a Full Page as
+ * it is.
  */
 
 /** The built page as a DOM. */
@@ -24,7 +26,7 @@ describe('buildDocument', () => {
     );
   });
 
-  it('embeds IRANYekanXFaNum Regular and Bold as data: URLs, since the sandboxed Preview cannot fetch fonts', () => {
+  it('embeds IRANYekanXFaNum Regular and Bold as data: URLs, so a downloaded page needs no server', () => {
     const [base] = dom(buildDocument(files)).querySelectorAll('head style');
     const faces = [...(base.textContent ?? '').matchAll(/@font-face\s*{([^}]*)}/g)].map((m) => m[1]);
     const embedded = faces.map((face) => {
@@ -88,6 +90,61 @@ describe('buildDocument', () => {
     expect([...page.body.children].map((el) => el.localName)).toEqual(['p', 'script']);
     expect(page.body.querySelector('script')?.textContent).toBe(
       "console.log('<\\/script>'); console.log(`<\\/Script >`);",
+    );
+  });
+});
+
+describe('a Full Page in the HTML tab', () => {
+  const page = [
+    '<!DOCTYPE html>',
+    '<html lang="en">',
+    '<head>',
+    '  <meta charset="UTF-8">',
+    '  <style>body { margin: 0 }</style>',
+    '</head>',
+    '<body><h1>Hello</h1><script>console.log(1)</script></body>',
+    '</html>',
+  ].join('\n');
+  const bridge = `<script>${CONSOLE_BRIDGE}</script>`;
+
+  it.each([
+    page,
+    '<!doctype html><p>سلام</p>',
+    '<html dir="rtl"><body>سلام</body></html>',
+    '\n  <!-- my page -->\n<!DOCTYPE html><html></html>',
+  ])('is told by its opening doctype or <html>: %j', (html) => {
+    expect(isFullPage(html)).toBe(true);
+  });
+
+  it.each([
+    '<h1>سلام دنیا</h1>',
+    '<header>سلام</header>',
+    '<htmlx></htmlx>',
+    '<p>سلام</p>\n<!DOCTYPE html>',
+    '<!-- <!DOCTYPE html> -->\n<p>سلام</p>',
+  ])('is not body content: %j', (html) => {
+    expect(isFullPage(html)).toBe(false);
+  });
+
+  it('is downloaded exactly as written, without the CSS and JS tabs', () => {
+    expect(buildDocument({ html: page, css: 'h1 { color: red }', js: 'alert(1)' }, { consoleBridge: false })).toBe(
+      page,
+    );
+  });
+
+  it('is previewed as written, with only the console bridge, first in its head', () => {
+    const built = buildDocument({ html: page, css: 'h1 { color: red }', js: 'alert(1)' });
+    expect(built).toBe(page.replace('<head>', `<head>${bridge}`));
+    const head = dom(built).head;
+    expect([...head.children].map((el) => el.localName)).toEqual(['script', 'meta', 'style']);
+  });
+
+  it('gets the bridge after <html> where it has no <head>, else after the doctype, which stays first', () => {
+    expect(buildDocument({ html: '<!DOCTYPE html><html lang="en"><body>x</body></html>', css: '', js: '' })).toBe(
+      `<!DOCTYPE html><html lang="en">${bridge}<body>x</body></html>`,
+    );
+    expect(buildDocument({ html: '<!DOCTYPE html><p>x</p>', css: '', js: '' })).toBe(
+      `<!DOCTYPE html>${bridge}<p>x</p>`,
     );
   });
 });

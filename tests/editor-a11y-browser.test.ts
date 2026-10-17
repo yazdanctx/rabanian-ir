@@ -21,7 +21,7 @@ const lib = `
   const selected = () => tabs().find((t) => t.getAttribute('aria-selected') === 'true');
   const content = () => document.querySelector('[role="tabpanel"] .cm-content');
   const consoleToggle = () => document.querySelector('[data-console] button[aria-expanded]');
-  const run = () => [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === 'اجرا');
+  const run = () => [...document.querySelectorAll('[data-actions] button')].find((b) => b.textContent.trim() === 'اجرای کد');
 `;
 
 /** Opens /editor and waits for the client-only island to render. */
@@ -104,8 +104,9 @@ describe.skipIf(!chromePath)('HTML Editor from the keyboard', () => {
     // The Preview's column comes first: it is the top pane on a phone.
     expect(stops).toEqual([
       { name: 'بازنشانی', ring: RING },
-      { name: 'دانلود', ring: RING },
-      { name: 'اجرا', ring: RING },
+      { name: 'دانلود index.html', ring: RING },
+      { name: 'تمام‌صفحه پیش‌نمایش', ring: RING },
+      { name: 'اجرای کد', ring: RING },
       { name: 'پیش‌نمایش', ring: "the visitor's page" },
       // Named with how many entries it holds.
       { name: 'کنسول، 40 پیام', ring: RING },

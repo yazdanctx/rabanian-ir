@@ -63,8 +63,12 @@ The text-editing area inside the HTML Editor where one of the three files is typ
 _Avoid_: editor (ambiguous with HTML Editor)
 
 **Preview** (پیش‌نمایش):
-The sandboxed frame inside the HTML Editor that renders the visitor's three files as a page. It is Farsi and right-to-left by default.
+The frame inside the HTML Editor that renders the visitor's three files as a page. It is Farsi and right-to-left by default. It is not sandboxed, as in Amin's original tool (ADR-0004).
 _Avoid_: output, result
+
+**Full Page** (صفحهٔ کامل):
+HTML-tab content that is a whole document, opening with `<!DOCTYPE …>` or `<html>`: what an AI or a tutorial hands over. The Preview runs it and «دانلود index.html» saves it exactly as written, without the CSS and JS tabs.
+_Avoid_: full document, complete HTML
 
 **Starter Template** (قالب شروع):
 The three files the HTML Editor opens with and resets to; a short Farsi page with explanatory comments.

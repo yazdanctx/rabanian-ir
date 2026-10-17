@@ -7,12 +7,14 @@ import ConfirmDialog from './ConfirmDialog';
 import ConsoleStrip from './ConsoleStrip';
 import { downloadPage } from './downloadPage';
 import Preview from './Preview';
+import StatusMessage from './StatusMessage';
 import TabBar, { tabId } from './TabBar';
 import { clearWorkspace, loadWorkspace, type Workspace } from './persistence';
 import { STARTER_TEMPLATE } from './starterTemplate';
 import { useAutosave } from './useAutosave';
 import { useMediaQuery } from './useMediaQuery';
 import { usePreviewBuild } from './usePreviewBuild';
+import { useStatus } from './useStatus';
 
 const PANEL_ID = 'editor-panel';
 const PREVIEW_TITLE_ID = 'editor-preview-title';
@@ -29,7 +31,9 @@ const PANEL_STYLE = { display: 'flex', flexDirection: 'column', overflow: 'hidde
 /**
  * The HTML Editor, filling the screen: the Preview (with the action bar and
  * the console strip) and the Code Pane (tabs over one file), with a
- * separator between them that resizes both.
+ * separator between them that resizes both. «تمام‌صفحه پیش‌نمایش» lays the
+ * Preview over all of it until «خروج از تمام‌صفحه» or Escape; the frame
+ * stays where it is, so the page in it isn't rerun.
  *
  * Side by side from 1024px, Preview on the left and Code Pane on the right;
  * stacked below that, Preview on top. One order gives both because the
@@ -51,6 +55,19 @@ export default function EditorApp() {
   const frame = useRef<HTMLIFrameElement>(null);
   // «بازنشانی» asks first, in a dialog on the page.
   const [askingReset, setAskingReset] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const { status, show, clear } = useStatus();
+  // A message about the files as they were is stale once they change.
+  useEffect(() => clear(), [files, clear]);
+
+  useEffect(() => {
+    if (!fullscreen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setFullscreen(false);
+    };
+    addEventListener('keydown', onKeyDown);
+    return () => removeEventListener('keydown', onKeyDown);
+  }, [fullscreen]);
 
   const orientation = useMediaQuery('(width >= 1024px)') ? 'horizontal' : 'vertical';
   const { defaultLayout, onLayoutChanged } = useDefaultLayout({
@@ -66,6 +83,16 @@ export default function EditorApp() {
     shownOrientation.current = orientation;
     group.current?.setLayout(defaultLayout ?? EVEN);
   }, [orientation, defaultLayout, group]);
+
+  /**
+   * «اجرای کد» and «دانلود index.html», each saying how it went. As in the
+   * original tool, both want something in the HTML tab first.
+   */
+  function act(action: () => void, done: string) {
+    if (!files.html.trim()) return show(COPY.editor.status.empty, 'error');
+    action();
+    show(done, 'success');
+  }
 
   /** «بازنشانی», once confirmed: the Starter Template again, and nothing saved. */
   function reset() {
@@ -89,23 +116,30 @@ export default function EditorApp() {
         className="editor"
       >
         <Panel id="preview" dir="rtl" minSize="20%" style={PANEL_STYLE} className="editor-preview-column">
-          <section aria-labelledby={PREVIEW_TITLE_ID} className="editor-pane">
+          <section
+            aria-labelledby={PREVIEW_TITLE_ID}
+            data-fullscreen={fullscreen || undefined}
+            className="editor-pane editor-preview-pane"
+          >
             <div className="editor-bar editor-preview-bar">
               <h2 id={PREVIEW_TITLE_ID} className="editor-pane-title">
                 {COPY.editor.preview}
               </h2>
               <ActionBar
-                onRun={preview.runNow}
+                onRun={() => act(preview.runNow, COPY.editor.status.ran)}
                 onReset={() => setAskingReset(true)}
-                onDownload={() => downloadPage(files)}
+                onDownload={() => act(() => downloadPage(files), COPY.editor.status.downloaded)}
+                fullscreen={fullscreen}
+                onFullscreen={setFullscreen}
               />
             </div>
             <Preview srcDoc={preview.srcDoc} build={preview.id} frameRef={frame} />
+            <StatusMessage status={status} />
           </section>
-          <ConsoleStrip frameRef={frame} build={preview.id} />
+          <ConsoleStrip frameRef={frame} build={preview.id} inert={fullscreen} />
         </Panel>
-        <Separator aria-label={COPY.editor.resize} className="editor-separator" />
-        <Panel id="code" dir="rtl" minSize="20%" style={PANEL_STYLE}>
+        <Separator aria-label={COPY.editor.resize} inert={fullscreen} className="editor-separator" />
+        <Panel id="code" dir="rtl" minSize="20%" inert={fullscreen} style={PANEL_STYLE}>
           <section data-code className="editor-pane">
             <TabBar
               active={activeTab}

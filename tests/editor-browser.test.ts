@@ -185,19 +185,25 @@ describe.skipIf(!chromePath)('HTML Editor shell in the browser', () => {
     });
     afterAll(() => tab?.close());
 
-    it('has the three actions, «بازنشانی» «دانلود» «اجرا», as plain buttons, each with a decorative icon', async () => {
+    it("has the original tool's four actions, by its names, as plain buttons, each with a decorative icon", async () => {
       const actions = await tab.evaluate<string[]>(`(() => [
         ...document.querySelectorAll('[data-actions] button'),
       ].map((b) => [b.type, b.textContent.trim(), b.querySelector('svg')?.getAttribute('aria-hidden')].join(':')))()`);
-      expect(actions).toEqual(['button:بازنشانی:true', 'button:دانلود:true', 'button:اجرا:true']);
+      expect(actions).toEqual([
+        'button:بازنشانی:true',
+        'button:دانلود index.html:true',
+        'button:تمام‌صفحه پیش‌نمایش:true',
+        'button:اجرای کد:true',
+      ]);
     });
 
-    it('puts «اجرا» at the far left of the bar', async () => {
+    it('puts «اجرای کد» at the far left of the bar', async () => {
       const lefts = await tab.evaluate<Record<string, number>>(`(() => Object.fromEntries(
         [...document.querySelectorAll('[data-actions] button')].map((b) => [b.textContent.trim(), b.getBoundingClientRect().left]),
       ))()`);
-      expect(lefts['اجرا']).toBeLessThan(lefts['دانلود']);
-      expect(lefts['دانلود']).toBeLessThan(lefts['بازنشانی']);
+      expect(lefts['اجرای کد']).toBeLessThan(lefts['تمام‌صفحه پیش‌نمایش']);
+      expect(lefts['تمام‌صفحه پیش‌نمایش']).toBeLessThan(lefts['دانلود index.html']);
+      expect(lefts['دانلود index.html']).toBeLessThan(lefts['بازنشانی']);
     });
 
     it('has a Preview region named «پیش‌نمایش»', async () => {

@@ -14,7 +14,7 @@ export interface PreviewBuild {
   id: number;
   /** The page the Preview renders. */
   srcDoc: string;
-  /** Rebuilds now from the current files, even unchanged ones («اجرا»). */
+  /** Rebuilds now from the current files, even unchanged ones («اجرای کد»). */
   runNow: () => void;
 }
 
@@ -27,7 +27,7 @@ export function usePreviewBuild(files: Files): PreviewBuild {
 
   useEffect(() => {
     const timer = setTimeout(
-      // Skipped when «اجرا» already built these files.
+      // Skipped when «اجرای کد» already built these files.
       () => setBuild((last) => (last.files === files ? last : { id: last.id + 1, files })),
       REBUILD_DELAY_MS,
     );

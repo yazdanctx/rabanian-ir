@@ -11,7 +11,7 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 /*
  * The HTML Editor's workspace (/editor) in a real (headless) Chrome: the
  * Starter Template on a first visit, autosave across reloads, «بازنشانی» and
- * «دانلود». Every `openPage` is a fresh browser profile, so a first visit.
+ * «دانلود index.html». Every `openPage` is a fresh browser profile, so a first visit.
  * Skipped where no Chrome is installed (set CHROME_PATH).
  */
 
@@ -74,29 +74,9 @@ async function waitForEditor(tab: BrowserPage) {
   if (!ready) throw new Error('the editor island never rendered');
 }
 
-/**
- * Runs `expression` inside the Preview. The sandboxed frame is out of
- * process, so it is reached as its own DevTools target.
- */
-async function inPreview<T>(tab: BrowserPage, expression: string): Promise<T> {
-  const { targetInfos } = await tab.send('Target.getTargets');
-  const frame = targetInfos.find(
-    (t: { type: string; url: string }) => t.type === 'iframe' && t.url === 'about:srcdoc',
-  );
-  if (!frame) throw new Error('no Preview frame');
-  const { sessionId } = await tab.send('Target.attachToTarget', { targetId: frame.targetId, flatten: true });
-  try {
-    const { result, exceptionDetails } = await tab.send(
-      'Runtime.evaluate',
-      { expression, awaitPromise: true, returnByValue: true },
-      sessionId,
-    );
-    if (exceptionDetails) throw new Error(exceptionDetails.exception?.description ?? 'evaluate failed');
-    return result.value as T;
-  } finally {
-    await tab.send('Target.detachFromTarget', { sessionId });
-  }
-}
+/** Runs `expression` inside the Preview, which shares the editor's origin (ADR-0004). */
+const inPreview = <T>(tab: BrowserPage, expression: string) =>
+  tab.evaluate<T>(`document.querySelector('iframe[data-preview]').contentWindow.eval(${JSON.stringify(expression)})`);
 
 /** The open tab and each tab's file, as the editor shows them. */
 const shown = (tab: BrowserPage) =>
@@ -296,7 +276,7 @@ describe.skipIf(!chromePath)('«بازنشانی»', () => {
   });
 });
 
-describe.skipIf(!chromePath)('«دانلود»', () => {
+describe.skipIf(!chromePath)('«دانلود index.html»', () => {
   let tab: BrowserPage;
   let downloads: string;
   beforeAll(async () => {
@@ -317,7 +297,7 @@ describe.skipIf(!chromePath)('«دانلود»', () => {
       ${lib}
       await write('HTML', ${JSON.stringify(STARTER_TEMPLATE.html + mine)});
       await waitFor(() => frame().srcdoc.includes(${JSON.stringify(mine)}));
-      button('دانلود').click();
+      button('دانلود index.html').click();
       return frame().srcdoc;
     })()`);
     const file = join(downloads, 'index.html');

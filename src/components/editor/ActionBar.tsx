@@ -1,13 +1,17 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 import { COPY } from '../../site';
 
 interface Props {
-  /** «اجرا»: rebuild the Preview now. */
+  /** «اجرای کد»: rebuild the Preview now. */
   onRun: () => void;
   /** «بازنشانی»: ask, in a dialog, before going back to the Starter Template. */
   onReset: () => void;
-  /** «دانلود»: the three files as one index.html. */
+  /** «دانلود index.html»: the page as one index.html. */
   onDownload: () => void;
+  /** Whether the Preview fills the screen: then the bar holds only «خروج از تمام‌صفحه». */
+  fullscreen: boolean;
+  /** «تمام‌صفحه پیش‌نمایش» (true) and «خروج از تمام‌صفحه» (false). */
+  onFullscreen: (fullscreen: boolean) => void;
 }
 
 /** Line glyphs in the site's style (Icon.astro: 24×24, round strokes). */
@@ -29,6 +33,9 @@ const icons = {
     </>
   ),
   download: <path d="M12 4v11m-5-5 5 5 5-5M5 20h14" {...stroke} />,
+  /** Four corners pulled out to the screen's edges. */
+  fullscreen: <path d="M4 9V4h5m6 0h5v5m0 6v5h-5m-6 0H4v-5" {...stroke} />,
+  close: <path d="M6 6l12 12M18 6 6 18" {...stroke} />,
 } satisfies Record<string, ReactNode>;
 
 function Glyph({ name }: { name: keyof typeof icons }) {
@@ -40,11 +47,35 @@ function Glyph({ name }: { name: keyof typeof icons }) {
 }
 
 /**
- * The editor's only actions (spec: Layout). «اجرا» comes last, so it sits at
- * the far left of the RTL bar, the end the eye reaches last.
+ * The editor's actions (spec: Layout), named as in Amin's original tool.
+ * «اجرای کد» comes last, so it sits at the far left of the RTL bar, the end
+ * the eye reaches last. While the Preview fills the screen, the one action is
+ * leaving it; focus follows the switch both ways, so the keyboard stays on
+ * the button that undoes it.
  */
-export default function ActionBar({ onRun, onReset, onDownload }: Props) {
+export default function ActionBar({ onRun, onReset, onDownload, fullscreen, onFullscreen }: Props) {
   const { run, reset, download } = COPY.editor;
+  const enter = useRef<HTMLButtonElement>(null);
+  const exit = useRef<HTMLButtonElement>(null);
+  const shown = useRef(fullscreen);
+
+  useEffect(() => {
+    if (shown.current === fullscreen) return;
+    shown.current = fullscreen;
+    (fullscreen ? exit : enter).current?.focus();
+  }, [fullscreen]);
+
+  if (fullscreen) {
+    return (
+      <div data-actions className="editor-actions">
+        <button ref={exit} type="button" onClick={() => onFullscreen(false)} className="editor-button">
+          <Glyph name="close" />
+          {COPY.editor.exitFullscreen}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div data-actions className="editor-actions">
       <button type="button" onClick={onReset} className="editor-button">
@@ -54,6 +85,10 @@ export default function ActionBar({ onRun, onReset, onDownload }: Props) {
       <button type="button" onClick={onDownload} className="editor-button">
         <Glyph name="download" />
         {download}
+      </button>
+      <button ref={enter} type="button" onClick={() => onFullscreen(true)} className="editor-button">
+        <Glyph name="fullscreen" />
+        {COPY.editor.fullscreen}
       </button>
       <button type="button" onClick={onRun} className="editor-button editor-button-primary">
         <Glyph name="run" />

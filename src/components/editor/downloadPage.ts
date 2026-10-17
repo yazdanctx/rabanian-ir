@@ -5,9 +5,10 @@ import type { Files } from './files';
 const KEEP_URL_MS = 60_000;
 
 /**
- * «دانلود»: saves the three files as one `index.html`, the Preview's page
- * (CSS in `<style>`, JS in `<script>`, the fonts inline) without the console
- * bridge, so it opens on its own in any browser.
+ * «دانلود index.html»: saves the three files as one `index.html`, the
+ * Preview's page (CSS in `<style>`, JS in `<script>`, the fonts inline)
+ * without the console bridge, so it opens on its own in any browser. A Full
+ * Page is saved exactly as it stands in the HTML tab.
  */
 export function downloadPage(files: Files) {
   const page = buildDocument(files, { consoleBridge: false });

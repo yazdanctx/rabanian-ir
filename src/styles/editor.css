@@ -150,6 +150,123 @@ body {
   padding-inline-start: 14px;
 }
 
+/*
+ * The Preview's pane: what its bar and the status message are laid out
+ * against. «تمام‌صفحه پیش‌نمایش» lifts it over the whole screen, frame and
+ * all, without moving it in the page (the page in the frame isn't rerun).
+ */
+.editor-preview-pane {
+  position: relative;
+  container: editor-preview / inline-size;
+}
+
+.editor-preview-pane[data-fullscreen] {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+}
+
+/*
+ * The four actions are wide (their names are the original tool's, the ones
+ * Amin's videos say). Where the pane can't hold them beside the title, the
+ * title gives way, still named for screen readers; narrower still, they go
+ * two to a row, then one.
+ */
+@container editor-preview (width < 620px) {
+  .editor-preview-pane:not([data-fullscreen]) .editor-pane-title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .editor-preview-pane:not([data-fullscreen]) .editor-preview-bar {
+    padding-inline-start: 6px;
+  }
+}
+
+@container editor-preview (width < 540px) {
+  .editor-preview-pane:not([data-fullscreen]) .editor-actions {
+    display: grid;
+    flex: 1;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .editor-preview-pane:not([data-fullscreen]) .editor-actions .editor-button {
+    justify-content: center;
+  }
+}
+
+@container editor-preview (width < 372px) {
+  .editor-preview-pane:not([data-fullscreen]) .editor-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/*
+ * The status message (StatusMessage.tsx): a card at the foot of the Preview
+ * for a moment, rising in and fading out. It keeps clear of the pointer, so
+ * the page under it still takes clicks.
+ */
+.editor-status {
+  position: absolute;
+  inset-inline: 12px;
+  bottom: 16px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.editor-status-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-btn);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-lift);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.6;
+  visibility: hidden;
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 150ms ease-out,
+    translate 150ms ease-out,
+    visibility 0s linear 150ms;
+}
+
+.editor-status[data-shown] .editor-status-message {
+  visibility: visible;
+  opacity: 1;
+  translate: none;
+  transition-delay: 0s;
+}
+
+@starting-style {
+  .editor-status[data-shown] .editor-status-message {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+.editor-status-icon {
+  flex: none;
+}
+
+.editor-status-message[data-tone='success'] .editor-status-icon {
+  color: var(--color-status);
+}
+
+.editor-status-message[data-tone='error'] {
+  color: var(--color-error);
+}
+
 .editor-pane-title,
 .editor-console-toggle {
   font-size: 13px;
@@ -279,7 +396,7 @@ body {
   line-height: 1.8;
 }
 
-/* At the end (left, RTL): «انصراف», then «بازنشانی» at the far left, like «اجرا». */
+/* At the end (left, RTL): «انصراف», then «بازنشانی» at the far left, like «اجرای کد». */
 .editor-dialog-actions {
   display: flex;
   justify-content: flex-end;
@@ -453,6 +570,14 @@ body {
   color: var(--color-muted);
 }
 
+/* An empty file's hint is chrome, in Farsi: right to left inside the LTR line. */
+.editor-code .cm-editor .cm-placeholder {
+  direction: rtl;
+  unicode-bidi: isolate;
+  color: var(--color-muted);
+  font-family: var(--font-sans);
+}
+
 /* The Preview frame: the visitor's page on white, filling its pane. */
 .editor-preview {
   display: block;
@@ -555,7 +680,8 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .editor-tab,
   .editor-button,
-  .editor-separator {
+  .editor-separator,
+  .editor-status-message {
     transition: none;
   }
 }

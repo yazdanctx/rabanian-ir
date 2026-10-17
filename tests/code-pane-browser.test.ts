@@ -28,7 +28,11 @@ const lib = `
   };
   const panel = () => document.querySelector('[role="tabpanel"]');
   const content = () => panel().querySelector('.cm-content');
-  const text = () => [...content().querySelectorAll('.cm-line')].map((l) => l.textContent).join('\\n');
+  /** The file's text as shown, without an empty file's hint (the placeholder). */
+  const text = () =>
+    [...content().querySelectorAll('.cm-line')]
+      .map((l) => [...l.childNodes].filter((n) => !n.classList?.contains('cm-placeholder')).map((n) => n.textContent).join(''))
+      .join('\\n');
 `;
 
 /** Opens /editor and waits for the Code Pane to mount. */

@@ -11,11 +11,12 @@ interface Props {
 }
 
 /**
- * The Preview: the three files rendered as a page in a sandboxed frame. Only
- * `allow-scripts`: no same-origin access to the editor, so the visitor's
- * page can't reach it. Every build remounts the frame, which reruns the page
- * even when nothing changed («اجرا») and gives it a new window, so messages
- * from an older build can't pass for the current one's.
+ * The Preview: the three files rendered as a page in a frame. Not sandboxed,
+ * as in Amin's original tool (ADR-0004): the visitor's page runs as it would
+ * on its own, storage, forms, dialogs and embedded videos included. Every
+ * build remounts the frame, which reruns the page even when nothing changed
+ * («اجرای کد») and gives it a new window, so messages from an older build
+ * can't pass for the current one's.
  */
 export default function Preview({ srcDoc, build, frameRef }: Props) {
   return (
@@ -23,7 +24,6 @@ export default function Preview({ srcDoc, build, frameRef }: Props) {
       key={build}
       ref={frameRef}
       data-preview
-      sandbox="allow-scripts"
       srcDoc={srcDoc}
       title={COPY.editor.preview}
       className="editor-preview"

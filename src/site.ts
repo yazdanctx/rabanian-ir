@@ -132,8 +132,11 @@ export const COPY = {
     code: 'کد',
     /** Screen-reader description of the Code Pane: Tab indents there, so how to leave it. */
     codeHint: 'در کد، Tab فاصله می‌گذارد؛ برای بیرون رفتن، اول Esc و بعد Tab را بزن.',
-    /** The action bar's three buttons. */
-    run: 'اجرا',
+    /**
+     * The action bar's four buttons, named as in Amin's original HTML tool:
+     * his videos call them by these names.
+     */
+    run: 'اجرای کد',
     reset: 'بازنشانی',
     /** The dialog that asks before «بازنشانی» replaces the visitor's files with the Starter Template. */
     resetDialog: {
@@ -142,7 +145,19 @@ export const COPY = {
       confirm: 'بازنشانی',
       cancel: 'انصراف',
     },
-    download: 'دانلود',
+    download: 'دانلود index.html',
+    fullscreen: 'تمام‌صفحه پیش‌نمایش',
+    /** In the bar of the full-screen Preview: back to the editor, as Escape does. */
+    exitFullscreen: 'خروج از تمام‌صفحه',
+    /** What an action did, shown for a moment over the Preview (the original tool's words). */
+    status: {
+      ran: 'کد با موفقیت اجرا شد.',
+      downloaded: 'فایل index.html با موفقیت دانلود شد.',
+      /** «اجرای کد» or «دانلود index.html» with nothing in the HTML tab. */
+      empty: 'لطفاً ابتدا کد HTML را وارد کنید.',
+    },
+    /** Shown in an empty Code Pane, before the file's name: «کد HTML خود را اینجا قرار دهید...». */
+    placeholder: (file: string) => `کد ${file} خود را اینجا قرار دهید...`,
     /** Title of the Preview card. */
     preview: 'پیش‌نمایش',
     /** Screen-reader name of the bar between the panes that resizes them. */

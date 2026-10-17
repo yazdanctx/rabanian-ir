@@ -8,6 +8,7 @@ import {
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
+  placeholder,
 } from '@codemirror/view';
 import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
 import { bracketMatching, indentUnit, syntaxHighlighting } from '@codemirror/language';
@@ -18,6 +19,7 @@ import { javascript } from '@codemirror/lang-javascript';
 import { tagHighlighter, tags } from '@lezer/highlight';
 import { COPY } from '../../site';
 import { FILES, type FileId, type Files } from './files';
+import { fullPagePaste } from './fullPagePaste';
 import { ltrIsolates } from './ltrIsolates';
 import { reducedMotion } from './reducedMotion';
 
@@ -32,7 +34,7 @@ interface Props {
   initialFiles: Files;
   /**
    * Every edit, applied synchronously (as a controlled input's would be), so
-   * an action straight after typing («اجرا») sees the new text.
+   * an action straight after typing («اجرای کد») sees the new text.
    */
   onChange: (file: FileId, text: string) => void;
 }
@@ -104,6 +106,9 @@ function createState(file: FileId, doc: string, onDocChange: (text: string) => v
       keymap.of([...closeBracketsKeymap, ...defaultKeymap, ...historyKeymap, indentWithTab]),
       LANGUAGE[file](),
       syntaxHighlighting(highlighter),
+      // The original tool's hint in an empty box; editor.css sets it right to left.
+      placeholder(COPY.editor.placeholder(label)),
+      file === 'html' ? fullPagePaste() : [],
       EditorView.updateListener.of((update) => {
         if (update.docChanged) onDocChange(update.state.doc.toString());
       }),

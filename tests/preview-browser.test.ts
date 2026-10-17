@@ -3,9 +3,8 @@ import { chromePath, openPage, serveDist, type BrowserPage } from './helpers/bro
 
 /*
  * The HTML Editor's Preview and console strip (/editor) in a real (headless)
- * Chrome. The sandboxed Preview is out of process, so its facts are read
- * through the parent: its `srcdoc`, and what the visitor's JS logs to the
- * console strip. Skipped where no Chrome is installed (set CHROME_PATH).
+ * Chrome. Its facts are read through the parent: its `srcdoc`, and what the
+ * visitor's JS logs to the console strip. Skipped where no Chrome is installed (set CHROME_PATH).
  */
 
 /** Page-side helpers, prepended to evaluated expressions. */
@@ -67,13 +66,13 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
   });
   afterAll(() => tab?.close());
 
-  it('is a frame titled «پیش‌نمایش», sandboxed to scripts only', async () => {
+  it('is a frame titled «پیش‌نمایش», not sandboxed, as in the original tool (ADR-0004)', async () => {
     const frame = await tab.evaluate<{ sandbox: string | null; title: string } | null>(`(() => {
       ${lib}
       const f = frame();
       return f && { sandbox: f.getAttribute('sandbox'), title: f.title };
     })()`);
-    expect(frame).toEqual({ sandbox: 'allow-scripts', title: 'پیش‌نمایش' });
+    expect(frame).toEqual({ sandbox: null, title: 'پیش‌نمایش' });
   });
 
   it('renders what is typed in the HTML tab, rebuilt shortly after typing stops', async () => {
@@ -126,17 +125,18 @@ describe.skipIf(!chromePath)('Preview in the browser', () => {
     expect(report).toEqual(['log two']);
   });
 
-  it('«اجرا» reruns the page at once, edits included, without waiting for the pause', async () => {
+  it('«اجرای کد» reruns the page at once, edits included, without waiting for the pause', async () => {
     const runs = await tab.evaluate<{ rerun: boolean; log: string[]; edited: boolean }>(`(async () => {
       ${lib}
-      await setFiles({ js: "console.log('ran')" });
+      // Something in the HTML tab: with none, «اجرای کد» asks for it instead.
+      await setFiles({ html: '<p>سلام</p>', js: "console.log('ran')" });
       await waitFor(() => entries().includes('log ran'));
       const before = frame();
-      button('اجرا').click();
+      button('اجرای کد').click();
       const rerun = await waitFor(() => frame() !== before && entries().includes('log ran'), 1000);
       const log = entries();
       await write('JS', "console.log('edited')");
-      button('اجرا').click();
+      button('اجرای کد').click();
       await sleep(50);
       return { rerun, log, edited: frame().srcdoc.includes("console.log('edited')") };
     })()`);

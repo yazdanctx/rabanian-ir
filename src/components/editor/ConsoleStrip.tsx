@@ -18,6 +18,8 @@ interface Props {
   frameRef: RefObject<HTMLIFrameElement | null>;
   /** The Preview's build id. A new build starts an empty console. */
   build: number;
+  /** Out of reach (under the full-screen Preview). */
+  inert?: boolean;
 }
 
 /**
@@ -25,7 +27,7 @@ interface Props {
  * console output and uncaught errors, newest last, as the console bridge
  * posts them. Messages from any other window are ignored.
  */
-export default function ConsoleStrip({ frameRef, build }: Props) {
+export default function ConsoleStrip({ frameRef, build, inert }: Props) {
   const [open, setOpen] = useState(false);
   // Still shown while it springs shut, hidden once closed.
   const [closing, setClosing] = useState(false);
@@ -86,7 +88,7 @@ export default function ConsoleStrip({ frameRef, build }: Props) {
   }, [open]);
 
   return (
-    <div data-console className="editor-console">
+    <div data-console inert={inert} className="editor-console">
       <div className="editor-console-head">
         <button
           type="button"
