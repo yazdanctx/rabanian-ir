@@ -209,6 +209,8 @@ describe('footer', () => {
     const cta = footer?.querySelector('[data-cta]');
     const nav = footer?.querySelector('nav');
     expect(cta && nav && cta.compareDocumentPosition(nav) & 4).toBeTruthy(); // CTA first
+    // One block: no rule between the CTA and what follows it.
+    expect([...(cta?.nextElementSibling?.classList ?? [])].filter((c) => c.startsWith('border'))).toEqual([]);
   });
 
   it('repeats the logo, linking to the top, and the one-line bio', () => {
